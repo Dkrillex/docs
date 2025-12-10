@@ -9,60 +9,81 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "tabs": [
+    "languages": [
       {
-        "tab": "Guides",
-        "groups": [
+        "language": "en",
+        "tabs": [
           {
-            "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
+            "tab": "Guides",
+            "groups": [
+              {
+                "group": "Getting started",
+                "pages": ["en/index", "en/quickstart", "en/development"]
+              },
+              {
+                "group": "Customization",
+                "pages": ["en/essentials/settings", "en/essentials/navigation"]
+              },
+              {
+                "group": "Writing content",
+                "pages": ["en/essentials/markdown", "en/essentials/code", "en/essentials/images", "en/essentials/reusable-snippets"]
+              },
+              {
+                "group": "AI tools",
+                "pages": ["en/ai-tools/cursor", "en/ai-tools/claude-code", "en/ai-tools/windsurf"]
+              }
             ]
           },
           {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+            "tab": "API reference",
+            "groups": [
+              {
+                "group": "API documentation",
+                "pages": ["en/api-reference/introduction"]
+              },
+              {
+                "group": "Endpoint examples",
+                "pages": ["en/api-reference/endpoint/get", "en/api-reference/endpoint/create", "en/api-reference/endpoint/delete", "en/api-reference/endpoint/webhook"]
+              }
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
-        "groups": [
+        "language": "cn",
+        "tabs": [
           {
-            "group": "API documentation",
-            "pages": [
-              "api-reference/introduction"
+            "tab": "指南",
+            "groups": [
+              {
+                "group": "快速开始",
+                "pages": ["cn/index", "cn/quickstart", "cn/development"]
+              },
+              {
+                "group": "自定义",
+                "pages": ["cn/essentials/settings", "cn/essentials/navigation"]
+              },
+              {
+                "group": "编写内容",
+                "pages": ["cn/essentials/markdown", "cn/essentials/code", "cn/essentials/images", "cn/essentials/reusable-snippets"]
+              },
+              {
+                "group": "AI 工具",
+                "pages": ["cn/ai-tools/cursor", "cn/ai-tools/claude-code", "cn/ai-tools/windsurf"]
+              }
             ]
           },
           {
-            "group": "Endpoint examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+            "tab": "API 参考",
+            "groups": [
+              {
+                "group": "API 文档",
+                "pages": ["cn/api-reference/introduction"]
+              },
+              {
+                "group": "接口示例",
+                "pages": ["cn/api-reference/endpoint/get", "cn/api-reference/endpoint/create", "cn/api-reference/endpoint/delete", "cn/api-reference/endpoint/webhook"]
+              }
             ]
           }
         ]
@@ -101,16 +122,7 @@
     }
   },
   "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+    "options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp", "cursor", "vscode"]
   },
   "footer": {
     "socials": {
