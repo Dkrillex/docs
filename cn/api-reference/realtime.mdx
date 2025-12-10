@@ -1,6 +1,6 @@
 ---
-title: '实时语音'
-description: 'Realtime API 实时对话接口'
+title: "实时语音"
+description: "Realtime API 实时对话接口"
 ---
 
 ## 概述
@@ -9,38 +9,38 @@ Realtime API 提供低时延的文本/语音实时对话能力，当前开放 `g
 
 ## 基础信息
 
-| 项目 | 内容 |
-|------|------|
-| **Base URL** | `wss://llm.ai-nebula.com` |
-| **接口地址** | `/v1/realtime?model={model}` |
-| **认证方式** | `Authorization: Bearer sk-xxxx` |
-| **协议** | WebSocket（JSON 事件流） |
-| **支持模型** | `gpt-realtime`、`gpt-realtime-mini` |
-| **音频格式** | PCM16 单声道，采样率 24000Hz |
+| 项目           | 内容                                 |
+| ------------ | ---------------------------------- |
+| **Base URL** | `wss://llm.ai-nebula.com`          |
+| **接口地址**     | `/v1/realtime?model={model}`       |
+| **认证方式**     | `Authorization: Bearer sk-xxxx`    |
+| **协议**       | WebSocket（JSON 事件流）                |
+| **支持模型**     | `gpt-realtime`、`gpt-realtime-mini` |
+| **音频格式**     | PCM16 单声道，采样率 24000Hz              |
 
 ## 事件总览
 
 ### 客户端发送
 
-| 事件 | 说明 |
-|------|------|
-| `session.update` | 设置/更新会话配置 |
-| `conversation.item.create` | 发送对话消息 |
-| `input_audio_buffer.append` | 流式推送音频 |
-| `input_audio_buffer.commit` | 提交音频缓冲 |
-| `response.create` | 请求生成回复 |
+| 事件                          | 说明        |
+| --------------------------- | --------- |
+| `session.update`            | 设置/更新会话配置 |
+| `conversation.item.create`  | 发送对话消息    |
+| `input_audio_buffer.append` | 流式推送音频    |
+| `input_audio_buffer.commit` | 提交音频缓冲    |
+| `response.create`           | 请求生成回复    |
 
 ### 服务端返回
 
-| 事件 | 说明 |
-|------|------|
-| `session.created` / `session.updated` | 会话就绪或已更新 |
-| `response.created` | 已开始生成 |
-| `response.text.delta` / `response.text.done` | 文本增量与完成 |
-| `response.audio_transcript.delta` / `response.audio_transcript.done` | 语音转写 |
-| `response.audio.delta` / `response.audio.done` | 音频增量与完成 |
-| `response.done` | 本轮结束，包含 `usage` |
-| `error` | 错误事件 |
+| 事件                                                                   | 说明              |
+| -------------------------------------------------------------------- | --------------- |
+| `session.created` / `session.updated`                                | 会话就绪或已更新        |
+| `response.created`                                                   | 已开始生成           |
+| `response.text.delta` / `response.text.done`                         | 文本增量与完成         |
+| `response.audio_transcript.delta` / `response.audio_transcript.done` | 语音转写            |
+| `response.audio.delta` / `response.audio.done`                       | 音频增量与完成         |
+| `response.done`                                                      | 本轮结束，包含 `usage` |
+| `error`                                                              | 错误事件            |
 
 ## 调用流程
 
@@ -190,18 +190,18 @@ ws.close()
 
 供外部系统使用系统访问令牌发起实时对话，为指定 `user_id` 进行扣费。
 
-| 项目 | 内容 |
-|------|------|
-| **URL** | `wss://llm.ai-nebula.com/api/sync/system/realtime` |
-| **认证** | `Authorization: <system_access_token>`（无需 Bearer 前缀） |
+| 项目      | 内容                                                   |
+| ------- | ---------------------------------------------------- |
+| **URL** | `wss://llm.ai-nebula.com/api/sync/system/realtime`   |
+| **认证**  | `Authorization: <system_access_token>`（无需 Bearer 前缀） |
 
 ### 查询参数
 
-| 参数 | 必填 | 说明 |
-|------|------|------|
-| `user_id` | 是 | 要扣费的用户 ID |
-| `model` | 是 | `gpt-realtime` 或 `gpt-realtime-mini` |
-| `group` | 否 | 指定分组，缺省使用默认分组 |
+| 参数        | 必填 | 说明                                   |
+| --------- | --- | ------------------------------------ |
+| `user_id` | 是  | 要扣费的用户 ID                            |
+| `model`   | 是  | `gpt-realtime` 或 `gpt-realtime-mini` |
+| `group`   | 否  | 指定分组，缺省使用默认分组                        |
 
 ### 示例
 
@@ -235,4 +235,3 @@ ws = websocket.WebSocketApp(
 )
 ws.run_forever()
 ```
-
