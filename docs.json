@@ -1,54 +1,15 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Nebula API Documentation",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#4F46E5",
+    "light": "#6366F1",
+    "dark": "#4338CA"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "languages": [
-      {
-        "language": "en",
-        "tabs": [
-          {
-            "tab": "Guides",
-            "groups": [
-              {
-                "group": "Getting started",
-                "pages": ["en/index", "en/quickstart", "en/development"]
-              },
-              {
-                "group": "Customization",
-                "pages": ["en/essentials/settings", "en/essentials/navigation"]
-              },
-              {
-                "group": "Writing content",
-                "pages": ["en/essentials/markdown", "en/essentials/code", "en/essentials/images", "en/essentials/reusable-snippets"]
-              },
-              {
-                "group": "AI tools",
-                "pages": ["en/ai-tools/cursor", "en/ai-tools/claude-code", "en/ai-tools/windsurf"]
-              }
-            ]
-          },
-          {
-            "tab": "API reference",
-            "groups": [
-              {
-                "group": "API documentation",
-                "pages": ["en/api-reference/introduction"]
-              },
-              {
-                "group": "Endpoint examples",
-                "pages": ["en/api-reference/endpoint/get", "en/api-reference/endpoint/create", "en/api-reference/endpoint/delete", "en/api-reference/endpoint/webhook"]
-              }
-            ]
-          }
-        ]
-      },
       {
         "language": "cn",
         "tabs": [
@@ -82,7 +43,72 @@
               },
               {
                 "group": "接口示例",
-                "pages": ["cn/api-reference/endpoint/get", "cn/api-reference/endpoint/create", "cn/api-reference/endpoint/delete", "cn/api-reference/endpoint/webhook"]
+                "pages": ["cn/api-reference/endpoint/get", "cn/api-reference/endpoint/create", "cn/api-reference/endpoint/delete", "cn/api-reference/endpoint/webhook", "cn/api-reference/endpoint/image-generation"]
+              },
+              {
+                "group": "实时语音",
+                "pages": ["cn/api-reference/realtime"]
+              }
+            ]
+          },
+          {
+            "tab": "开发工具&平台",
+            "groups": [
+              {
+                "group": "客户端集成",
+                "pages": ["cn/integrations/claude-code", "cn/integrations/cherry-studio"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "language": "en",
+        "tabs": [
+          {
+            "tab": "Guides",
+            "groups": [
+              {
+                "group": "Getting started",
+                "pages": ["en/index", "en/quickstart", "en/development"]
+              },
+              {
+                "group": "Customization",
+                "pages": ["en/essentials/settings", "en/essentials/navigation"]
+              },
+              {
+                "group": "Writing content",
+                "pages": ["en/essentials/markdown", "en/essentials/code", "en/essentials/images", "en/essentials/reusable-snippets"]
+              },
+              {
+                "group": "AI tools",
+                "pages": ["en/ai-tools/cursor", "en/ai-tools/claude-code", "en/ai-tools/windsurf"]
+              }
+            ]
+          },
+          {
+            "tab": "API reference",
+            "groups": [
+              {
+                "group": "API documentation",
+                "pages": ["en/api-reference/introduction"]
+              },
+              {
+                "group": "Endpoint examples",
+                "pages": ["en/api-reference/endpoint/get", "en/api-reference/endpoint/create", "en/api-reference/endpoint/delete", "en/api-reference/endpoint/webhook", "en/api-reference/endpoint/image-generation"]
+              },
+              {
+                "group": "Realtime Voice",
+                "pages": ["en/api-reference/realtime"]
+              }
+            ]
+          },
+          {
+            "tab": "Dev Tools & Platforms",
+            "groups": [
+              {
+                "group": "Client Integrations",
+                "pages": ["en/integrations/claude-code", "en/integrations/cherry-studio"]
               }
             ]
           }
@@ -132,3 +158,5 @@
     }
   }
 }
+
+

@@ -1,0 +1,116 @@
+---
+title: '图片生成'
+api: 'POST https://llm.ai-nebula.com/v1/images/generations'
+---
+
+## 认证
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## 请求参数
+
+<ParamField body="model" type="string" required>
+  模型名称，如 `gemini-2.5-flash-image-preview`
+</ParamField>
+
+<ParamField body="prompt" type="string">
+  文生图的提示词
+</ParamField>
+
+<ParamField body="response_format" type="string" default="url">
+  响应格式：`b64_json` 或 `url`
+</ParamField>
+
+<ParamField body="contents" type="array">
+  图生图或上下文对话的多轮内容
+</ParamField>
+
+## 文生图
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gemini-2.5-flash-image-preview",
+    "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
+    "response_format": "b64_json"
+  }'
+```
+
+## 图生图
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gemini-2.5-flash-image-preview",
+    "response_format": "b64_json",
+    "contents": [
+      {
+        "role": "user",
+        "parts": [
+          {"text": "根据这张图帮我生成一张俯瞰广州塔的图片"},
+          {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
+        ]
+      }
+    ]
+  }'
+```
+
+## 上下文对话
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gemini-2.5-flash-image-preview",
+    "response_format": "b64_json",
+    "contents": [
+      {
+        "role": "user",
+        "parts": [
+          {"text": "根据这张图帮我生成一张俯瞰广州塔的图片"},
+          {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {"text": "已为您生成1张图片"},
+          {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {"text": "把景色换成夜色下雪的场景"}
+        ]
+      }
+    ]
+  }'
+```
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": {
+    "data": [
+      {
+        "url": "",
+        "b64_json": "iVBORw0KGgoAAAANSUhEUgAABAAAAAQA...",
+        "revised_prompt": ""
+      }
+    ],
+    "created": 1757320007
+  }
+}
+```
+</ResponseExample>
+

@@ -1,0 +1,97 @@
+---
+title: 'Claude Code'
+description: 'Claude Code Client Integration Guide'
+---
+
+## 1. Install Node.js (Skip if installed)
+
+Ensure Node.js version ≥ 18.0
+
+<Tabs>
+  <Tab title="Windows">
+    Download: https://nodejs.org/dist/v22.18.0/node-v22.18.0-x64.msi
+  </Tab>
+  <Tab title="macOS">
+    ```bash
+    sudo xcode-select --install
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brew install node
+    node --version
+    ```
+  </Tab>
+  <Tab title="Ubuntu / Debian">
+    ```bash
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
+    sudo apt-get install -y nodejs
+    node --version
+    ```
+  </Tab>
+</Tabs>
+
+### Uninstall Other Proxy Clients (Optional)
+
+Check installation:
+
+```bash
+npm ls @anthropic-ai/claude-code
+npm ls -g @anthropic-ai/claude-code
+```
+
+Uninstall:
+
+```bash
+npm uninstall @anthropic-ai/claude-code
+npm uninstall -g @anthropic-ai/claude-code
+```
+
+## 2. Install Claude Code
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+Verify installation:
+
+```bash
+claude --version
+```
+
+## 3. Get API Key
+
+```
+base_url = "https://llm.ai-nebula.com"
+api_key = "sk-zbTYx*******************************fceTvn5"
+```
+
+## 4. Configure Environment Variables
+
+<Tabs>
+  <Tab title="Mac / Linux">
+    ```bash
+    export ANTHROPIC_BASE_URL="https://llm.ai-nebula.com"
+    export ANTHROPIC_AUTH_TOKEN="sk-zbTYx*******************************fceTvn5"
+    export ANTHROPIC_MODEL="kimi-k2-250905"
+    cd your-project-folder
+    claude
+    ```
+  </Tab>
+  <Tab title="Windows CMD">
+    ```cmd
+    set ANTHROPIC_BASE_URL=https://llm.ai-nebula.com
+    set ANTHROPIC_AUTH_TOKEN=sk-zbTYx*******************************fceTvn5
+    set ANTHROPIC_MODEL=kimi-k2-250905
+    cd your-project-folder
+    claude
+    ```
+  </Tab>
+  <Tab title="Windows PowerShell">
+    ```powershell
+    $env:ANTHROPIC_BASE_URL="https://llm.ai-nebula.com"
+    $env:ANTHROPIC_AUTH_TOKEN="sk-zbTYx*******************************fceTvn5"
+    $env:ANTHROPIC_MODEL="kimi-k2-250905"
+    cd your-project-folder
+    claude
+    ```
+  </Tab>
+</Tabs>
+

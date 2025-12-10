@@ -1,0 +1,116 @@
+---
+title: 'Image Generation'
+api: 'POST https://llm.ai-nebula.com/v1/images/generations'
+---
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g. `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Body
+
+<ParamField body="model" type="string" required>
+  Model name, e.g. `gemini-2.5-flash-image-preview`
+</ParamField>
+
+<ParamField body="prompt" type="string">
+  Text prompt for text-to-image generation
+</ParamField>
+
+<ParamField body="response_format" type="string" default="url">
+  Response format: `b64_json` or `url`
+</ParamField>
+
+<ParamField body="contents" type="array">
+  Multi-turn conversation for image-to-image or context-aware generation
+</ParamField>
+
+## Text-to-Image
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gemini-2.5-flash-image-preview",
+    "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
+    "response_format": "b64_json"
+  }'
+```
+
+## Image-to-Image
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gemini-2.5-flash-image-preview",
+    "response_format": "b64_json",
+    "contents": [
+      {
+        "role": "user",
+        "parts": [
+          {"text": "Generate a bird eye view of Canton Tower based on this image"},
+          {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
+        ]
+      }
+    ]
+  }'
+```
+
+## Multi-turn Conversation
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gemini-2.5-flash-image-preview",
+    "response_format": "b64_json",
+    "contents": [
+      {
+        "role": "user",
+        "parts": [
+          {"text": "Generate a bird eye view of Canton Tower based on this image"},
+          {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
+        ]
+      },
+      {
+        "role": "model",
+        "parts": [
+          {"text": "Generated 1 image for you"},
+          {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
+        ]
+      },
+      {
+        "role": "user",
+        "parts": [
+          {"text": "Change the scene to a snowy night"}
+        ]
+      }
+    ]
+  }'
+```
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "Success",
+  "data": {
+    "data": [
+      {
+        "url": "",
+        "b64_json": "iVBORw0KGgoAAAANSUhEUgAABAAAAAQA...",
+        "revised_prompt": ""
+      }
+    ],
+    "created": 1757320007
+  }
+}
+```
+</ResponseExample>
+
