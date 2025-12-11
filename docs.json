@@ -8,29 +8,21 @@
     "dark": "#4338CA"
   },
   "favicon": "/favicon.svg",
+  "announcement": {
+    "title": "🔥 最新发布：Claude Opus 4.5 编程能力登顶，价格降至 1/3！ | 🌟 Gemini 3 Pro Preview LMArena 全球第一！",
+    "href": "https://openai-nebula.com"
+  },
   "navigation": {
     "languages": [
       {
         "language": "cn",
         "tabs": [
           {
-            "tab": "指南",
+            "tab": "首页",
             "groups": [
               {
                 "group": "快速开始",
-                "pages": ["cn/index", "cn/quickstart"]
-              },
-              {
-                "group": "自定义",
-                "pages": ["cn/essentials/settings", "cn/essentials/navigation"]
-              },
-              {
-                "group": "编写内容",
-                "pages": ["cn/essentials/markdown", "cn/essentials/code", "cn/essentials/images", "cn/essentials/reusable-snippets"]
-              },
-              {
-                "group": "AI 工具",
-                "pages": ["cn/ai-tools/cursor", "cn/ai-tools/claude-code", "cn/ai-tools/windsurf"]
+                "pages": ["cn/index", "cn/quickstart", "cn/changelog", "cn/contact"]
               }
             ]
           },
@@ -39,7 +31,7 @@
             "groups": [
 {
               "group": "API 文档",
-              "pages": ["cn/api-reference/introduction", "cn/api-reference/models"]
+              "pages": ["cn/api-reference/models", "cn/api-reference/openai-sdk"]
             },
 {
               "group": "文本系列",
@@ -47,7 +39,7 @@
             },
             {
               "group": "接口示例",
-              "pages": ["cn/api-reference/endpoint/image-generation", "cn/api-reference/endpoint/get", "cn/api-reference/endpoint/create", "cn/api-reference/endpoint/delete", "cn/api-reference/endpoint/webhook"]
+              "pages": ["cn/api-reference/endpoint/image-generation"]
             },
               {
                 "group": "实时语音",
@@ -59,8 +51,20 @@
             "tab": "开发工具&平台",
             "groups": [
               {
-                "group": "客户端集成",
-                "pages": ["cn/integrations/cursor", "cn/integrations/claude-code", "cn/integrations/cherry-studio", "cn/integrations/langchain", "cn/integrations/immersive-translate"]
+                "group": "对话型 AI",
+                "pages": ["cn/integrations/cherry-studio"]
+              },
+              {
+                "group": "编程开发",
+                "pages": ["cn/integrations/cursor", "cn/integrations/claude-code"]
+              },
+              {
+                "group": "技术工程",
+                "pages": ["cn/integrations/langchain"]
+              },
+              {
+                "group": "翻译场景",
+                "pages": ["cn/integrations/immersive-translate"]
               }
             ]
           },
@@ -79,23 +83,11 @@
         "language": "en",
         "tabs": [
           {
-            "tab": "Guides",
+            "tab": "Home",
             "groups": [
               {
                 "group": "Getting started",
-                "pages": ["en/index", "en/quickstart"]
-              },
-              {
-                "group": "Customization",
-                "pages": ["en/essentials/settings", "en/essentials/navigation"]
-              },
-              {
-                "group": "Writing content",
-                "pages": ["en/essentials/markdown", "en/essentials/code", "en/essentials/images", "en/essentials/reusable-snippets"]
-              },
-              {
-                "group": "AI tools",
-                "pages": ["en/ai-tools/cursor", "en/ai-tools/claude-code", "en/ai-tools/windsurf"]
+                "pages": ["en/index", "en/quickstart", "en/changelog", "en/contact"]
               }
             ]
           },
@@ -104,7 +96,7 @@
             "groups": [
 {
               "group": "API documentation",
-              "pages": ["en/api-reference/introduction", "en/api-reference/models"]
+              "pages": ["en/api-reference/models", "en/api-reference/openai-sdk"]
             },
 {
               "group": "Text Series",
@@ -112,7 +104,7 @@
             },
             {
               "group": "Endpoint examples",
-              "pages": ["en/api-reference/endpoint/image-generation", "en/api-reference/endpoint/get", "en/api-reference/endpoint/create", "en/api-reference/endpoint/delete", "en/api-reference/endpoint/webhook"]
+              "pages": ["en/api-reference/endpoint/image-generation"]
             },
               {
                 "group": "Realtime Voice",
@@ -124,8 +116,20 @@
             "tab": "Dev Tools & Platforms",
             "groups": [
               {
-                "group": "Client Integrations",
-                "pages": ["en/integrations/cursor", "en/integrations/claude-code", "en/integrations/cherry-studio", "en/integrations/langchain", "en/integrations/immersive-translate"]
+                "group": "Chat AI",
+                "pages": ["en/integrations/cherry-studio"]
+              },
+              {
+                "group": "Coding",
+                "pages": ["en/integrations/cursor", "en/integrations/claude-code"]
+              },
+              {
+                "group": "Tech Engineering",
+                "pages": ["en/integrations/langchain"]
+              },
+              {
+                "group": "Translation",
+                "pages": ["en/integrations/immersive-translate"]
               }
             ]
           },
@@ -143,16 +147,6 @@
     ],
     "global": {
       "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "NebulaAPI",
-          "href": "https://openai-nebula.com/",
-          "icon": "newspaper"
-        }
       ]
     }
   },
@@ -163,8 +157,12 @@
   "navbar": {
     "links": [
       {
+        "label": "Nebula API",
+        "href": "https://openai-nebula.com"
+      },
+      {
         "label": "Support",
-        "href": "mailto:mla@nebula-data.com"
+        "href": "/cn/contact"
       }
     ],
     "primary": {
@@ -178,9 +176,7 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "website": "https://openai-nebula.com"
     }
   }
 }
