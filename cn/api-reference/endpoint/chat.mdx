@@ -1,0 +1,110 @@
+---
+title: '创建对话请求（OpenAI）'
+api: 'POST https://llm.ai-nebula.com/v1/chat/completions'
+---
+
+## 简介
+
+通用文本对话接口，支持 OpenAI 兼容的大语言模型生成对话回答。
+
+## 认证
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## 请求参数
+
+<ParamField body="model" type="string" required>
+  模型标识，如 `claude-sonnet-4-20250514`、`GPT-4o`
+</ParamField>
+
+<ParamField body="messages" type="array" required>
+  对话消息列表，每个元素包含 `role`（user/system/assistant）和 `content`
+</ParamField>
+
+<ParamField body="temperature" type="number" default="0.7">
+  随机性控制，0-2，值越高回复越随机
+</ParamField>
+
+## cURL 示例
+
+```bash
+curl https://llm.ai-nebula.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-XyLy**************************mIqSt" \
+  -d '{
+    "model": "claude-sonnet-4-20250514",
+    "messages": [
+      {"role": "system", "content": "你是一个有用的助手"},
+      {"role": "user", "content": "请用中文简要介绍人工智能"}
+    ],
+    "temperature": 0.7
+  }'
+```
+
+## Python 示例
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-XyLy**************************mIqSt",
+    base_url="https://llm.ai-nebula.com/v1"
+)
+
+completion = client.chat.completions.create(
+    model="claude-sonnet-4-20250514",
+    messages=[
+        {"role": "system", "content": "你是一个有用的助手"},
+        {"role": "user", "content": "请用中文简要介绍人工智能"}
+    ],
+    temperature=0.7
+)
+
+print(completion.choices[0].message.content)
+```
+
+<ResponseExample>
+```json
+{
+  "id": "chatcmpl-xxx",
+  "object": "chat.completion",
+  "created": 1234567890,
+  "model": "claude-sonnet-4-20250514",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "人工智能是研究、开发用于模拟、延伸和扩展人的智能的理论、方法、技术及应用系统的一门新的技术科学..."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 25,
+    "completion_tokens": 100,
+    "total_tokens": 125
+  }
+}
+```
+</ResponseExample>
+
+## 错误处理
+
+| 异常类型 | 触发场景 | 返回信息 |
+|---------|---------|---------|
+| AuthenticationError | API密钥无效或未授权 | 错误：API密钥无效或未授权 |
+| NotFoundError | 模型不存在或不被支持 | 错误：模型 [model] 不存在或不被支持 |
+| APIConnectionError | 网络中断或服务器未响应 | 错误：无法连接到API服务器 |
+| APIError | 请求格式错误等服务端异常 | API请求失败：[错误详情] |
+
+## 注意事项
+
+<Note>
+- `messages` 列表中 `system` 角色用于设定模型行为，`user` 角色为用户提问
+- 多轮对话需追加历史记录（包含 `assistant` 角色的回复）
+- 依赖 `openai` 库：`pip install openai`
+</Note>
+

@@ -1,97 +1,147 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Nebula Lab - Enterprise AI Model API Gateway"
+description: "Enterprise-grade AI model API gateway supporting 200+ popular AI models"
 ---
 
-## Setting up
+## Welcome to Nebula Lab
 
-Get your documentation site up and running in minutes.
+**Nebula Lab** is an enterprise-grade AI model API gateway based on the unified OpenAI API standard, supporting 200+ popular AI models. One token to access OpenAI, Claude, Gemini, DeepSeek, Qwen, Kimi, GLM and all mainstream large language models.
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
+## 📖 Getting Started
 
 <Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+  <Card title="Quick Start" icon="rocket" href="/en/quickstart">
+    Get started in three simple steps
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="API Reference" icon="book" href="/en/api-reference/introduction">
+    Complete API documentation and developer guide
   </Card>
 </Columns>
 
-## Create beautiful pages
-
-Everything you need to create world-class documentation.
+## 🔧 Core APIs
 
 <Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+  <Card title="Chat Completions API" icon="comments" href="/en/api-reference/endpoint/chat">
+    Create multi-turn conversations and text generation
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
+  <Card title="Image Generation API" icon="image" href="/en/api-reference/endpoint/image-generation">
+    Text-to-image, image-to-image, context-aware generation
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
+  <Card title="Realtime Voice API" icon="microphone" href="/en/api-reference/realtime">
+    Low-latency text/voice real-time conversations
   </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
+  <Card title="Models API" icon="list" href="/en/api-reference/introduction">
+    Get all available model information
   </Card>
 </Columns>
 
-## Need inspiration?
+## 💡 Supported Models
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+### OpenAI Series
+- GPT-4.1 / GPT-4o series
+- o3 / o4-mini (reasoning models)
+- GPT-Image-1 (image generation)
+
+### Anthropic Series
+- **Claude Sonnet 4** (latest flagship)
+- Claude 3.7 Sonnet / Claude 3 Opus
+- Claude 3 Haiku (cost-effective)
+
+### Google Series
+- **Gemini 2.5 Pro** (1M context)
+- Gemini 2.5 Flash (fast response)
+
+### Chinese Models
+- DeepSeek V3 / R1 (hybrid reasoning)
+- Kimi K2 (Moonshot AI)
+- Qwen series (Alibaba)
+
+## 🎯 Use Cases
+
+<Columns cols={2}>
+  <Card title="AI Chat" icon="message" href="/en/integrations/cherry-studio">
+    Cherry Studio, Chatbox and other AI chat clients
+  </Card>
+  <Card title="Coding" icon="code" href="/en/integrations/cursor">
+    Cursor, Claude Code, Cline and other AI coding tools
+  </Card>
+  <Card title="Frameworks" icon="cube" href="/en/integrations/langchain">
+    LangChain, Dify and other AI development frameworks
+  </Card>
+  <Card title="Translation" icon="language" href="/en/integrations/immersive-translate">
+    Immersive Translate, Bob and other translation tools
+  </Card>
+</Columns>
+
+## 🚀 Why Nebula Lab?
+
+### One API, Multiple Models
+
+No need to manage separate accounts and API keys for each AI service:
+- **One account**: Manage all AI services
+- **One API key**: Access all models
+- **One standard**: OpenAI API compatible
+
+### 🔧 Easy to Use
+
+Switching models is as simple as changing a parameter:
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-xxxxxxxxxx",
+    base_url="https://llm.ai-nebula.com/v1"
+)
+
+# Use GPT-4
+response = client.chat.completions.create(
+    model="gpt-4",
+    messages=[{"role": "user", "content": "Hello!"}]
+)
+
+# Switch to Claude - just change the model name
+response = client.chat.completions.create(
+    model="claude-sonnet-4-20250514",
+    messages=[{"role": "user", "content": "Hello!"}]
+)
+```
+
+### 🛡️ Stable & Reliable
+
+- **High Availability**: Multi-node deployment, smart routing
+- **Auto Fallback**: Automatic switching when model unavailable
+- **Load Balancing**: Smart request distribution, avoid rate limits
+- **Real-time Monitoring**: 24/7 service status monitoring
+
+### 💰 Cost Optimization
+
+- **Unified Billing**: All models use unified balance
+- **Transparent Pricing**: Clear pricing structure
+- **Usage Statistics**: Detailed usage reports
+- **Flexible Payments**: Multiple payment methods supported
+
+## 🚀 Get Started
+
+<Steps>
+  <Step title="Register">
+    Visit [Nebula Lab](https://ai-nebula.com) to create your account
+  </Step>
+  <Step title="Get API Key">
+    Generate your API key in the console
+  </Step>
+  <Step title="Start Using">
+    Check [API Documentation](/en/api-reference/introduction) to begin integration
+  </Step>
+</Steps>
+
+## 🔗 Quick Links
+
+<Columns cols={2}>
+  <Card title="Register Now" icon="user-plus" href="https://ai-nebula.com">
+    Create account and get free test credits
+  </Card>
+  <Card title="Dashboard" icon="gauge" href="https://ai-nebula.com">
+    Manage API keys, view usage and billing
+  </Card>
+</Columns>

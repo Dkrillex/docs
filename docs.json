@@ -18,7 +18,7 @@
             "groups": [
               {
                 "group": "快速开始",
-                "pages": ["cn/index", "cn/quickstart", "cn/development"]
+                "pages": ["cn/index", "cn/quickstart"]
               },
               {
                 "group": "自定义",
@@ -37,14 +37,18 @@
           {
             "tab": "API 参考",
             "groups": [
-              {
-                "group": "API 文档",
-                "pages": ["cn/api-reference/introduction"]
-              },
-              {
-                "group": "接口示例",
-                "pages": ["cn/api-reference/endpoint/get", "cn/api-reference/endpoint/create", "cn/api-reference/endpoint/delete", "cn/api-reference/endpoint/webhook", "cn/api-reference/endpoint/image-generation"]
-              },
+{
+              "group": "API 文档",
+              "pages": ["cn/api-reference/introduction", "cn/api-reference/models"]
+            },
+{
+              "group": "文本系列",
+              "pages": ["cn/api-reference/endpoint/chat"]
+            },
+            {
+              "group": "接口示例",
+              "pages": ["cn/api-reference/endpoint/image-generation", "cn/api-reference/endpoint/get", "cn/api-reference/endpoint/create", "cn/api-reference/endpoint/delete", "cn/api-reference/endpoint/webhook"]
+            },
               {
                 "group": "实时语音",
                 "pages": ["cn/api-reference/realtime"]
@@ -56,7 +60,16 @@
             "groups": [
               {
                 "group": "客户端集成",
-                "pages": ["cn/integrations/claude-code", "cn/integrations/cherry-studio"]
+                "pages": ["cn/integrations/cursor", "cn/integrations/claude-code", "cn/integrations/cherry-studio", "cn/integrations/langchain", "cn/integrations/immersive-translate"]
+              }
+            ]
+          },
+          {
+            "tab": "常见问题",
+            "groups": [
+              {
+                "group": "使用指南",
+                "pages": ["cn/faq/invalid-api-key", "cn/faq/network-proxy", "cn/faq/model-selection", "cn/faq/data-security", "cn/faq/content-safety"]
               }
             ]
           }
@@ -70,7 +83,7 @@
             "groups": [
               {
                 "group": "Getting started",
-                "pages": ["en/index", "en/quickstart", "en/development"]
+                "pages": ["en/index", "en/quickstart"]
               },
               {
                 "group": "Customization",
@@ -89,14 +102,18 @@
           {
             "tab": "API reference",
             "groups": [
-              {
-                "group": "API documentation",
-                "pages": ["en/api-reference/introduction"]
-              },
-              {
-                "group": "Endpoint examples",
-                "pages": ["en/api-reference/endpoint/get", "en/api-reference/endpoint/create", "en/api-reference/endpoint/delete", "en/api-reference/endpoint/webhook", "en/api-reference/endpoint/image-generation"]
-              },
+{
+              "group": "API documentation",
+              "pages": ["en/api-reference/introduction", "en/api-reference/models"]
+            },
+{
+              "group": "Text Series",
+              "pages": ["en/api-reference/endpoint/chat"]
+            },
+            {
+              "group": "Endpoint examples",
+              "pages": ["en/api-reference/endpoint/image-generation", "en/api-reference/endpoint/get", "en/api-reference/endpoint/create", "en/api-reference/endpoint/delete", "en/api-reference/endpoint/webhook"]
+            },
               {
                 "group": "Realtime Voice",
                 "pages": ["en/api-reference/realtime"]
@@ -108,7 +125,16 @@
             "groups": [
               {
                 "group": "Client Integrations",
-                "pages": ["en/integrations/claude-code", "en/integrations/cherry-studio"]
+                "pages": ["en/integrations/cursor", "en/integrations/claude-code", "en/integrations/cherry-studio", "en/integrations/langchain", "en/integrations/immersive-translate"]
+              }
+            ]
+          },
+          {
+            "tab": "FAQ",
+            "groups": [
+              {
+                "group": "Usage Guide",
+                "pages": ["en/faq/invalid-api-key", "en/faq/network-proxy", "en/faq/model-selection", "en/faq/data-security", "en/faq/content-safety"]
               }
             ]
           }
@@ -123,22 +149,22 @@
           "icon": "book-open-cover"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
+          "anchor": "NebulaAPI",
+          "href": "https://openai-nebula.com/",
           "icon": "newspaper"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/lab.png",
+    "dark": "/logo/lab.png"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:mla@nebula-data.com"
       }
     ],
     "primary": {

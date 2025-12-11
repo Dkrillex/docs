@@ -1,0 +1,110 @@
+---
+title: 'Create Chat Request (OpenAI)'
+api: 'POST https://llm.ai-nebula.com/v1/chat/completions'
+---
+
+## Introduction
+
+Universal text chat API supporting OpenAI-compatible large language models.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g. `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField body="model" type="string" required>
+  Model identifier, e.g. `claude-sonnet-4-20250514`, `GPT-4o`
+</ParamField>
+
+<ParamField body="messages" type="array" required>
+  Message list, each containing `role` (user/system/assistant) and `content`
+</ParamField>
+
+<ParamField body="temperature" type="number" default="0.7">
+  Randomness control, 0-2, higher values = more random
+</ParamField>
+
+## cURL Example
+
+```bash
+curl https://llm.ai-nebula.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-XyLy**************************mIqSt" \
+  -d '{
+    "model": "claude-sonnet-4-20250514",
+    "messages": [
+      {"role": "system", "content": "You are a helpful assistant"},
+      {"role": "user", "content": "Briefly introduce artificial intelligence"}
+    ],
+    "temperature": 0.7
+  }'
+```
+
+## Python Example
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-XyLy**************************mIqSt",
+    base_url="https://llm.ai-nebula.com/v1"
+)
+
+completion = client.chat.completions.create(
+    model="claude-sonnet-4-20250514",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant"},
+        {"role": "user", "content": "Briefly introduce artificial intelligence"}
+    ],
+    temperature=0.7
+)
+
+print(completion.choices[0].message.content)
+```
+
+<ResponseExample>
+```json
+{
+  "id": "chatcmpl-xxx",
+  "object": "chat.completion",
+  "created": 1234567890,
+  "model": "claude-sonnet-4-20250514",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Artificial intelligence is a branch of computer science that aims to create intelligent machines..."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 25,
+    "completion_tokens": 100,
+    "total_tokens": 125
+  }
+}
+```
+</ResponseExample>
+
+## Error Handling
+
+| Exception | Trigger | Message |
+|-----------|---------|---------|
+| AuthenticationError | Invalid API key | Error: Invalid or unauthorized API key |
+| NotFoundError | Model not found | Error: Model [model] does not exist |
+| APIConnectionError | Network error | Error: Cannot connect to API server |
+| APIError | Server-side error | API request failed: [details] |
+
+## Notes
+
+<Note>
+- `system` role defines model behavior, `user` role for questions
+- Multi-turn conversations require appending history (including `assistant` responses)
+- Requires `openai` library: `pip install openai`
+</Note>
+
