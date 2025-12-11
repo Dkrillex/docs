@@ -1,0 +1,89 @@
+---
+title: '列出模型'
+api: 'GET https://llm.ai-nebula.com/v1/models'
+---
+
+## 简介
+
+获取当前可用的模型列表。根据请求头自动识别返回格式：
+
+- 包含 `x-api-key` 和 `anthropic-version` 头时返回 Anthropic 格式
+- 包含 `x-goog-api-key` 头或 `key` 查询参数时返回 Gemini 格式
+- 其他情况返回 OpenAI 格式
+
+## 认证
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## cURL 示例
+
+```bash
+curl https://llm.ai-nebula.com/v1/models \
+  -H "Authorization: Bearer sk-XyLy**************************mIqSt"
+```
+
+## Python 示例
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-XyLy**************************mIqSt",
+    base_url="https://llm.ai-nebula.com/v1"
+)
+
+models = client.models.list()
+
+for model in models.data:
+    print(model.id)
+```
+
+<ResponseExample>
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "gpt-4o",
+      "object": "model",
+      "created": 1234567890,
+      "owned_by": "openai"
+    },
+    {
+      "id": "claude-sonnet-4-20250514",
+      "object": "model",
+      "created": 1234567890,
+      "owned_by": "anthropic"
+    },
+    {
+      "id": "gemini-2.5-pro",
+      "object": "model",
+      "created": 1234567890,
+      "owned_by": "google"
+    }
+  ]
+}
+```
+</ResponseExample>
+
+## 响应字段
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| object | string | 固定为 `list` |
+| data | array | 模型列表 |
+| data[].id | string | 模型标识 |
+| data[].object | string | 固定为 `model` |
+| data[].created | integer | 创建时间戳 |
+| data[].owned_by | string | 模型提供商 |
+
+## 注意事项
+
+<Note>
+- 返回的模型列表会根据您的 API Key 权限动态变化
+- 可用于检查特定模型是否可用
+- 依赖 `openai` 库：`pip install openai`
+</Note>
+

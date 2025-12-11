@@ -1,0 +1,132 @@
+---
+title: '创建视频生成任务'
+api: 'POST https://llm.ai-nebula.com/v1/video/generations'
+---
+
+## 简介
+
+提交视频生成任务，支持文生视频和图生视频。返回任务 ID，可通过 GET 接口查询任务状态。
+
+## 认证
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## 请求参数
+
+<ParamField body="model" type="string" required>
+  模型名称，如 `sora-2`、`veo-2`
+</ParamField>
+
+<ParamField body="prompt" type="string" required>
+  视频描述文本
+</ParamField>
+
+<ParamField body="image" type="string">
+  图生视频时的参考图片（base64 或 URL）
+</ParamField>
+
+<ParamField body="duration" type="integer" default="5">
+  视频时长（秒），如 5、10、15
+</ParamField>
+
+<ParamField body="resolution" type="string" default="1080p">
+  分辨率：`720p`、`1080p`、`4k`
+</ParamField>
+
+<ParamField body="aspect_ratio" type="string" default="16:9">
+  宽高比：`16:9`、`9:16`、`1:1`
+</ParamField>
+
+## cURL 示例
+
+```bash
+curl https://llm.ai-nebula.com/v1/video/generations \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-XyLy**************************mIqSt" \
+  -d '{
+    "model": "sora-2",
+    "prompt": "一只猫在草地上奔跑，阳光明媚，电影级画质",
+    "duration": 5,
+    "resolution": "1080p",
+    "aspect_ratio": "16:9"
+  }'
+```
+
+## Python 示例
+
+```python
+import requests
+
+url = "https://llm.ai-nebula.com/v1/video/generations"
+headers = {
+    "Authorization": "Bearer sk-XyLy**************************mIqSt",
+    "Content-Type": "application/json"
+}
+
+data = {
+    "model": "sora-2",
+    "prompt": "一只猫在草地上奔跑，阳光明媚，电影级画质",
+    "duration": 5,
+    "resolution": "1080p",
+    "aspect_ratio": "16:9"
+}
+
+response = requests.post(url, headers=headers, json=data)
+task = response.json()
+print(f"任务ID: {task['id']}")
+```
+
+<ResponseExample>
+```json
+{
+  "id": "video_task_abc123",
+  "object": "video.generation",
+  "status": "pending",
+  "model": "sora-2",
+  "created": 1234567890,
+  "prompt": "一只猫在草地上奔跑，阳光明媚，电影级画质",
+  "duration": 5,
+  "resolution": "1080p",
+  "aspect_ratio": "16:9"
+}
+```
+</ResponseExample>
+
+## 图生视频示例
+
+```python
+import base64
+
+with open("reference.jpg", "rb") as f:
+    image_base64 = base64.b64encode(f.read()).decode()
+
+data = {
+    "model": "sora-2",
+    "prompt": "让图片中的人物动起来，微笑并挥手",
+    "image": f"data:image/jpeg;base64,{image_base64}",
+    "duration": 5
+}
+
+response = requests.post(url, headers=headers, json=data)
+```
+
+## 任务状态
+
+| 状态 | 说明 |
+|------|------|
+| `pending` | 排队中 |
+| `processing` | 生成中 |
+| `completed` | 已完成 |
+| `failed` | 失败 |
+
+## 注意事项
+
+<Note>
+- 视频生成为异步任务，提交后需轮询查询状态
+- 生成时间取决于时长和分辨率，通常 1-5 分钟
+- 完成后通过返回的 URL 下载视频
+- 依赖 `requests` 库：`pip install requests`
+</Note>
+

@@ -1,0 +1,132 @@
+---
+title: 'Create Video Generation Task'
+api: 'POST https://llm.ai-nebula.com/v1/video/generations'
+---
+
+## Introduction
+
+Submit video generation task, supporting text-to-video and image-to-video. Returns task ID for status polling.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g. `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField body="model" type="string" required>
+  Model name, e.g. `sora-2`, `veo-2`
+</ParamField>
+
+<ParamField body="prompt" type="string" required>
+  Video description text
+</ParamField>
+
+<ParamField body="image" type="string">
+  Reference image for image-to-video (base64 or URL)
+</ParamField>
+
+<ParamField body="duration" type="integer" default="5">
+  Video duration in seconds: 5, 10, 15
+</ParamField>
+
+<ParamField body="resolution" type="string" default="1080p">
+  Resolution: `720p`, `1080p`, `4k`
+</ParamField>
+
+<ParamField body="aspect_ratio" type="string" default="16:9">
+  Aspect ratio: `16:9`, `9:16`, `1:1`
+</ParamField>
+
+## cURL Example
+
+```bash
+curl https://llm.ai-nebula.com/v1/video/generations \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-XyLy**************************mIqSt" \
+  -d '{
+    "model": "sora-2",
+    "prompt": "A cat running on grass, sunny day, cinematic quality",
+    "duration": 5,
+    "resolution": "1080p",
+    "aspect_ratio": "16:9"
+  }'
+```
+
+## Python Example
+
+```python
+import requests
+
+url = "https://llm.ai-nebula.com/v1/video/generations"
+headers = {
+    "Authorization": "Bearer sk-XyLy**************************mIqSt",
+    "Content-Type": "application/json"
+}
+
+data = {
+    "model": "sora-2",
+    "prompt": "A cat running on grass, sunny day, cinematic quality",
+    "duration": 5,
+    "resolution": "1080p",
+    "aspect_ratio": "16:9"
+}
+
+response = requests.post(url, headers=headers, json=data)
+task = response.json()
+print(f"Task ID: {task['id']}")
+```
+
+<ResponseExample>
+```json
+{
+  "id": "video_task_abc123",
+  "object": "video.generation",
+  "status": "pending",
+  "model": "sora-2",
+  "created": 1234567890,
+  "prompt": "A cat running on grass, sunny day, cinematic quality",
+  "duration": 5,
+  "resolution": "1080p",
+  "aspect_ratio": "16:9"
+}
+```
+</ResponseExample>
+
+## Image-to-Video Example
+
+```python
+import base64
+
+with open("reference.jpg", "rb") as f:
+    image_base64 = base64.b64encode(f.read()).decode()
+
+data = {
+    "model": "sora-2",
+    "prompt": "Make the person in the image smile and wave",
+    "image": f"data:image/jpeg;base64,{image_base64}",
+    "duration": 5
+}
+
+response = requests.post(url, headers=headers, json=data)
+```
+
+## Task Status
+
+| Status | Description |
+|--------|-------------|
+| `pending` | Queued |
+| `processing` | Generating |
+| `completed` | Done |
+| `failed` | Failed |
+
+## Notes
+
+<Note>
+- Video generation is async, poll for status after submission
+- Generation time depends on duration and resolution, typically 1-5 minutes
+- Download video from returned URL when completed
+- Requires `requests`: `pip install requests`
+</Note>
+

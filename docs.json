@@ -31,20 +31,24 @@
             "groups": [
 {
               "group": "API 文档",
-              "pages": ["cn/api-reference/models", "cn/api-reference/openai-sdk"]
+              "pages": ["cn/api-reference/models", "cn/api-reference/openai-sdk", "cn/api-reference/endpoint/list-models"]
             },
 {
               "group": "文本系列",
-              "pages": ["cn/api-reference/endpoint/chat"]
+              "pages": ["cn/api-reference/endpoint/chat", "cn/api-reference/endpoint/embeddings", "cn/api-reference/endpoint/rerank"]
             },
             {
-              "group": "接口示例",
+              "group": "图像系列",
               "pages": ["cn/api-reference/endpoint/image-generation"]
             },
-              {
-                "group": "实时语音",
-                "pages": ["cn/api-reference/realtime"]
-              }
+            {
+              "group": "视频系列",
+              "pages": ["cn/api-reference/endpoint/video-generation"]
+            },
+            {
+              "group": "实时语音",
+              "pages": ["cn/api-reference/realtime"]
+            }
             ]
           },
           {
@@ -96,20 +100,24 @@
             "groups": [
 {
               "group": "API documentation",
-              "pages": ["en/api-reference/models", "en/api-reference/openai-sdk"]
+              "pages": ["en/api-reference/models", "en/api-reference/openai-sdk", "en/api-reference/endpoint/list-models"]
             },
 {
               "group": "Text Series",
-              "pages": ["en/api-reference/endpoint/chat"]
+              "pages": ["en/api-reference/endpoint/chat", "en/api-reference/endpoint/embeddings", "en/api-reference/endpoint/rerank"]
             },
             {
-              "group": "Endpoint examples",
+              "group": "Image Series",
               "pages": ["en/api-reference/endpoint/image-generation"]
             },
-              {
-                "group": "Realtime Voice",
-                "pages": ["en/api-reference/realtime"]
-              }
+            {
+              "group": "Video Series",
+              "pages": ["en/api-reference/endpoint/video-generation"]
+            },
+{
+              "group": "Realtime Voice",
+              "pages": ["en/api-reference/realtime"]
+            }
             ]
           },
           {

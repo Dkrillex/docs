@@ -1,11 +1,27 @@
 ---
 title: 'Realtime Voice'
-description: 'Realtime API for voice conversations'
+description: 'WebSocket realtime conversation API'
 ---
 
-## Overview
+## Introduction
 
-Realtime API provides low-latency text/voice real-time conversation capabilities. Currently supports `gpt-realtime` and `gpt-realtime-mini` models via WebSocket event streams.
+Realtime API provides low-latency text/voice real-time conversation via WebSocket with event-based streaming.
+
+```
+WSS wss://llm.ai-nebula.com/v1/realtime?model={model}
+```
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g. `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Connection Parameters
+
+<ParamField query="model" type="string" required>
+  Model name: `gpt-realtime` or `gpt-realtime-mini`
+</ParamField>
 
 ## Basic Info
 
@@ -13,12 +29,10 @@ Realtime API provides low-latency text/voice real-time conversation capabilities
 |------|---------|
 | **Base URL** | `wss://llm.ai-nebula.com` |
 | **Endpoint** | `/v1/realtime?model={model}` |
-| **Auth** | `Authorization: Bearer sk-xxxx` |
-| **Protocol** | WebSocket (JSON events) |
-| **Models** | `gpt-realtime`, `gpt-realtime-mini` |
+| **Protocol** | WebSocket (JSON event stream) |
 | **Audio Format** | PCM16 mono, 24000Hz sample rate |
 
-## Events
+## Event Types
 
 ### Client Events
 
@@ -34,23 +48,13 @@ Realtime API provides low-latency text/voice real-time conversation capabilities
 
 | Event | Description |
 |-------|-------------|
-| `session.created` / `session.updated` | Session ready/updated |
-| `response.created` | Generation started |
-| `response.text.delta` / `response.text.done` | Text streaming |
-| `response.audio_transcript.delta` / `response.audio_transcript.done` | Transcription |
-| `response.audio.delta` / `response.audio.done` | Audio streaming |
+| `session.created` / `session.updated` | Session ready or updated |
+| `response.text.delta` / `response.text.done` | Text increments and completion |
+| `response.audio.delta` / `response.audio.done` | Audio increments and completion |
 | `response.done` | Turn complete with `usage` |
 | `error` | Error event |
 
-## Flow
-
-1. Connect: `wss://llm.ai-nebula.com/v1/realtime?model=gpt-realtime`
-2. Send `session.update` to configure
-3. Send messages via `conversation.item.create`
-4. Send `response.create` to generate
-5. Continue multi-turn in same connection
-
-### Session Config
+## Session Config Example
 
 ```json
 {
@@ -62,20 +66,18 @@ Realtime API provides low-latency text/voice real-time conversation capabilities
     "voice": "alloy",
     "temperature": 0.8,
     "input_audio_format": "pcm16",
-    "output_audio_format": "pcm16",
-    "input_audio_transcription": { "model": "whisper-1" }
+    "output_audio_format": "pcm16"
   }
 }
 ```
 
-### Text Message
+## Text Message Example
 
 ```json
 {
   "event_id": "evt_002",
   "type": "conversation.item.create",
   "item": {
-    "id": "item_01",
     "type": "message",
     "role": "user",
     "content": [
@@ -85,63 +87,13 @@ Realtime API provides low-latency text/voice real-time conversation capabilities
 }
 ```
 
-### Trigger Response
-
-```json
-{ "event_id": "evt_003", "type": "response.create" }
-```
-
-### Server Response
-
-```json
-{ "type": "session.created", "session": { "id": "sess_xxx" } }
-{ "type": "response.created", "response": { "id": "resp_xxx" } }
-{ "type": "response.text.delta", "delta": "Hello! I am" }
-{ "type": "response.text.delta", "delta": " Nebula's realtime assistant." }
-{ "type": "response.done",
-  "response": {
-    "usage": {
-      "total_tokens": 123,
-      "input_tokens": 45,
-      "output_tokens": 78
-    }
-  }
-}
-```
-
-## Audio Input
-
-### One-shot
-
-```json
-{
-  "type": "conversation.item.create",
-  "item": {
-    "type": "message",
-    "role": "user",
-    "content": [
-      { "type": "input_audio", "audio": "<base64-of-pcm16>" }
-    ]
-  }
-}
-```
-
-### Streaming
-
-```json
-{ "type": "input_audio_buffer.append", "audio": "<chunk-1-base64>" }
-{ "type": "input_audio_buffer.append", "audio": "<chunk-2-base64>" }
-{ "type": "input_audio_buffer.commit", "item": { "type": "message", "role": "user" } }
-{ "type": "response.create" }
-```
-
 ## Python Example
 
 ```python
-import json, time, websocket
+import json, websocket
 
 API_BASE = "wss://llm.ai-nebula.com"
-API_KEY = "sk-xxxx"
+API_KEY = "sk-XyLy**************************mIqSt"
 MODEL = "gpt-realtime"
 
 ws = websocket.WebSocketApp(
@@ -163,76 +115,41 @@ ws.on_open = lambda ws: (
 )
 
 ws.run_forever()
-time.sleep(5)
-ws.close()
 ```
 
-## Common Errors
-
-<AccordionGroup>
-  <Accordion title="Auth Failed">
-    Verify API Key is valid with `sk-` prefix
-  </Accordion>
-  <Accordion title="Model Not Found">
-    `model` only supports `gpt-realtime` / `gpt-realtime-mini`
-  </Accordion>
-  <Accordion title="Audio Decode Error">
-    Ensure PCM16 mono, 24000Hz, properly base64 encoded
-  </Accordion>
-  <Accordion title="No Delta Events">
-    Check if `response.create` was sent and connection is alive
-  </Accordion>
-</AccordionGroup>
-
----
-
-## External System Proxy
-
-For external systems using system access token for billing.
-
-| Item | Content |
-|------|---------|
-| **URL** | `wss://llm.ai-nebula.com/api/sync/system/realtime` |
-| **Auth** | `Authorization: <system_access_token>` (no Bearer prefix) |
-
-### Query Params
-
-| Param | Required | Description |
-|-------|----------|-------------|
-| `user_id` | Yes | User ID to bill |
-| `model` | Yes | `gpt-realtime` or `gpt-realtime-mini` |
-| `group` | No | Specify group, defaults to user's default |
-
-### Example
-
-```python
-import json, websocket
-
-WS_URL = "wss://llm.ai-nebula.com/api/sync/system/realtime"
-ACCESS_TOKEN = "sys-access-token-xxx"
-USER_ID = 123
-MODEL = "gpt-realtime"
-
-def on_open(ws):
-    ws.send(json.dumps({
-        "type": "session.update",
-        "session": {"modalities": ["text"], "instructions": "You are a concise assistant"}
-    }))
-    ws.send(json.dumps({
-        "type": "conversation.item.create",
-        "item": {
-            "type": "message", "role": "user",
-            "content": [{"type": "input_text", "text": "Hello, introduce yourself"}]
-        }
-    }))
-    ws.send(json.dumps({"type": "response.create"}))
-
-ws = websocket.WebSocketApp(
-    f"{WS_URL}?user_id={USER_ID}&model={MODEL}",
-    header={"Authorization": ACCESS_TOKEN},
-    on_open=on_open,
-    on_message=lambda ws, msg: print("[recv]", msg)
-)
-ws.run_forever()
+<ResponseExample>
+```json
+{ "type": "session.created", "session": { "id": "sess_xxx" } }
+{ "type": "response.created", "response": { "id": "resp_xxx" } }
+{ "type": "response.text.delta", "delta": "Hello! I am" }
+{ "type": "response.text.delta", "delta": " Nebula's realtime assistant." }
+{
+  "type": "response.done",
+  "response": {
+    "usage": {
+      "total_tokens": 123,
+      "input_tokens": 45,
+      "output_tokens": 78
+    }
+  }
+}
 ```
+</ResponseExample>
 
+## Error Handling
+
+| Error Type | Trigger | Message |
+|------------|---------|---------|
+| Auth Failed | Invalid API Key | Check Authorization header |
+| Model Not Found | Wrong model name | Only gpt-realtime / gpt-realtime-mini |
+| Audio Decode Error | Wrong audio format | Ensure PCM16 mono 24000Hz |
+| Connection Lost | WebSocket disconnected | Check network or reconnect |
+
+## Notes
+
+<Note>
+- Send `session.update` to configure session after connecting
+- Call `response.create` to trigger generation after sending message
+- Audio must be PCM16 mono 24000Hz, base64 encoded
+- Requires `websocket-client`: `pip install websocket-client`
+</Note>
