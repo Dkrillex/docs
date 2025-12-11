@@ -7,7 +7,7 @@
     "light": "#6366F1",
     "dark": "#4338CA"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/logo/lab.png",
   "announcement": {
     "title": "🔥 最新发布：Claude Opus 4.5 编程能力登顶，价格降至 1/3！ | 🌟 Gemini 3 Pro Preview LMArena 全球第一！",
     "href": "https://openai-nebula.com"
