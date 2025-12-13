@@ -3,6 +3,10 @@ title: '图片生成'
 api: 'POST https://llm.ai-nebula.com/v1/images/generations'
 ---
 
+## 简介
+
+图片生成接口支持文生图、图生图、图片编辑等多种功能。通过统一的API接口，您可以调用 Gemini、通义千问等多个主流图像生成模型。
+
 ## 认证
 
 <ParamField header="Authorization" type="string" required>
@@ -12,7 +16,9 @@ api: 'POST https://llm.ai-nebula.com/v1/images/generations'
 ## 请求参数
 
 <ParamField body="model" type="string" required>
-  模型名称，如 `gemini-2.5-flash-image-preview`
+  模型标识，支持的模型包括：
+  - Gemini 系列：`gemini-2.5-flash-image-preview` 等
+  - 通义千问系列：`qwen-image-plus`、`qwen-image-edit-plus` 等
 </ParamField>
 
 <ParamField body="prompt" type="string">
@@ -27,21 +33,78 @@ api: 'POST https://llm.ai-nebula.com/v1/images/generations'
   图生图或上下文对话的多轮内容
 </ParamField>
 
-## 文生图
+## 基础示例
 
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gemini-2.5-flash-image-preview",
-    "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
-    "response_format": "b64_json"
-  }'
-```
+<Tabs>
+  <Tab title="Gemini (Nano Banana)">
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "gemini-2.5-flash-image-preview",
+        "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
+        "response_format": "b64_json"
+      }'
+    ```
+  </Tab>
+  
+  <Tab title="通义千问">
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "qwen-image-plus",
+        "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
+        "parameters": {
+          "size": "1328*1328",
+          "negative_prompt": "",
+          "prompt_extend": true,
+          "watermark": true
+        }
+      }'
+    ```
+  </Tab>
+</Tabs>
 
 ## 图生图
 
+<Tabs>
+  <Tab title="Gemini (Nano Banana)">
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "gemini-2.5-flash-image-preview",
+        "response_format": "b64_json",
+        "contents": [
+          {
+            "role": "user",
+            "parts": [
+              {"text": "根据这张图帮我生成一张俯瞰广州塔的图片"},
+              {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
+            ]
+          }
+        ]
+      }'
+    ```
+  </Tab>
+  
+  <Tab title="通义千问">
+    <Warning>
+      通义千问图像生成模型（qwen-image-plus）不支持图生图功能，仅支持文生图。
+    </Warning>
+  </Tab>
+</Tabs>
+
+## 高级功能
+
+### 多图融合（Nano Banana 特有）
+
+Nano Banana 支持同时输入 2-5 张图片进行融合生成：
+
 ```bash
 curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
   -H "Authorization: Bearer sk-xxxxxxxxxx" \
@@ -49,53 +112,70 @@ curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
   -d '{
     "model": "gemini-2.5-flash-image-preview",
     "response_format": "b64_json",
+    "size": "16:9",
     "contents": [
       {
         "role": "user",
         "parts": [
-          {"text": "根据这张图帮我生成一张俯瞰广州塔的图片"},
-          {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
+          {"text": "将第一张图的油画风格应用到第二张图的内容上"},
+          {"image": "https://example.com/style.jpg"},
+          {"image": "https://example.com/content.jpg"}
         ]
       }
     ]
   }'
 ```
 
-## 上下文对话
+### 文本渲染（通义千问特有）
+
+通义千问特别擅长在图片中生成复杂文字，支持中英文文本渲染：
 
 ```bash
 curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
   -H "Authorization: Bearer sk-xxxxxxxxxx" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gemini-2.5-flash-image-preview",
-    "response_format": "b64_json",
+    "model": "qwen-image-plus",
+    "prompt": "一张咖啡海报，顶部大标题\"匠心咖啡\"，副标题\"醇香每一刻\"，中间是一杯冒着热气的咖啡",
+    "parameters": {
+      "size": "928*1664",
+      "negative_prompt": "模糊的文字",
+      "prompt_extend": false,
+      "watermark": false
+    }
+  }'
+```
+
+### 图片编辑（通义千问图像编辑）
+
+使用 `qwen-image-edit-plus` 模型进行图片编辑，支持修改图内文字、增删物体、风格迁移等：
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen-image-edit-plus",
+    "prompt": "将图片中的\"Hello\"改成\"你好\"，保持其他内容不变",
+    "parameters": {
+      "n": 1,
+      "negative_prompt": "",
+      "watermark": false
+    },
     "contents": [
       {
         "role": "user",
         "parts": [
-          {"text": "根据这张图帮我生成一张俯瞰广州塔的图片"},
-          {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
-        ]
-      },
-      {
-        "role": "model",
-        "parts": [
-          {"text": "已为您生成1张图片"},
-          {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
-        ]
-      },
-      {
-        "role": "user",
-        "parts": [
-          {"text": "把景色换成夜色下雪的场景"}
+          {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
+          {"text": "将图片中的\"Hello\"改成\"你好\""}
         ]
       }
     ]
   }'
 ```
 
-<ResponseExample>
+## 响应格式
+
 ```json
 {
   "code": 200,
@@ -112,5 +192,160 @@ curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
   }
 }
 ```
-</ResponseExample>
+
+## 支持的模型
+
+### Gemini 系列 (Nano Banana)
+
+**模型名称**: `gemini-2.5-flash-image-preview`
+
+**核心能力**:
+- ✅ 文生图（纯文本描述生成图片）
+- ✅ 图生图（单图片+文本生成新图片）
+- ✅ 多图生一图（2-5张图片融合生成）
+- ✅ 多轮对话式图片生成（上下文连续修改）
+
+**支持的宽高比**: 1:1、3:2、2:3、3:4、4:3、4:5、5:4、9:16、16:9、21:9
+
+**图片输入**: 支持 URL 和 Base64 格式，最大 7MB
+
+### 通义千问系列
+
+**模型名称**: `qwen-image-plus`
+
+**核心能力**:
+- ✅ 文生图（纯文本描述生成图片）
+- ✅ 中英文文本渲染（擅长在图片中生成复杂文字）
+- ✅ 多种艺术风格
+- ✅ 提示词智能扩展
+- ❌ 不支持图生图
+
+**支持的尺寸**: 1328×1328、1664×928、928×1664、1472×1140、1140×1472
+
+**计费方式**: 按张计费（¥0.18/张）
+
+**模型名称**: `qwen-image-edit-plus`
+
+**核心能力**:
+- ✅ 单图编辑（1张输入图片）
+- ✅ 多图融合（2-3张输入图片）
+- ✅ 修改图内文字
+- ✅ 增删/移动物体
+- ✅ 迁移图片风格
+- ✅ 增强画面细节
+
+## 最佳实践
+
+### 提示词优化建议
+
+<Tabs>
+  <Tab title="Gemini (Nano Banana)">
+    1. **明确比例需求**：在提示词中说明构图方向
+       - 横屏：使用"横向构图"、"宽屏视角"
+       - 竖屏：使用"竖向构图"、"垂直视角"
+
+    2. **高质量关键词**：
+       - "高质量"、"高清"、"专业摄影"
+       - "8k分辨率"、"细节丰富"
+
+    3. **多图融合技巧**：
+       - 明确说明每张图片的作用
+       - 指定融合方式（风格迁移、元素组合等）
+  </Tab>
+  
+  <Tab title="通义千问">
+    1. **文本渲染技巧**：
+       - 在提示词中用引号明确标注文字内容
+       - 示例："一张海报，标题是\"夏日特惠\""
+
+    2. **提示词扩展**：
+       - 简短提示词：启用 `prompt_extend: true`
+       - 详细提示词：关闭 `prompt_extend: false`
+
+    3. **负面提示词**：
+       - 排除不想要的元素："模糊、低质量、水印"
+       - 文本渲染："模糊的文字、错别字"
+  </Tab>
+</Tabs>
+
+### 尺寸选择建议
+
+<Tabs>
+  <Tab title="社交媒体">
+    - **微信朋友圈**: 1328×1328 (1:1) 或 1140×1472 (3:4)
+    - **微博头图**: 1664×928 (16:9)
+    - **抖音封面**: 928×1664 (9:16)
+    - **小红书**: 1140×1472 (3:4)
+  </Tab>
+  
+  <Tab title="设计用途">
+    - **网站横幅**: 1664×928 (16:9) 或 21:9
+    - **海报**: 1140×1472 (3:4) 或 928×1664 (9:16)
+    - **产品图片**: 1328×1328 (1:1)
+    - **手机壁纸**: 928×1664 (9:16)
+  </Tab>
+</Tabs>
+
+## 常见问题
+
+<Tabs>
+  <Tab title="通用问题">
+    <AccordionGroup>
+      <Accordion title="支持的图片格式有哪些？">
+        支持 PNG、JPEG、JPG、WEBP 格式，最大文件大小 7MB（Nano Banana）或 10MB（通义千问）。
+      </Accordion>
+      
+      <Accordion title="生成的图片有效期是多久？">
+        图片URL的有效期约为24小时。建议在收到响应后立即下载保存，或上传到您自己的存储服务。
+      </Accordion>
+      
+      <Accordion title="可以同时生成多张图片吗？">
+        通义千问系列每次请求生成1张图片。如需多张，请发起多个并发请求。
+      </Accordion>
+    </AccordionGroup>
+  </Tab>
+  
+  <Tab title="Gemini (Nano Banana)">
+    <AccordionGroup>
+      <Accordion title="如何在对话中保持相同的宽高比？">
+        在 `contents` 对话数组中，每次请求都要带上 `size` 参数，系统会为当前请求应用指定的宽高比。
+      </Accordion>
+      
+      <Accordion title="使用 URL 图片有什么要求？">
+        URL 必须是可公开访问的 HTTP/HTTPS 地址，支持格式包括 PNG、JPEG、JPG、WEBP，最大 7MB。
+      </Accordion>
+      
+      <Accordion title="多图融合最多支持几张图片？">
+        支持 2-5 张图片同时输入，建议 2-3 张效果最佳。
+      </Accordion>
+    </AccordionGroup>
+  </Tab>
+  
+  <Tab title="通义千问">
+    <AccordionGroup>
+      <Accordion title="qwen-image-plus 支持图生图吗？">
+        不支持。qwen-image-plus 是纯文生图模型，只支持通过文本描述生成图片。
+      </Accordion>
+      
+      <Accordion title="如何生成带有中文文字的图片？">
+        在提示词中明确说明文字内容，例如："一张海报，标题是\"双十一大促\"，副标题\"全场5折起\""
+      </Accordion>
+      
+      <Accordion title="提示词扩展和负面提示词可以同时使用吗？">
+        可以！两者互不冲突。建议：简短提示词 + 启用扩展 + 添加负面提示词，效果最佳。
+      </Accordion>
+    </AccordionGroup>
+  </Tab>
+</Tabs>
+
+## 相关资源
+
+<Columns cols={2}>
+  <Card title="视频生成" icon="video" href="/cn/api-reference/endpoint/video-generation">
+    查看视频生成接口文档
+  </Card>
+  <Card title="模型列表" icon="list" href="/cn/api-reference/models">
+    查看所有支持的模型信息
+  </Card>
+</Columns>
 
