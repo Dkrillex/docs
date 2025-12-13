@@ -5,8 +5,9 @@ description: 'WebSocket 实时对话接口'
 
 ## 简介
 
-Realtime API 提供低时延的文本/语音实时对话能力，通过 WebSocket 建立长连接，按事件流交互。
+Realtime API 提供低时延的文本/语音实时对话能力，通过 WebSocket 建立长连接，按事件流交互。支持文本和音频两种输入输出模式，可实现实时语音对话、文本对话等功能。
 
+**接口地址**：
 ```
 WSS wss://llm.ai-nebula.com/v1/realtime?model={model}
 ```
@@ -20,7 +21,9 @@ WSS wss://llm.ai-nebula.com/v1/realtime?model={model}
 ## 连接参数
 
 <ParamField query="model" type="string" required>
-  模型名称：`gpt-realtime` 或 `gpt-realtime-mini`
+  模型名称，支持的模型：
+  - `gpt-realtime` - GPT Realtime 标准版
+  - `gpt-realtime-mini` - GPT Realtime Mini 版
 </ParamField>
 
 ## 基础信息
@@ -34,27 +37,39 @@ WSS wss://llm.ai-nebula.com/v1/realtime?model={model}
 
 ## 事件类型
 
-### 客户端发送
+### 客户端发送事件
 
-| 事件 | 说明 |
-|------|------|
-| `session.update` | 设置/更新会话配置 |
-| `conversation.item.create` | 发送对话消息 |
-| `input_audio_buffer.append` | 流式推送音频 |
-| `input_audio_buffer.commit` | 提交音频缓冲 |
-| `response.create` | 请求生成回复 |
+| 事件类型 | 说明 | 必需字段 |
+|---------|------|---------|
+| `session.update` | 设置/更新会话配置（连接后首先发送） | `session` |
+| `conversation.item.create` | 发送对话消息（文本或音频） | `item` |
+| `input_audio_buffer.append` | 流式推送音频数据（Base64 编码） | `audio` |
+| `input_audio_buffer.commit` | 提交音频缓冲，触发处理 | 无 |
+| `response.create` | 请求生成回复（发送消息后调用） | 无 |
 
-### 服务端返回
+### 服务端返回事件
 
-| 事件 | 说明 |
-|------|------|
-| `session.created` / `session.updated` | 会话就绪或已更新 |
-| `response.text.delta` / `response.text.done` | 文本增量与完成 |
-| `response.audio.delta` / `response.audio.done` | 音频增量与完成 |
-| `response.done` | 本轮结束，包含 `usage` |
-| `error` | 错误事件 |
+| 事件类型 | 说明 | 包含字段 |
+|---------|------|---------|
+| `session.created` | 会话已创建 | `session.id` |
+| `session.updated` | 会话配置已更新 | `session` |
+| `conversation.item.created` | 对话项已创建 | `item` |
+| `response.created` | 回复已创建 | `response.id` |
+| `response.text.delta` | 文本增量输出 | `delta` |
+| `response.text.done` | 文本输出完成 | 无 |
+| `response.audio.delta` | 音频增量输出 | `delta` |
+| `response.audio.done` | 音频输出完成 | 无 |
+| `response.audio_transcript.delta` | 音频转录增量 | `delta` |
+| `response.function_call_arguments.delta` | 函数调用参数增量 | `delta` |
+| `response.function_call_arguments.done` | 函数调用参数完成 | 无 |
+| `response.done` | 本轮回复结束，包含使用统计 | `response.usage` |
+| `error` | 错误事件 | `error` |
 
-## 会话配置示例
+## 会话配置
+
+建立 WebSocket 连接后，首先需要发送 `session.update` 事件来配置会话参数。
+
+### 会话配置示例
 
 ```json
 {
@@ -71,7 +86,46 @@ WSS wss://llm.ai-nebula.com/v1/realtime?model={model}
 }
 ```
 
-## 文本消息示例
+### 会话参数说明
+
+<ParamField body="session.modalities" type="array" default='["text"]'>
+  支持的交互模式，可选值：
+  - `"text"` - 文本模式
+  - `"audio"` - 音频模式
+  可同时包含多个模式，如 `["text", "audio"]`
+</ParamField>
+
+<ParamField body="session.instructions" type="string">
+  系统提示词，用于设置助手的行为和角色
+</ParamField>
+
+<ParamField body="session.voice" type="string" default="alloy">
+  语音类型，可选值：`alloy`、`echo`、`fable`、`onyx`、`nova`、`shimmer`
+</ParamField>
+
+<ParamField body="session.temperature" type="number" default="1.0">
+  温度参数，控制输出的随机性，范围：0.0 - 2.0
+</ParamField>
+
+<ParamField body="session.input_audio_format" type="string" default="pcm16">
+  输入音频格式，目前仅支持 `pcm16`
+</ParamField>
+
+<ParamField body="session.output_audio_format" type="string" default="pcm16">
+  输出音频格式，目前仅支持 `pcm16`
+</ParamField>
+
+<ParamField body="session.tools" type="array">
+  工具函数列表，支持函数调用功能
+</ParamField>
+
+<ParamField body="session.tool_choice" type="string">
+  工具选择策略：`auto`、`required`、`none`
+</ParamField>
+
+## 发送消息
+
+### 文本消息示例
 
 ```json
 {
@@ -87,34 +141,213 @@ WSS wss://llm.ai-nebula.com/v1/realtime?model={model}
 }
 ```
 
-## Python 示例
+### 音频消息示例
+
+音频消息需要先通过 `input_audio_buffer.append` 推送音频数据，然后调用 `input_audio_buffer.commit` 提交：
+
+```json
+// 1. 推送音频数据（可多次调用）
+{
+  "event_id": "evt_003",
+  "type": "input_audio_buffer.append",
+  "audio": "base64_encoded_audio_data..."
+}
+
+// 2. 提交音频缓冲
+{
+  "event_id": "evt_004",
+  "type": "input_audio_buffer.commit"
+}
+
+// 3. 创建对话项
+{
+  "event_id": "evt_005",
+  "type": "conversation.item.create",
+  "item": {
+    "type": "message",
+    "role": "user",
+    "content": [
+      { "type": "input_audio", "audio": "" }
+    ]
+  }
+}
+```
+
+### 请求生成回复
+
+发送消息后，需要调用 `response.create` 来触发生成：
+
+```json
+{
+  "event_id": "evt_006",
+  "type": "response.create"
+}
+```
+
+## 完整示例
+
+### Python 示例
 
 ```python
-import json, websocket
+import json
+import websocket
+import threading
 
 API_BASE = "wss://llm.ai-nebula.com"
-API_KEY = "sk-XyLy**************************mIqSt"
+API_KEY = "sk-xxxxxxxxxx"
 MODEL = "gpt-realtime"
 
+def on_message(ws, message):
+    """处理服务端返回的消息"""
+    event = json.loads(message)
+    event_type = event.get("type")
+    
+    if event_type == "session.created":
+        print(f"✅ 会话已创建: {event.get('session', {}).get('id')}")
+    elif event_type == "response.text.delta":
+        # 流式输出文本
+        delta = event.get("delta", "")
+        print(delta, end="", flush=True)
+    elif event_type == "response.done":
+        # 回复完成，显示使用统计
+        usage = event.get("response", {}).get("usage", {})
+        print(f"\n\n📊 Token 使用: {usage.get('total_tokens', 0)}")
+    elif event_type == "error":
+        error = event.get("error", {})
+        print(f"\n❌ 错误: {error.get('message', '未知错误')}")
+
+def on_error(ws, error):
+    print(f"❌ WebSocket 错误: {error}")
+
+def on_close(ws, close_status_code, close_msg):
+    print("🔌 连接已关闭")
+
+def on_open(ws):
+    """连接建立后发送初始消息"""
+    # 1. 配置会话
+    session_config = {
+        "event_id": "evt_001",
+        "type": "session.update",
+        "session": {
+            "modalities": ["text"],
+            "instructions": "你是一个简洁的助手",
+            "temperature": 0.8
+        }
+    }
+    ws.send(json.dumps(session_config, ensure_ascii=False))
+    
+    # 2. 发送用户消息
+    user_message = {
+        "event_id": "evt_002",
+        "type": "conversation.item.create",
+        "item": {
+            "type": "message",
+            "role": "user",
+            "content": [
+                {"type": "input_text", "text": "用一句话介绍 Nebula。"}
+            ]
+        }
+    }
+    ws.send(json.dumps(user_message, ensure_ascii=False))
+    
+    # 3. 请求生成回复
+    response_create = {
+        "event_id": "evt_003",
+        "type": "response.create"
+    }
+    ws.send(json.dumps(response_create, ensure_ascii=False))
+
+# 建立 WebSocket 连接
 ws = websocket.WebSocketApp(
     f"{API_BASE}/v1/realtime?model={MODEL}",
     header={"Authorization": f"Bearer {API_KEY}"},
-    on_message=lambda ws, msg: print("[recv]", msg)
+    on_message=on_message,
+    on_error=on_error,
+    on_close=on_close,
+    on_open=on_open
 )
 
-ws.on_open = lambda ws: (
-    ws.send(json.dumps({"type": "session.update", "session": {
-        "modalities": ["text"],
-        "instructions": "你是一个简洁的助手"
-    }}, ensure_ascii=False)),
-    ws.send(json.dumps({"type": "conversation.item.create", "item": {
-        "type": "message", "role": "user",
-        "content": [{"type": "input_text", "text": "用一句话介绍 Nebula。"}]
-    }}, ensure_ascii=False)),
-    ws.send(json.dumps({"type": "response.create"}))
-)
-
+# 运行 WebSocket（阻塞）
 ws.run_forever()
+```
+
+### JavaScript 示例
+
+```javascript
+const API_BASE = 'wss://llm.ai-nebula.com';
+const API_KEY = 'sk-xxxxxxxxxx';
+const MODEL = 'gpt-realtime';
+
+const ws = new WebSocket(`${API_BASE}/v1/realtime?model=${MODEL}`, [], {
+  headers: {
+    'Authorization': `Bearer ${API_KEY}`
+  }
+});
+
+ws.onopen = () => {
+  console.log('✅ WebSocket 连接已建立');
+  
+  // 1. 配置会话
+  ws.send(JSON.stringify({
+    event_id: 'evt_001',
+    type: 'session.update',
+    session: {
+      modalities: ['text'],
+      instructions: '你是一个简洁的助手',
+      temperature: 0.8
+    }
+  }));
+  
+  // 2. 发送用户消息
+  ws.send(JSON.stringify({
+    event_id: 'evt_002',
+    type: 'conversation.item.create',
+    item: {
+      type: 'message',
+      role: 'user',
+      content: [
+        { type: 'input_text', text: '用一句话介绍 Nebula。' }
+      ]
+    }
+  }));
+  
+  // 3. 请求生成回复
+  ws.send(JSON.stringify({
+    event_id: 'evt_003',
+    type: 'response.create'
+  }));
+};
+
+ws.onmessage = (event) => {
+  const message = JSON.parse(event.data);
+  const eventType = message.type;
+  
+  switch (eventType) {
+    case 'session.created':
+      console.log('✅ 会话已创建:', message.session?.id);
+      break;
+    case 'response.text.delta':
+      // 流式输出文本
+      process.stdout.write(message.delta || '');
+      break;
+    case 'response.done':
+      // 回复完成
+      const usage = message.response?.usage;
+      console.log('\n\n📊 Token 使用:', usage?.total_tokens || 0);
+      break;
+    case 'error':
+      console.error('❌ 错误:', message.error?.message);
+      break;
+  }
+};
+
+ws.onerror = (error) => {
+  console.error('❌ WebSocket 错误:', error);
+};
+
+ws.onclose = () => {
+  console.log('🔌 连接已关闭');
+};
 ```
 
 <ResponseExample>
@@ -136,20 +369,131 @@ ws.run_forever()
 ```
 </ResponseExample>
 
+## 响应示例
+
+<ResponseExample>
+```json
+// 会话创建成功
+{ 
+  "type": "session.created", 
+  "session": { "id": "sess_xxx" } 
+}
+
+// 回复创建
+{ 
+  "type": "response.created", 
+  "response": { "id": "resp_xxx" } 
+}
+
+// 文本增量输出
+{ 
+  "type": "response.text.delta", 
+  "delta": "你好！我是" 
+}
+
+{ 
+  "type": "response.text.delta", 
+  "delta": " Nebula 的实时助手。" 
+}
+
+// 文本输出完成
+{ 
+  "type": "response.text.done" 
+}
+
+// 本轮回复结束，包含使用统计
+{
+  "type": "response.done",
+  "response": {
+    "usage": {
+      "total_tokens": 123,
+      "input_tokens": 45,
+      "output_tokens": 78,
+      "input_token_details": {
+        "text_tokens": 45,
+        "audio_tokens": 0
+      },
+      "output_token_details": {
+        "text_tokens": 78,
+        "audio_tokens": 0
+      }
+    }
+  }
+}
+```
+</ResponseExample>
+
 ## 错误处理
 
-| 异常类型 | 触发场景 | 返回信息 |
+### 错误事件格式
+
+```json
+{
+  "type": "error",
+  "error": {
+    "type": "invalid_request_error",
+    "message": "错误描述",
+    "code": "error_code"
+  }
+}
+```
+
+### 常见错误
+
+| 错误类型 | 触发场景 | 解决方法 |
 |---------|---------|---------|
-| 认证失败 | API Key 无效或未授权 | 确认 Authorization 头中 API Key 有效 |
-| 模型不存在 | 模型名称错误 | 仅支持 gpt-realtime / gpt-realtime-mini |
-| 音频解码错误 | 音频格式不正确 | 确保 PCM16 单声道、采样率 24000Hz |
-| 连接断开 | WebSocket 断连 | 检查网络或重新建立连接 |
+| `authentication_error` | API Key 无效或未授权 | 确认 Authorization 头中 API Key 有效 |
+| `invalid_request_error` | 请求格式错误 | 检查事件格式和必需字段 |
+| `model_not_found` | 模型名称错误 | 仅支持 `gpt-realtime` 或 `gpt-realtime-mini` |
+| `audio_decode_error` | 音频格式不正确 | 确保 PCM16 单声道、采样率 24000Hz |
+| `rate_limit_error` | 请求频率过高 | 降低请求频率或等待后重试 |
+| `server_error` | 服务器内部错误 | 稍后重试或联系技术支持 |
+
+## 音频格式要求
+
+### 输入音频
+
+- **格式**：PCM16（16-bit PCM）
+- **声道**：单声道（Mono）
+- **采样率**：24000 Hz
+- **编码**：Base64 编码后通过 `input_audio_buffer.append` 发送
+
+### 输出音频
+
+- **格式**：PCM16（16-bit PCM）
+- **声道**：单声道（Mono）
+- **采样率**：24000 Hz
+- **编码**：Base64 编码，通过 `response.audio.delta` 事件返回
+
+## 使用流程
+
+1. **建立连接**：通过 WebSocket 连接到 `wss://llm.ai-nebula.com/v1/realtime?model={model}`
+2. **配置会话**：发送 `session.update` 事件配置会话参数
+3. **发送消息**：
+   - 文本模式：发送 `conversation.item.create` 事件
+   - 音频模式：先发送 `input_audio_buffer.append` 推送音频，然后 `input_audio_buffer.commit` 提交，最后发送 `conversation.item.create`
+4. **请求回复**：发送 `response.create` 事件触发生成
+5. **接收回复**：监听 `response.text.delta` 或 `response.audio.delta` 事件接收增量输出
+6. **完成处理**：收到 `response.done` 事件后，可查看 `usage` 统计信息
 
 ## 注意事项
 
 <Note>
-- 建立连接后先发送 `session.update` 配置会话
-- 发送消息后需调用 `response.create` 触发生成
-- 音频需为 PCM16 单声道 24000Hz，base64 编码
-- 依赖 `websocket-client` 库：`pip install websocket-client`
+- **必需步骤**：建立连接后必须先发送 `session.update` 配置会话
+- **触发回复**：发送消息后必须调用 `response.create` 才能触发生成
+- **音频格式**：音频必须为 PCM16 单声道 24000Hz，Base64 编码
+- **事件 ID**：建议为每个事件设置唯一的 `event_id`，便于追踪和调试
+- **连接管理**：保持 WebSocket 连接活跃，避免频繁断开重连
+- **错误处理**：监听 `error` 事件并实现适当的错误处理逻辑
+- **依赖库**：
+  - Python: `pip install websocket-client`
+  - JavaScript: 使用原生 `WebSocket` API 或 `ws` 库
 </Note>
+
+## 最佳实践
+
+1. **连接复用**：尽量复用同一个 WebSocket 连接进行多轮对话，减少连接开销
+2. **错误重试**：实现指数退避重试机制处理网络错误
+3. **音频缓冲**：音频数据建议分块发送，避免单次发送过大
+4. **使用统计**：关注 `response.done` 中的 `usage` 信息，合理控制成本
+5. **超时处理**：设置合理的超时时间，避免长时间等待
