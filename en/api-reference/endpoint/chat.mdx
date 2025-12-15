@@ -21,6 +21,7 @@ Universal text chat API supporting OpenAI-compatible large language models for g
   - Claude series: `claude-sonnet-4-20250514`, `claude-3.7-sonnet-20250219`, etc.
   - DeepSeek series: `deepseek-v3`, `deepseek-v3-1-250821`, etc.
   - Grok series: `grok-4`, `grok-3`, `grok-3-fast`, `grok-4-fast-reasoning`, etc.
+  - Gemini series: `gemini-2.5-flash`, `gemini-2.5-pro`, `gemini-3-pro-preview` and `-thinking/-nothinking` / `-thinking-<budget>` / `-thinking-low/-thinking-high` variants
   - Tongyi Qianwen series: `qwen3-omni-flash`, etc.
 </ParamField>
 
@@ -327,6 +328,56 @@ Some models support thinking capability (Thinking/Reasoning), which can display 
     <Warning>
     Tongyi Qianwen's deep thinking functionality must be used with `stream: true`. If `enable_thinking: true` is set but `stream: false`, the system will automatically disable deep thinking to avoid upstream errors.
     </Warning>
+  </Tab>
+
+  <Tab title="Gemini">
+    Refer to the Gemini thinking mode guide. Main ways to enable:
+
+    - **Model suffix**: `-thinking` (auto budget); `-thinking-<number>` precise budget (e.g., `gemini-2.5-flash-thinking-8192`); `-nothinking` disable; `gemini-3-pro-preview-thinking-low/high` specify level directly
+    - **extra_body config**: `extra_body.google.thinking_config.thinking_budget` + `include_thoughts`; special values: `-1` auto-enable, `0` disable, `>0` specific budget; requires `stream: true`
+    - **reasoning_effort**: usable when using `-thinking` and `max_tokens` is not set (`low/medium/high` ≈ 20%/50%/80% budget)
+    - **Gemini 3 Pro Preview**: uses `thinking_level` (`LOW`/`HIGH`, default HIGH), can be combined with search
+    - **Enable search**: recommended OpenAI-compatible tool `"tools":[{"type":"function","function":{"name":"googleSearch"}}]`; or pass through `extra_body.google.tools:[{"googleSearch":{}}]`
+    - **Notes**: thinking adapter must be enabled server-side; thinking budget counts toward output tokens; use `stream: true` to view `reasoning_content`
+
+    Example (2.5 with specific budget):
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "model": "gemini-2.5-flash",
+        "messages": [
+          {"role":"user","content":"Give a medium-difficulty geometry problem and analyze it step by step."}
+        ],
+        "extra_body": {
+          "google": {
+            "thinking_config": { "thinking_budget": 6000, "include_thoughts": true }
+          }
+        },
+        "stream": true
+      }'
+    ```
+
+    Example (3 Pro Preview thinking + search):
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "model": "gemini-3-pro-preview",
+        "messages": [
+          {"role":"user","content":"Google search the weather in Guangzhou today"}
+        ],
+        "generationConfig": {
+          "thinkingConfig": { "thinkingLevel": "LOW" }
+        },
+        "tools": [
+          { "type": "function", "function": { "name": "googleSearch" } }
+        ],
+        "stream": true
+      }'
+    ```
   </Tab>
 </Tabs>
 
