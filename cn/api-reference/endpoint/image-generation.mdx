@@ -41,8 +41,10 @@ api: 'POST https://llm.ai-nebula.com/v1/images/generations'
   图生图或上下文对话的多轮内容
 </ParamField>
 
-## cURL 示例
+## 代码示例
 
+<Tabs>
+  <Tab title="cURL">
 ```bash
 curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
   -H "Authorization: Bearer sk-xxxxxxxxxx" \
@@ -56,9 +58,9 @@ curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
     "response_format": "b64_json"
   }'
 ```
+  </Tab>
 
-## Python 示例
-
+  <Tab title="Python">
 ```python
 from openai import OpenAI
 
@@ -78,9 +80,9 @@ response = client.images.generate(
 
 print(response.data[0].b64_json)
 ```
+  </Tab>
 
-## Java 示例
-
+  <Tab title="Java">
 ```java
 import com.theokanning.openai.image.CreateImageRequest;
 import com.theokanning.openai.service.OpenAiService;
@@ -103,9 +105,9 @@ CreateImageRequest request = CreateImageRequest.builder()
 ImageResult result = service.createImage(request);
 System.out.println(result.getData().get(0).getB64Json());
 ```
+  </Tab>
 
-## Node.js 示例
-
+  <Tab title="Node.js">
 ```javascript
 import OpenAI from 'openai';
 
@@ -125,6 +127,8 @@ const response = await openai.images.generate({
 
 console.log(response.data[0].b64_json);
 ```
+  </Tab>
+</Tabs>
 
 ## 模型专用参数
 
