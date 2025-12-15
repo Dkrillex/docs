@@ -1,11 +1,11 @@
 ---
-title: 'Create Chat Request (OpenAI)'
+title: 'Create Chat Request'
 api: 'POST https://llm.ai-nebula.com/v1/chat/completions'
 ---
 
 ## Introduction
 
-Universal text chat API supporting OpenAI-compatible large language models.
+Universal text chat API supporting OpenAI-compatible large language models for generating conversational responses. Through a unified API interface, you can call multiple mainstream large models including OpenAI, Claude, DeepSeek, Grok, and Tongyi Qianwen.
 
 ## Authentication
 
@@ -16,54 +16,103 @@ Universal text chat API supporting OpenAI-compatible large language models.
 ## Request Parameters
 
 <ParamField body="model" type="string" required>
-  Model identifier, e.g. `claude-sonnet-4-20250514`, `GPT-4o`
+  Model identifier, supported models include:
+  - OpenAI series: `gpt-4o`, `gpt-4.1`, `gpt-4o-mini`, `gpt-3.5-turbo`, etc.
+  - Claude series: `claude-sonnet-4-20250514`, `claude-3.7-sonnet-20250219`, etc.
+  - DeepSeek series: `deepseek-v3`, `deepseek-v3-1-250821`, etc.
+  - Grok series: `grok-4`, `grok-3`, `grok-3-fast`, `grok-4-fast-reasoning`, etc.
+  - Tongyi Qianwen series: `qwen3-omni-flash`, etc.
 </ParamField>
 
 <ParamField body="messages" type="array" required>
-  Message list, each containing `role` (user/system/assistant) and `content`
+  Conversation message list, each element contains `role` (user/system/assistant) and `content`
 </ParamField>
 
 <ParamField body="temperature" type="number" default="0.7">
-  Randomness control, 0-2, higher values = more random
+  Randomness control, 0-2, higher values = more random responses
 </ParamField>
 
-## cURL Example
+<ParamField body="stream" type="boolean" default="false">
+  Whether to enable streaming output, returns SSE format chunked data
+</ParamField>
 
-```bash
-curl https://llm.ai-nebula.com/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-XyLy**************************mIqSt" \
-  -d '{
-    "model": "claude-sonnet-4-20250514",
-    "messages": [
-      {"role": "system", "content": "You are a helpful assistant"},
-      {"role": "user", "content": "Briefly introduce artificial intelligence"}
-    ],
-    "temperature": 0.7
-  }'
-```
+<ParamField body="max_tokens" type="number">
+  Maximum number of tokens to generate, controls response length
+</ParamField>
 
-## Python Example
+<ParamField body="top_p" type="number">
+  Nucleus sampling parameter, 0-1, controls generation diversity
+</ParamField>
 
-```python
-from openai import OpenAI
+## Basic Examples
 
-client = OpenAI(
-    api_key="sk-XyLy**************************mIqSt",
-    base_url="https://llm.ai-nebula.com/v1"
-)
+<Tabs>
+  <Tab title="Non-Streaming Request">
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "model": "gpt-4o",
+        "messages": [
+          {"role": "system", "content": "You are a helpful assistant"},
+          {"role": "user", "content": "Briefly introduce artificial intelligence"}
+        ],
+        "temperature": 0.7
+      }'
+    ```
+  </Tab>
+  
+  <Tab title="Streaming Request (SSE)">
+    ```bash
+    curl -N -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "model": "gpt-4o",
+        "stream": true,
+        "messages": [
+          {"role": "system", "content": "You are a helpful assistant"},
+          {"role": "user", "content": "Briefly introduce artificial intelligence"}
+        ]
+      }'
+    ```
+  </Tab>
+  
+  <Tab title="Python Example">
+    ```python
+    from openai import OpenAI
 
-completion = client.chat.completions.create(
-    model="claude-sonnet-4-20250514",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant"},
-        {"role": "user", "content": "Briefly introduce artificial intelligence"}
-    ],
-    temperature=0.7
-)
+    client = OpenAI(
+        api_key="sk-xxxxxxxxxx",
+        base_url="https://llm.ai-nebula.com/v1"
+    )
 
-print(completion.choices[0].message.content)
-```
+    # Non-streaming
+    completion = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant"},
+            {"role": "user", "content": "Briefly introduce artificial intelligence"}
+        ],
+        temperature=0.7
+    )
+    print(completion.choices[0].message.content)
+
+    # Streaming
+    stream = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "user", "content": "Briefly introduce artificial intelligence"}
+        ],
+        stream=True
+    )
+    for chunk in stream:
+        if chunk.choices[0].delta.content:
+            print(chunk.choices[0].delta.content, end="")
+    ```
+  </Tab>
+</Tabs>
 
 <ResponseExample>
 ```json
@@ -71,7 +120,7 @@ print(completion.choices[0].message.content)
   "id": "chatcmpl-xxx",
   "object": "chat.completion",
   "created": 1234567890,
-  "model": "claude-sonnet-4-20250514",
+  "model": "gpt-4o",
   "choices": [
     {
       "index": 0,
@@ -91,20 +140,451 @@ print(completion.choices[0].message.content)
 ```
 </ResponseExample>
 
+## Advanced Features
+
+### Tool Calling (Functions / Tools)
+
+Supports OpenAI-compatible tool calling format, applicable to GPT, Claude, DeepSeek, Grok, Tongyi Qianwen, and other models.
+
+<Tabs>
+  <Tab title="Phase 1: Model Returns Tool Call">
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "model": "gpt-4o",
+        "messages": [
+          {"role": "user", "content": "What'\''s the weather in Shanghai?"}
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "get_weather",
+              "description": "Get weather information by city",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {"type": "string"}
+                },
+                "required": ["city"]
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto"
+      }'
+    ```
+  </Tab>
+  
+  <Tab title="Phase 2: Return Tool Execution Result">
+    After the model returns `tool_calls`, you need to execute the tool and pass the result back to the model:
+
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "model": "gpt-4o",
+        "messages": [
+          {"role": "user", "content": "What'\''s the weather in Shanghai?"},
+          {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_xxx",
+                "type": "function",
+                "function": {
+                  "name": "get_weather",
+                  "arguments": "{\"city\":\"Shanghai\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "call_xxx",
+            "content": "{\"temp\":\"22°C\",\"condition\":\"Cloudy\",\"aqi\":53}"
+          }
+        ]
+      }'
+    ```
+
+    <Note>
+    - `tool_call_id` must match the ID returned in Phase 1
+    - If tool execution fails, return readable error information to avoid blocking subsequent completions
+    - Phase 2 also supports streaming output
+    </Note>
+  </Tab>
+</Tabs>
+
+### Structured Output (JSON Schema)
+
+Supports controlling output format through `response_format` parameter, applicable to GPT, Claude, Grok, and other models.
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -d '{
+    "model": "gpt-4o",
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "Answer",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "summary": {"type": "string"}
+          },
+          "required": ["summary"]
+        }
+      }
+    },
+    "messages": [
+      {"role": "user", "content": "Return a JSON containing a summary field"}
+    ]
+  }'
+```
+
+<Tip>
+For strict structured output, it is recommended to lower the `temperature` value (e.g., 0.1-0.3) and set an appropriate `max_tokens` to improve consistency.
+</Tip>
+
+### Thinking Capability
+
+Some models support thinking capability (Thinking/Reasoning), which can display the reasoning process when generating responses. Different models implement this differently:
+
+<Tabs>
+  <Tab title="DeepSeek">
+    DeepSeek models support enabling thinking capability through the `thinking` field:
+
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "model": "deepseek-v3-1-250821",
+        "messages": [
+          {"role": "system", "content": "You are a helpful assistant"},
+          {"role": "user", "content": "Give a medium-difficulty geometry problem and solve it step by step"}
+        ],
+        "thinking": {"type": "enabled"}
+      }'
+    ```
+
+    <Note>
+    - Default `thinking.type` is `"disabled"`, need to explicitly set to `"enabled"` to enable
+    - The output form of thinking capability may vary by model version
+    - It is recommended to use with `stream: true` for better interactive experience
+    </Note>
+  </Tab>
+  
+  <Tab title="Tongyi Qianwen">
+    Tongyi Qianwen supports deep thinking functionality, requires streaming output:
+
+    ```bash
+    curl -N -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "model": "qwen3-omni-flash",
+        "stream": true,
+        "enable_thinking": true,
+        "parameters": {
+          "incremental_output": true
+        },
+        "messages": [
+          {"role": "system", "content": "You are an excellent mathematician"},
+          {"role": "user", "content": "What is the formula for Tower of Hanoi"}
+        ]
+      }'
+    ```
+
+    **Inline reasoning process into content**:
+
+    If the client does not display `reasoning_content`, you can use `nebula_thinking_to_content: true` to inline reasoning content into `content`:
+
+    ```bash
+    curl -N -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "model": "qwen3-omni-flash",
+        "stream": true,
+        "enable_thinking": true,
+        "nebula_thinking_to_content": true,
+        "parameters": {
+          "incremental_output": true
+        },
+        "messages": [
+          {"role": "user", "content": "What is the formula for Tower of Hanoi"}
+        ]
+      }'
+    ```
+
+    <Warning>
+    Tongyi Qianwen's deep thinking functionality must be used with `stream: true`. If `enable_thinking: true` is set but `stream: false`, the system will automatically disable deep thinking to avoid upstream errors.
+    </Warning>
+  </Tab>
+</Tabs>
+
+### Tongyi Qianwen Extended Features
+
+Tongyi Qianwen models support extended features such as search, speech recognition, etc. All extended parameters need to be placed in the `parameters` object.
+
+<Tabs>
+  <Tab title="Search Feature">
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "model": "qwen3-omni-flash",
+        "messages": [
+          {"role": "user", "content": "Please first search for recent common misconceptions about Fermat'\''s Last Theorem, then answer"}
+        ],
+        "stream": true,
+        "enable_thinking": true,
+        "parameters": {
+          "enable_search": true,
+          "search_options": {
+            "region": "CN",
+            "recency_days": 30
+          },
+          "incremental_output": true
+        }
+      }'
+    ```
+  </Tab>
+  
+  <Tab title="Speech Recognition">
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "model": "qwen3-omni-flash",
+        "messages": [
+          {"role": "user", "content": "Hello"}
+        ],
+        "parameters": {
+          "asr_options": {
+            "language": "zh"
+          }
+        }
+      }'
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+All extended parameters for Tongyi Qianwen (such as `enable_search`, `search_options`, `asr_options`, `temperature`, `top_p`, etc.) need to be placed in the `parameters` object, not at the top level of the request body.
+</Note>
+
+### GPT File Input (Responses API)
+
+GPT-5 and other models support file input functionality, which needs to be called through the `/v1/responses` endpoint, not `/v1/chat/completions`.
+
+<Tabs>
+  <Tab title="Upload via File URL">
+    You can upload PDF files by linking external URLs:
+
+    ```python
+    from openai import OpenAI
+
+    client = OpenAI(
+        api_key="sk-xxxxxxxxxx",
+        base_url="https://llm.ai-nebula.com/v1"
+    )
+
+    response = client.responses.create(
+        model="gpt-5-chat",
+        input=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "input_text",
+                        "text": "Analyze this letter and summarize its key points"
+                    },
+                    {
+                        "type": "input_file",
+                        "file_url": "https://www.example.com/document.pdf"
+                    }
+                ]
+            }
+        ]
+    )
+    print(response.output_text)
+    ```
+  </Tab>
+  
+  <Tab title="Upload via Base64 Encoding">
+    Send as Base64-encoded input:
+
+    ```python
+    import base64
+    from openai import OpenAI
+
+    client = OpenAI(
+        api_key="sk-xxxxxxxxxx",
+        base_url="https://llm.ai-nebula.com/v1"
+    )
+
+    with open("document.pdf", "rb") as f:
+        data = f.read()
+
+    base64_string = base64.b64encode(data).decode("utf-8")
+
+    response = client.responses.create(
+        model="gpt-5-chat",
+        input=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "input_file",
+                        "filename": "document.pdf",
+                        "file_data": f"data:application/pdf;base64,{base64_string}"
+                    },
+                    {
+                        "type": "input_text",
+                        "text": "What is the main content of this document?"
+                    }
+                ]
+            }
+        ]
+    )
+    print(response.output_text)
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+- File size limit: Single file not exceeding 50 MB, total size of all files in a single request not exceeding 50 MB
+- Supported models: `gpt-4o`, `gpt-4o-mini`, `gpt-5-chat`, and other models that support text and image input
+- Reasoning models (o1, o3, o4-mini) should also use the `/v1/responses` endpoint if they need to use reasoning capability
+</Note>
+
+### Grok Reasoning Capability
+
+Grok models (especially `grok-4-fast-reasoning`) support reasoning capability. The `usage` in the response distinguishes between `completion_tokens` and `reasoning_tokens`:
+
+```json
+{
+  "usage": {
+    "prompt_tokens": 100,
+    "completion_tokens": 500,
+    "total_tokens": 600,
+    "completion_tokens_details": {
+      "reasoning_tokens": 300
+    }
+  }
+}
+```
+
+Actual output text token count = `completion_tokens - reasoning_tokens`
+
+## Response Format
+
+<Tabs>
+  <Tab title="Non-Streaming Response">
+    ```json
+    {
+      "id": "chatcmpl-xxx",
+      "object": "chat.completion",
+      "created": 1234567890,
+      "model": "gpt-4o",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "Response content..."
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 25,
+        "completion_tokens": 100,
+        "total_tokens": 125
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Streaming Response">
+    Streaming responses are returned in SSE (Server-Sent Events) format, each chunk contains partial content:
+
+    ```json
+    data: {"id":"chatcmpl-xxx","object":"chat.completion.chunk","created":1234567890,"model":"gpt-4o","choices":[{"index":0,"delta":{"content":"回"},"finish_reason":null}]}
+
+    data: {"id":"chatcmpl-xxx","object":"chat.completion.chunk","created":1234567890,"model":"gpt-4o","choices":[{"index":0,"delta":{"content":"复"},"finish_reason":null}]}
+
+    data: [DONE]
+    ```
+
+    The last chunk usually contains `usage` statistics.
+  </Tab>
+</Tabs>
+
 ## Error Handling
 
-| Exception | Trigger | Message |
-|-----------|---------|---------|
-| AuthenticationError | Invalid API key | Error: Invalid or unauthorized API key |
-| NotFoundError | Model not found | Error: Model [model] does not exist |
-| APIConnectionError | Network error | Error: Cannot connect to API server |
-| APIError | Server-side error | API request failed: [details] |
+| Exception Type | Trigger Scenario | Return Message |
+|---------------|------------------|----------------|
+| AuthenticationError | Invalid or unauthorized API key | Error: Invalid or unauthorized API key |
+| NotFoundError | Model does not exist or is not supported | Error: Model [model] does not exist or is not supported |
+| APIConnectionError | Network interruption or server not responding | Error: Cannot connect to API server |
+| APIError | Request format error and other server-side exceptions | API request failed: [error details] |
+
+## Supported Model Series
+
+### OpenAI Series
+- GPT-4.1, GPT-4o, GPT-4o Mini, GPT-3.5-turbo
+- Reasoning models: o3, o4-mini (need to use `/v1/responses` endpoint)
+
+### Claude Series (Anthropic)
+- Claude Sonnet 4, Claude 3.7 Sonnet, Claude 3 Opus, Claude 3 Haiku
+
+### DeepSeek Series
+- DeepSeek V3, DeepSeek R1
+
+### Grok Series (xAI)
+- Grok-4, Grok-3, Grok-3-fast, Grok-4-fast-reasoning
+
+### Tongyi Qianwen Series (Qwen)
+- Qwen3-omni-flash, etc.
+
+### Other Models
+- Gemini series, GLM series, Kimi series, etc.
+
+For the complete model list, please see the [Model Information Page](/en/api-reference/models).
 
 ## Notes
 
 <Note>
-- `system` role defines model behavior, `user` role for questions
-- Multi-turn conversations require appending history (including `assistant` responses)
+- In the `messages` list, `system` role is used to set model behavior, `user` role is for user questions
+- Multi-turn conversations require appending history (including `assistant` role responses)
 - Requires `openai` library: `pip install openai`
+- Different models may have different levels of support for certain features, it is recommended to check the specific model documentation before use
 </Note>
 
+<Tip>
+- Using streaming output can improve first token response time and interactive experience
+- Tool calling requires proper timeout and retry mechanisms to avoid blocking model responses
+- Tongyi Qianwen extended parameters must be placed in the `parameters` object
+</Tip>
+
+## Related Resources
+
+<Columns cols={2}>
+  <Card title="FAQ" icon="question-circle" href="/en/faq/chat-completions">
+    View FAQ for chat interface
+  </Card>
+  <Card title="Model List" icon="list" href="/en/api-reference/models">
+    View all supported model information
+  </Card>
+</Columns>
