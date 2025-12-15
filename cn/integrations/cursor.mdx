@@ -5,7 +5,7 @@ description: 'Cursor 代码编辑器集成指南'
 
 ## 一、产品简介
 
-Cursor 是一款 AI 驱动的代码编辑器，通过集成 **Nebula Api**，可在编写代码时获得强大的 AI 辅助功能，支持智能代码生成、补全、解释及优化。
+Cursor 是一款 AI 驱动的代码编辑器，通过集成 **Nebula Api**，可在编写代码时获得强大的 AI 辅助功能，支持智能代码生成、补全、解释及优化。Nebula Api 现已兼容 Cursor 的 Agent 能力（Auto Apply / 多文件编辑等），配置得当即可启用。
 
 ## 二、快速配置步骤
 
@@ -19,15 +19,17 @@ Cursor 是一款 AI 驱动的代码编辑器，通过集成 **Nebula Api**，可
 - **Override OpenAI Base URL**：勾选并输入 `https://llm.ai-nebula.com/v1`
 - 点击 **Verify** 验证配置
 
-<Warning>
-Cursor 目前不支持 Agent 模式，仅支持 Chat 对话模式（需手动将 AI 生成的代码应用到文件中）
-</Warning>
+<Tip>
+- Nebula Api 已兼容 Cursor Agent（Auto Apply 等）。若希望启用 Agent，请在模型选择中使用支持 Agent 的模型。  
+- GPT 系列模型需在模型名加前缀 `openai/`，例如使用 `gpt-5.2` 时需填写 `openai/gpt-5.2`。其余渠道按原模型 ID 配置。
+</Tip>
 
-### 3. 替代方案
+### 3. Agent 模式使用提示
 
-若依赖 Agent 模式：
-- 购买 Cursor 官方会员
-- 使用 VS Code 的 RooCode 或 Cline 插件
+- 使用支持 Agent 的模型（如 Claude、DeepSeek、Grok、以及带 `openai/` 前缀的 GPT 系列等）
+- 确保 Base URL 为 `https://llm.ai-nebula.com/v1`
+- 首次启用时可在 Cursor 侧边栏执行一次简单改动验证自动应用
+- 若模型不支持 Agent，可改为 Chat 方式手动 Apply
 
 ## 三、推荐模型配置
 
