@@ -1,11 +1,11 @@
 ---
 title: 'OpenAI 官方库使用'
-description: '使用官方 OpenAI SDK 无缝接入 Nebula Lab 服务'
+description: '使用官方 OpenAI SDK 无缝接入 Nebula Api 服务'
 ---
 
 ## 在 OpenAI 官方库使用
 
-Nebula Lab 完全兼容 OpenAI API 格式，您可以直接使用官方 OpenAI SDK，只需简单修改配置即可无缝切换。
+Nebula Api 完全兼容 OpenAI API 格式，您可以直接使用官方 OpenAI SDK，只需简单修改配置即可无缝切换。
 
 ## 支持的官方 SDK
 
@@ -359,7 +359,7 @@ except APIError as e:
 # 原来的配置
 client = OpenAI(api_key="sk-...")
 
-# 改为 Nebula Lab
+# 改为 Nebula Api
 client = OpenAI(
     api_key="YOUR_NEBULA_KEY", 
     base_url="https://llm.ai-nebula.com/v1"

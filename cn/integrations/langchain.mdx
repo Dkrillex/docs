@@ -5,7 +5,7 @@ description: 'LangChain 开发框架集成指南'
 
 ## 一、简介
 
-LangChain 是一个用于开发基于语言模型的应用程序的强大框架。通过集成 **Nebula Lab**，可在 LangChain 中灵活调用各类主流 AI 模型。
+LangChain 是一个用于开发基于语言模型的应用程序的强大框架。通过集成 **Nebula Api**，可在 LangChain 中灵活调用各类主流 AI 模型。
 
 ## 二、快速开始
 
@@ -21,7 +21,7 @@ pip install langchain langchain-openai
 import os
 from langchain_openai import ChatOpenAI
 
-os.environ["OPENAI_API_KEY"] = "您的Nebula Lab密钥"
+os.environ["OPENAI_API_KEY"] = "您的Nebula Api密钥"
 os.environ["OPENAI_BASE_URL"] = "https://llm.ai-nebula.com/v1"
 
 llm = ChatOpenAI(

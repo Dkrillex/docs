@@ -20,7 +20,7 @@ description: '解决 API Key 无效错误，了解 Base URL 和 API Key 的正�
 这通常**不是**您的 API Key 本身有问题，而是**请求地址（Base URL）配置错误**导致的。
 
 <Warning>
-最常见的错误：使用了 Nebula Lab 的 Key，但请求地址仍然指向 OpenAI 官网 `https://api.openai.com`
+最常见的错误：使用了 Nebula Api 的 Key，但请求地址仍然指向 OpenAI 官网 `https://api.openai.com`
 </Warning>
 
 ## 什么是 Base URL？
@@ -31,7 +31,7 @@ description: '解决 API Key 无效错误，了解 Base URL 和 API Key 的正�
 
 | 服务提供商 | Base URL | API Key 格式 | 是否匹配 |
 |-----------|----------|--------------|---------|
-| **Nebula Lab** | https://llm.ai-nebula.com | sk-xxxx... | ✅ 正确 |
+| **Nebula Api** | https://llm.ai-nebula.com | sk-xxxx... | ✅ 正确 |
 | **OpenAI 官方** | https://api.openai.com | sk-xxxx... | ✅ 正确 |
 | ❌ Nebula Key | https://api.openai.com | sk-xxxx... | ❌ **错误** |
 | ❌ OpenAI Key | https://llm.ai-nebula.com | sk-xxxx... | ❌ **错误** |
@@ -50,8 +50,8 @@ description: '解决 API Key 无效错误，了解 Base URL 和 API Key 的正�
     from openai import OpenAI
 
     client = OpenAI(
-        api_key="sk-your-nebula-key",  # Nebula Lab 后台获取的 Key
-        base_url="https://llm.ai-nebula.com/v1"  # 改为 Nebula Lab 地址
+        api_key="sk-your-nebula-key",  # Nebula Api 后台获取的 Key
+        base_url="https://llm.ai-nebula.com/v1"  # 改为 Nebula Api 地址
     )
 
     response = client.chat.completions.create(
@@ -130,8 +130,8 @@ description: '解决 API Key 无效错误，了解 Base URL 和 API Key 的正�
     4. **拼写错误**：确认地址拼写正确
   </Accordion>
   <Accordion title="如何确认 Key 是否有效？">
-    在 Nebula Lab 后台查看：
-    1. 登录 [Nebula Lab 控制台](https://ai-nebula.com)
+    在 Nebula Api 后台查看：
+    1. 登录 [Nebula Api 控制台](https://ai-nebula.com)
     2. 进入「令牌」页面
     3. 检查 Key 状态是否为「启用」
     4. 确认账户余额充足
@@ -139,7 +139,7 @@ description: '解决 API Key 无效错误，了解 Base URL 和 API Key 的正�
   <Accordion title="使用第三方工具如何配置？">
     大多数第三方工具都有「自定义 API」选项：
     - **API 地址 / Base URL**：`https://llm.ai-nebula.com/v1`
-    - **API Key**：从 Nebula Lab 后台复制您的 Key
+    - **API Key**：从 Nebula Api 后台复制您的 Key
     - **模型名称**：参考模型列表
   </Accordion>
 </AccordionGroup>
@@ -156,7 +156,7 @@ client = OpenAI(
 )
 ```
 
-**结果**：OpenAI 服务器会拒绝 Nebula Lab 的 Key
+**结果**：OpenAI 服务器会拒绝 Nebula Api 的 Key
 
 ### ✅ 正确配置
 
@@ -164,11 +164,11 @@ client = OpenAI(
 client = OpenAI(
     api_key="sk-nebula-key",
     base_url="https://llm.ai-nebula.com/v1"
-    # ✅ 使用 Nebula Lab 地址
+    # ✅ 使用 Nebula Api 地址
 )
 ```
 
-**结果**：请求成功发送到 Nebula Lab 服务器
+**结果**：请求成功发送到 Nebula Api 服务器
 
 ## 快速测试方法
 
@@ -198,6 +198,6 @@ curl https://llm.ai-nebula.com/v1/models \
 3. 账户余额是否充足
 
 <Tip>
-记住核心原则：哪家的 Key 配哪家的 URL，Nebula Lab 的 Key 就用 `https://llm.ai-nebula.com/v1`
+记住核心原则：哪家的 Key 配哪家的 URL，Nebula Api 的 Key 就用 `https://llm.ai-nebula.com/v1`
 </Tip>
 

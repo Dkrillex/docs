@@ -5,7 +5,7 @@ description: 'LangChain Framework Integration Guide'
 
 ## Introduction
 
-LangChain is a powerful framework for building language model applications. By integrating with **Nebula Lab**, you can flexibly call various AI models in LangChain.
+LangChain is a powerful framework for building language model applications. By integrating with **Nebula Api**, you can flexibly call various AI models in LangChain.
 
 ## Quick Start
 
@@ -21,7 +21,7 @@ pip install langchain langchain-openai
 import os
 from langchain_openai import ChatOpenAI
 
-os.environ["OPENAI_API_KEY"] = "Your Nebula Lab Key"
+os.environ["OPENAI_API_KEY"] = "Your Nebula Api Key"
 os.environ["OPENAI_BASE_URL"] = "https://llm.ai-nebula.com/v1"
 
 llm = ChatOpenAI(
@@ -69,7 +69,7 @@ from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 
 embeddings = OpenAIEmbeddings(
-    api_key="Your Nebula Lab Key",
+    api_key="Your Nebula Api Key",
     base_url="https://llm.ai-nebula.com/v1"
 )
 
@@ -95,13 +95,13 @@ result = qa.run("What are the key concepts in the document?")
 ```python
 gpt4 = ChatOpenAI(
     model="gpt-4",
-    api_key="Your Nebula Lab Key",
+    api_key="Your Nebula Api Key",
     base_url="https://llm.ai-nebula.com/v1"
 )
 
 claude = ChatOpenAI(
     model="claude-3-opus-20240229",
-    api_key="Your Nebula Lab Key",
+    api_key="Your Nebula Api Key",
     base_url="https://llm.ai-nebula.com/v1"
 )
 ```
@@ -212,7 +212,7 @@ from langchain_openai import AsyncChatOpenAI
 async def async_chat():
     async_llm = AsyncChatOpenAI(
         model="gpt-3.5-turbo",
-        api_key="Your Nebula Lab Key",
+        api_key="Your Nebula Api Key",
         base_url="https://llm.ai-nebula.com/v1"
     )
     response = await async_llm.ainvoke("Async generated content")

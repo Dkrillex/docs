@@ -20,7 +20,7 @@ When you see an error like this:
 This usually **isn't** a problem with your API Key itself, but rather a **Base URL misconfiguration**.
 
 <Warning>
-Most common mistake: Using Nebula Lab's Key but the request URL still points to OpenAI's `https://api.openai.com`
+Most common mistake: Using Nebula Api's Key but the request URL still points to OpenAI's `https://api.openai.com`
 </Warning>
 
 ## What is Base URL?
@@ -31,7 +31,7 @@ Most common mistake: Using Nebula Lab's Key but the request URL still points to 
 
 | Provider | Base URL | API Key Format | Match? |
 |----------|----------|----------------|--------|
-| **Nebula Lab** | https://llm.ai-nebula.com | sk-xxxx... | ✅ Correct |
+| **Nebula Api** | https://llm.ai-nebula.com | sk-xxxx... | ✅ Correct |
 | **OpenAI Official** | https://api.openai.com | sk-xxxx... | ✅ Correct |
 | ❌ Nebula Key | https://api.openai.com | sk-xxxx... | ❌ **Wrong** |
 | ❌ OpenAI Key | https://llm.ai-nebula.com | sk-xxxx... | ❌ **Wrong** |
@@ -130,8 +130,8 @@ Key principle: Use the provider's Base URL that matches your API Key
     4. **Typos**: Verify the URL spelling
   </Accordion>
   <Accordion title="How to verify Key is valid?">
-    Check in Nebula Lab console:
-    1. Login to [Nebula Lab](https://ai-nebula.com)
+    Check in Nebula Api console:
+    1. Login to [Nebula Api](https://ai-nebula.com)
     2. Go to "Tokens" page
     3. Check if Key status is "Enabled"
     4. Confirm account balance is sufficient
@@ -139,7 +139,7 @@ Key principle: Use the provider's Base URL that matches your API Key
   <Accordion title="How to configure third-party tools?">
     Most tools have "Custom API" options:
     - **API URL / Base URL**: `https://llm.ai-nebula.com/v1`
-    - **API Key**: Copy from Nebula Lab console
+    - **API Key**: Copy from Nebula Api console
     - **Model name**: Refer to model list
   </Accordion>
 </AccordionGroup>
@@ -156,7 +156,7 @@ client = OpenAI(
 )
 ```
 
-**Result**: OpenAI server rejects Nebula Lab's Key
+**Result**: OpenAI server rejects Nebula Api's Key
 
 ### ✅ Correct Configuration
 
@@ -164,11 +164,11 @@ client = OpenAI(
 client = OpenAI(
     api_key="sk-nebula-key",
     base_url="https://llm.ai-nebula.com/v1"
-    # ✅ Using Nebula Lab URL
+    # ✅ Using Nebula Api URL
 )
 ```
 
-**Result**: Request successfully sent to Nebula Lab
+**Result**: Request successfully sent to Nebula Api
 
 ## Quick Test
 
@@ -198,6 +198,6 @@ If you get an error, check:
 3. Account balance is sufficient
 
 <Tip>
-Remember: Match the Key to its URL. Nebula Lab Key uses `https://llm.ai-nebula.com/v1`
+Remember: Match the Key to its URL. Nebula Api Key uses `https://llm.ai-nebula.com/v1`
 </Tip>
 
