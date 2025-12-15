@@ -5,7 +5,7 @@ description: 'Cursor Code Editor Integration Guide'
 
 ## Introduction
 
-Cursor is an AI-powered code editor. By integrating with **Nebula Api**, you can get powerful AI assistance for code generation, completion, explanation, and optimization.
+Cursor is an AI-powered code editor. By integrating with **Nebula Api**, you get powerful AI assistance for code generation, completion, explanation, and optimization. Nebula Api now supports Cursor Agent capabilities (Auto Apply / multi-file editing, etc.) when configured properly.
 
 ## Quick Setup
 
@@ -19,15 +19,17 @@ Click the gear icon ⚙️ in the top right, select **Models**.
 - **Override OpenAI Base URL**: Check and enter `https://llm.ai-nebula.com/v1`
 - Click **Verify** to validate
 
-<Warning>
-Cursor currently doesn't support Agent mode, only Chat mode (manually apply AI-generated code to files)
-</Warning>
+<Tip>
+- Nebula Api is compatible with Cursor Agent (Auto Apply, etc.). To enable Agent, pick models that support Agent.  
+- For GPT family, prefix model name with `openai/`. For example, use `openai/gpt-5.2` instead of `gpt-5.2`. Other providers keep their original model IDs.
+</Tip>
 
-### 3. Alternatives
+### 3. Agent Mode Tips
 
-If you need Agent mode:
-- Purchase Cursor official membership
-- Use VS Code with RooCode or Cline plugins
+- Use Agent-capable models (e.g., Claude, DeepSeek, Grok, and GPT with `openai/` prefix)
+- Ensure Base URL is `https://llm.ai-nebula.com/v1`
+- On first enable, try a small change to verify auto-apply in Cursor sidebar
+- If a model doesn’t support Agent, fall back to Chat and apply manually
 
 ## Recommended Models
 
