@@ -1,0 +1,197 @@
+---
+title: 'Submit Video Task'
+api: 'POST https://llm.ai-nebula.com/v1/video/generations'
+---
+
+## Introduction
+
+The submit video task API is used to create a new video generation task. Upon successful submission, it returns a task ID that you can use to query the task status.
+
+**Important Note**: Video generation is an asynchronous task. You need to first submit a task to get a task ID, then poll the task status until it succeeds.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g. `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField body="model" type="string" required>
+  Model identifier, supported models and features:
+
+  **Sora 2 Series**:
+  - `sora-2` - Supports text-to-video, image-to-video, video-to-video (Remix mode)
+
+  **Google Veo Series**:
+  - `veo-3.0-fast-generate-001` - Text-to-video (first frame mode)
+  - `veo-3.1-fast-generate-preview` - Text-to-video (first frame mode, first/last frame mode)
+
+  **Ali Wanxiang Series**:
+  - `wan2.5-t2v-preview` - Text-to-video
+  - `wan2.5-i2v-preview` - Image-to-video (first frame mode)
+
+  **Doubao Seedance Series**:
+  - `doubao-seedance-1-0-lite-t2v-250428` - Text-to-video
+  - `doubao-seedance-1-0-lite-i2v-250428` - Image-to-video (first frame mode, first/last frame mode, reference image mode)
+  - `doubao-seedance-1-0-pro-250528` - Text-to-video (first frame mode)
+</ParamField>
+
+<ParamField body="prompt" type="string" required>
+  Video generation prompt, describing scene actions and settings
+</ParamField>
+
+<ParamField body="image" type="string">
+  Reference image for image-to-video (supports Base64 or URL format)
+</ParamField>
+
+<ParamField body="duration" type="integer" default="5">
+  Video duration (seconds), different models support different durations
+</ParamField>
+
+<ParamField body="resolution" type="string" default="720p">
+  Video resolution: `480p`, `720p`, `1080p`, `4k`
+</ParamField>
+
+<ParamField body="aspect_ratio" type="string" default="16:9">
+  Aspect ratio: `16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `21:9`, `adaptive` (adaptive, only supported by some models)
+</ParamField>
+
+## Model-Specific Parameters
+
+Different models support different specific parameters. Below are detailed descriptions by model series:
+
+<Tabs>
+  <Tab title="Sora 2">
+<ParamField body="seconds" type="string|integer" default="4">
+  Video duration (seconds), supports: `4`, `8`, `12`
+</ParamField>
+<ParamField body="size" type="string" default="720x1280">
+  Video resolution, supports: `720x1280` (portrait), `1280x720` (landscape)
+</ParamField>
+<ParamField body="input_reference" type="string">
+  Reference image (supports URL or Base64 format), for image-to-video
+</ParamField>
+<ParamField body="remix_from_video_id" type="string">
+  Remix mode: Regenerate based on existing video ID (must start with `video_`)
+</ParamField>
+  </Tab>
+  
+  <Tab title="Veo">
+<ParamField body="durationSeconds" type="integer" default="4">
+  Video duration (seconds), supports: `4`, `6`, `8`
+</ParamField>
+<ParamField body="aspectRatio" type="string" default="16:9">
+  Aspect ratio, only supports: `16:9`, `9:16`
+</ParamField>
+<ParamField body="resolution" type="string" default="1080p">
+  Resolution, supports: `720p`, `1080p`
+</ParamField>
+<ParamField body="fps" type="integer" default="24">
+  Frame rate, default 24
+</ParamField>
+<ParamField body="image" type="string">
+  First frame reference image (supports URL or Base64 format)
+</ParamField>
+<ParamField body="lastFrame" type="string">
+  Last frame reference image (supports URL or Base64 format), only `veo-3.1` series supports
+</ParamField>
+<ParamField body="generateAudio" type="boolean" default="false">
+  Whether to generate synchronized audio. Fast models ignore this parameter and always include audio
+</ParamField>
+<ParamField body="personGeneration" type="string" default="allow_all">
+  Person generation strategy: `allow_all` (all ages), `allow_adult` (adults only), `dont_allow` (no people)
+</ParamField>
+<ParamField body="addWatermark" type="boolean" default="false">
+  Whether to add watermark
+</ParamField>
+<ParamField body="seed" type="integer">
+  Random seed for reproducing results
+</ParamField>
+<ParamField body="sampleCount" type="integer" default="1">
+  Number of videos generated each time, range: `1-4`
+</ParamField>
+  </Tab>
+  
+  <Tab title="Ali Wanxiang">
+<ParamField body="duration" type="integer" default="5">
+  Video duration (seconds), supports: `5`, `10`
+</ParamField>
+<ParamField body="resolution" type="string" default="720p">
+  Video resolution, supports: `480p`, `720p`, `1080p`
+</ParamField>
+<ParamField body="size" type="string">
+  Video size (t2v mode only), format: `width*height`, e.g. `1280*720`
+</ParamField>
+<ParamField body="smart_rewrite" type="boolean" default="false">
+  Whether to enable intelligent prompt expansion
+</ParamField>
+<ParamField body="generate_audio" type="boolean" default="false">
+  Whether to generate synchronized audio with the video
+</ParamField>
+<ParamField body="audio_url" type="string">
+  Custom audio file URL (HTTPS format)
+</ParamField>
+<ParamField body="seed" type="integer">
+  Random seed, range: `0-2147483647`
+</ParamField>
+  </Tab>
+  
+  <Tab title="Doubao Seedance">
+<ParamField body="metadata" type="object">
+  Doubao models use `metadata.content` array to pass content, supporting mixed text and image input. Parameters are controlled by special markers in the text prompt:
+  - `--rs` or `--resolution`: Resolution (`480p`, `720p`, `1080p`)
+  - `--ratio`: Aspect ratio (`16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `adaptive`)
+  - `--dur` or `--duration`: Duration (seconds, e.g. `5`, `10`)
+  - `--fps` or `--framespersecond`: Frame rate (e.g. `24`, `30`)
+  - `--seed`: Random seed
+  - `--wm` or `--watermark`: Watermark switch (`true`, `false`)
+  - `--cf` or `--camerafixed`: Fixed camera (`true`, `false`, only lite models support)
+</ParamField>
+<ParamField body="image" type="string">
+  Reference image (supports URL or Base64 format). In `metadata.content`, images can be marked with `role` field:
+  - `first_frame`: First frame image
+  - `last_frame`: Last frame image (only some models support)
+  - `reference_image`: Reference image (only `doubao-seedance-1-0-lite-i2v-250428` supports)
+</ParamField>
+<ParamField body="callback_url" type="string">
+  Callback notification URL (optional), automatically pushes results when task status changes
+</ParamField>
+  </Tab>
+</Tabs>
+
+## Usage Example
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sora-2",
+    "prompt": "A cute little cat playing in the garden, sunny and warm",
+    "seconds": "4",
+    "size": "720x1280"
+  }'
+```
+
+## Response Example
+
+```json
+{
+  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
+  "status": "submitted",
+  "format": "mp4"
+}
+```
+
+## Related APIs
+
+<Columns cols={2}>
+  <Card title="Query Video Task" icon="search" href="/en/api-reference/endpoint/query-video-task">
+    Query video generation task status and results
+  </Card>
+  <Card title="Download Video" icon="download" href="/en/api-reference/endpoint/download-video">
+    Download completed video files (Sora 2 only)
+  </Card>
+</Columns>
+

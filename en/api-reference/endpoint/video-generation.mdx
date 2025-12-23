@@ -36,6 +36,159 @@ The video generation API supports text-to-video, image-to-video, video-to-video,
   Bearer Token, e.g. `Bearer sk-xxxxxxxxxx`
 </ParamField>
 
+## API Endpoints
+
+### Submit Video Task
+
+**POST** `/v1/video/generations`
+
+Submit a video generation task and return a task ID for subsequent queries.
+
+### Query Video Task
+
+**GET** `/v1/video/generations/{task_id}`
+
+Query the status and results of a video generation task by task ID.
+
+#### Path Parameters
+
+<ParamField path="task_id" type="string" required>
+  Video generation task ID returned by the submit task interface
+</ParamField>
+
+#### Response Examples
+
+**Task Status Description**:
+
+| Status | Description | Suggested Action |
+|--------|-------------|------------------|
+| `queued` | Task queued, waiting for processing | Continue polling |
+| `in_progress` | Task being processed | Continue polling |
+| `succeeded` | Task completed successfully | Download video |
+| `failed` | Task failed | View error reason |
+
+**Response Example (Queued)**:
+```json
+{
+  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
+  "status": "queued",
+  "format": "mp4"
+}
+```
+
+**Response Example (In Progress)**:
+```json
+{
+  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
+  "status": "in_progress",
+  "format": "mp4"
+}
+```
+
+**Response Example (Completed)**:
+```json
+{
+  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
+  "status": "succeeded",
+  "format": "mp4"
+}
+```
+
+**Response Example (Failed)**:
+```json
+{
+  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
+  "status": "failed",
+  "format": "mp4",
+  "error": {
+    "code": 400,
+    "message": "Prompt contains inappropriate content"
+  }
+}
+```
+
+#### Usage Example
+
+```bash
+curl -X GET "https://llm.ai-nebula.com/v1/video/generations/video_69095b4ce0048190893a01510c0c98b0" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx"
+```
+
+### Download Video
+
+**GET** `/v1/video/generations/download?id={videoId}`
+
+Download completed video files (Sora 2 only).
+
+#### Query Parameters
+
+<ParamField query="id" type="string" required>
+  Video ID returned by the query task interface (task_id)
+</ParamField>
+
+#### Response Example
+
+```json
+{
+  "success": true,
+  "generation_id": "video_69095b4ce0048190893a01510c0c98b0",
+  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
+  "format": "mp4",
+  "size": 15728640,
+  "base64": "AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAB...",
+  "data_url": "data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAB..."
+}
+```
+
+**Response Field Description**:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `success` | boolean | Success status |
+| `generation_id` | string | Generation ID (same as videoId) |
+| `task_id` | string | Task ID |
+| `format` | string | Video format (fixed as `"mp4"`) |
+| `size` | number | Video file size (bytes) |
+| `base64` | string | Base64 encoded video data |
+| `data_url` | string | Data URL format video data, can be used directly in frontend `<video>` tags |
+
+#### Usage Example
+
+```bash
+curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69095b4ce0048190893a01510c0c98b0" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx"
+```
+
+## Submit Video Task
+
+**POST** `/v1/video/generations`
+
+Submit a video generation task and return a task ID for subsequent queries.
+
+#### Usage Example
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sora-2",
+    "prompt": "A cute little cat playing in the garden, sunny and warm",
+    "seconds": "4",
+    "size": "720x1280"
+  }'
+```
+
+#### Response Example
+
+```json
+{
+  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
+  "status": "submitted",
+  "format": "mp4"
+}
+```
+
 ## Request Parameters
 
 <ParamField body="model" type="string" required>

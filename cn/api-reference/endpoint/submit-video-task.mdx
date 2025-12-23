@@ -1,33 +1,13 @@
 ---
-title: '视频生成'
+title: '提交视频任务'
+api: 'POST https://llm.ai-nebula.com/v1/video/generations'
 ---
 
 ## 简介
 
-视频生成接口支持文生视频、图生视频、视频生视频等多种功能。通过统一的API接口，您可以调用Sora 2、Veo、阿里万相、豆包 Seedance 等多个主流视频生成模型。
+提交视频生成任务接口用于创建新的视频生成任务。提交成功后会返回任务ID，您可以使用该任务ID查询任务状态。
 
 **重要提示**：视频生成是异步任务，需要先提交任务获取任务ID，然后轮询查询任务状态直到成功。
-
-## 支持的模型及功能
-
-| 模型系列 | 模型名称 | 支持功能 |
-|---------|---------|---------|
-| **Sora 2** | `sora-2` | 文生视频、图生视频、视频生视频（Remix 模式） |
-| **谷歌 Veo** | `veo-3.0-fast-generate-001` | 文生视频（首帧模式） |
-| | `veo-3.1-fast-generate-preview` | 文生视频（首帧模式、首尾帧模式） |
-| **阿里万相** | `wan2.5-t2v-preview` | 文生视频 |
-| | `wan2.5-i2v-preview` | 图生视频（首帧模式） |
-| **豆包 Seedance** | `doubao-seedance-1-0-lite-t2v-250428` | 文生视频 |
-| | `doubao-seedance-1-0-lite-i2v-250428` | 图生视频（首帧模式、首尾帧模式、参考图模式） |
-| | `doubao-seedance-1-0-pro-250528` | 文生视频（首帧模式） |
-
-**功能说明**：
-- **文生视频（T2V）**：仅通过文本提示词生成视频
-- **图生视频（I2V）**：基于参考图片生成视频
-  - **首帧模式**：使用首帧图片作为起始画面
-  - **首尾帧模式**：使用首帧和尾帧图片控制视频起止画面
-  - **参考图模式**：使用参考图片作为风格参考（仅部分模型支持）
-- **视频生视频（Remix）**：基于已有视频重新生成（仅 Sora 2 支持）
 
 ## 认证
 
@@ -35,156 +15,7 @@ title: '视频生成'
   Bearer Token，如 `Bearer sk-xxxxxxxxxx`
 </ParamField>
 
-## API 端点
-
-### 提交视频任务
-
-**POST** `/v1/video/generations`
-
-提交视频生成任务，返回任务ID用于后续查询。
-
-### 查询视频任务
-
-**GET** `/v1/video/generations/{task_id}`
-
-根据任务ID查询视频生成任务的状态和结果。
-
-#### 路径参数
-
-<ParamField path="task_id" type="string" required>
-  视频生成任务ID，由提交任务接口返回
-</ParamField>
-
-#### 响应示例
-
-**任务状态说明**：
-
-| 状态 | 说明 | 建议操作 |
-|------|------|----------|
-| `queued` | 任务已排队，等待处理 | 继续轮询 |
-| `in_progress` | 任务正在处理中 | 继续轮询 |
-| `succeeded` | 任务成功完成 | 下载视频 |
-| `failed` | 任务失败 | 查看失败原因 |
-
-**响应示例（排队中）**：
-```json
-{
-  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
-  "status": "queued",
-  "format": "mp4"
-}
-```
-
-**响应示例（处理中）**：
-```json
-{
-  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
-  "status": "in_progress",
-  "format": "mp4"
-}
-```
-
-**响应示例（已完成）**：
-```json
-{
-  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
-  "status": "succeeded",
-  "format": "mp4"
-}
-```
-
-**响应示例（失败）**：
-```json
-{
-  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
-  "status": "failed",
-  "format": "mp4",
-  "error": {
-    "code": 400,
-    "message": "提示词包含不当内容"
-  }
-}
-```
-
-#### 使用示例
-
-```bash
-curl -X GET "https://llm.ai-nebula.com/v1/video/generations/video_69095b4ce0048190893a01510c0c98b0" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx"
-```
-
-### 下载视频
-
-**GET** `/v1/video/generations/download?id={videoId}`
-
-下载已完成的视频文件（仅 Sora 2 支持）。
-
-#### 查询参数
-
-<ParamField query="id" type="string" required>
-  视频ID，由查询任务接口返回的 task_id
-</ParamField>
-
-#### 响应示例
-
-```json
-{
-  "success": true,
-  "generation_id": "video_69095b4ce0048190893a01510c0c98b0",
-  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
-  "format": "mp4",
-  "size": 15728640,
-  "base64": "AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAB...",
-  "data_url": "data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAB..."
-}
-```
-
-**响应字段说明**：
-
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| `success` | boolean | 是否成功 |
-| `generation_id` | string | 生成ID（与 videoId 相同） |
-| `task_id` | string | 任务ID |
-| `format` | string | 视频格式（固定为 `"mp4"`） |
-| `size` | number | 视频文件大小（字节） |
-| `base64` | string | Base64 编码的视频数据 |
-| `data_url` | string | Data URL 格式的视频数据，可直接用于前端 `<video>` 标签 |
-
-#### 使用示例
-
-```bash
-curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69095b4ce0048190893a01510c0c98b0" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx"
-```
-
-## 提交视频任务
-
-#### 使用示例
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sora-2",
-    "prompt": "一只可爱的小猫在花园里玩耍，阳光明媚，画面温馨",
-    "seconds": "4",
-    "size": "720x1280"
-  }'
-```
-
-#### 响应示例
-
-```json
-{
-  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
-  "status": "submitted",
-  "format": "mp4"
-}
-```
-
-### 请求参数
+## 请求参数
 
 <ParamField body="model" type="string" required>
   模型标识，支持的模型及功能如下：
@@ -329,5 +160,38 @@ curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
   </Tab>
 </Tabs>
 
-## 最佳实践
+## 使用示例
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sora-2",
+    "prompt": "一只可爱的小猫在花园里玩耍，阳光明媚，画面温馨",
+    "seconds": "4",
+    "size": "720x1280"
+  }'
+```
+
+## 响应示例
+
+```json
+{
+  "task_id": "video_69095b4ce0048190893a01510c0c98b0",
+  "status": "submitted",
+  "format": "mp4"
+}
+```
+
+## 相关接口
+
+<Columns cols={2}>
+  <Card title="查询视频任务" icon="search" href="/cn/api-reference/endpoint/query-video-task">
+    查询视频生成任务的状态和结果
+  </Card>
+  <Card title="下载视频" icon="download" href="/cn/api-reference/endpoint/download-video">
+    下载已完成的视频文件（仅 Sora 2）
+  </Card>
+</Columns>
 

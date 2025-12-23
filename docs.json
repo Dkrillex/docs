@@ -43,11 +43,15 @@
             },
             {
               "group": "视频系列",
-              "pages": ["cn/api-reference/endpoint/video-generation"]
+              "pages": [
+                "cn/api-reference/endpoint/submit-video-task",
+                "cn/api-reference/endpoint/query-video-task",
+                "cn/api-reference/endpoint/download-video"
+              ]
             },
             {
               "group": "实时语音",
-              "pages": ["cn/api-reference/realtime"]
+              "pages": ["cn/api-reference/realtime", "cn/api-reference/endpoint/gemini-live"]
             }
             ]
           },
@@ -112,11 +116,15 @@
             },
             {
               "group": "Video Series",
-              "pages": ["en/api-reference/endpoint/video-generation"]
+              "pages": [
+                "en/api-reference/endpoint/submit-video-task",
+                "en/api-reference/endpoint/query-video-task",
+                "en/api-reference/endpoint/download-video"
+              ]
             },
 {
               "group": "Realtime Voice",
-              "pages": ["en/api-reference/realtime"]
+              "pages": ["en/api-reference/realtime", "en/api-reference/endpoint/gemini-live"]
             }
             ]
           },
