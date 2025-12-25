@@ -37,8 +37,8 @@ The submit video task API is used to create a new video generation task. Upon su
   - `doubao-seedance-1-0-pro-250528` - Text-to-video (first frame mode)
 </ParamField>
 
-<ParamField body="prompt" type="string" required>
-  Video generation prompt, describing scene actions and settings
+<ParamField body="prompt" type="string">
+  Video generation prompt, describing scene actions and settings. **Note**: Doubao Seedance series models do not require this field, the prompt should be written directly in the `text` field of the `metadata.content` array
 </ParamField>
 
 <ParamField body="image" type="string">
@@ -138,8 +138,8 @@ Different models support different specific parameters. Below are detailed descr
   </Tab>
   
   <Tab title="Doubao Seedance">
-<ParamField body="content" type="array" required>
-  Content array, must include text and optional images. Parameters are controlled through special markers in text prompts:
+<ParamField body="metadata.content" type="array" required>
+  Content array, must be placed in the `metadata` object. Must include text and optional images. Parameters are controlled through special markers in text prompts:
   - `--rs` or `--resolution`: Resolution (`480p`, `720p`, `1080p`)
   - `--ratio`: Aspect ratio (`16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `adaptive`, note that `doubao-seedance-1-0-lite-t2v-250428` does not support `adaptive`)
   - `--dur` or `--duration`: Duration (seconds, e.g. `5`, `10`)
@@ -148,25 +148,26 @@ Different models support different specific parameters. Below are detailed descr
   - `--wm` or `--watermark`: Watermark toggle (`true`, `false`)
   - `--cf` or `--camerafixed`: Fixed camera (`true`, `false`, only lite models support)
   
-  **content array format**:
+  **metadata.content array format**:
   ```json
-  [
-    {
-      "type": "text",
-      "text": "Prompt content --ratio 16:9 --dur 5 --rs 720p --wm false"
-    },
-    {
-      "type": "image_url",
-      "image_url": {
-        "url": "data:image/png;base64,..."
-      },
-      "role": "first_frame"  // Optional: first_frame, last_frame, reference_image
+  {
+    "metadata": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Prompt content --ratio 16:9 --dur 5 --rs 720p --wm false"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,..."
+          },
+          "role": "first_frame"  // Optional: first_frame, last_frame, reference_image
+        }
+      ]
     }
-  ]
+  }
   ```
-</ParamField>
-<ParamField body="prompt" type="string" required>
-  Base prompt (without parameter markers), parameter markers will be automatically added to the text in the content array
 </ParamField>
   </Tab>
 </Tabs>
@@ -384,13 +385,14 @@ Different models support different specific parameters. Below are detailed descr
       -H "Content-Type: application/json" \
       -d '{
         "model": "doubao-seedance-1-0-lite-t2v-250428",
-        "prompt": "A cute kitten playing in a garden, sunny day",
-        "content": [
-          {
-            "type": "text",
-            "text": "A cute kitten playing in a garden, sunny day --ratio 16:9 --dur 5 --rs 720p --wm false"
-          }
-        ]
+        "metadata": {
+          "content": [
+            {
+              "type": "text",
+              "text": "A cute kitten playing in a garden, sunny day --ratio 16:9 --dur 5 --rs 720p --wm false"
+            }
+          ]
+        }
       }'
     ```
     
@@ -401,13 +403,14 @@ Different models support different specific parameters. Below are detailed descr
       -H "Content-Type: application/json" \
       -d '{
         "model": "doubao-seedance-1-0-lite-t2v-250428",
-        "prompt": "A cute kitten playing in a garden, sunny day",
-        "content": [
-          {
-            "type": "text",
-            "text": "A cute kitten playing in a garden, sunny day --ratio 9:16 --dur 10 --rs 1080p --fps 30 --wm true --seed 12345"
-          }
-        ]
+        "metadata": {
+          "content": [
+            {
+              "type": "text",
+              "text": "A cute kitten playing in a garden, sunny day --ratio 9:16 --dur 10 --rs 1080p --fps 30 --wm true --seed 12345"
+            }
+          ]
+        }
       }'
     ```
     
@@ -418,19 +421,20 @@ Different models support different specific parameters. Below are detailed descr
       -H "Content-Type: application/json" \
       -d '{
         "model": "doubao-seedance-1-0-lite-i2v-250428",
-        "prompt": "A girl opens her eyes and looks gently at the camera",
-        "content": [
-          {
-            "type": "text",
-            "text": "A girl opens her eyes and looks gently at the camera --ratio adaptive --dur 5 --rs 720p --wm false"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+        "metadata": {
+          "content": [
+            {
+              "type": "text",
+              "text": "A girl opens her eyes and looks gently at the camera --ratio adaptive --dur 5 --rs 720p --wm false"
+            },
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+              }
             }
-          }
-        ]
+          ]
+        }
       }'
     ```
     
@@ -441,27 +445,28 @@ Different models support different specific parameters. Below are detailed descr
       -H "Content-Type: application/json" \
       -d '{
         "model": "doubao-seedance-1-0-lite-i2v-250428",
-        "prompt": "A blue-green jingwei bird transforms into human form",
-        "content": [
-          {
-            "type": "text",
-            "text": "A blue-green jingwei bird transforms into human form --rs 720p --dur 5 --fps 24 --cf false --wm false --seed 67890"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+        "metadata": {
+          "content": [
+            {
+              "type": "text",
+              "text": "A blue-green jingwei bird transforms into human form --rs 720p --dur 5 --fps 24 --cf false --wm false --seed 67890"
             },
-            "role": "first_frame"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "data:image/png;base64,iVBORw0KGgoAAyyyy..."
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+              },
+              "role": "first_frame"
             },
-            "role": "last_frame"
-          }
-        ]
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "data:image/png;base64,iVBORw0KGgoAAyyyy..."
+              },
+              "role": "last_frame"
+            }
+          ]
+        }
       }'
     ```
     
@@ -472,34 +477,35 @@ Different models support different specific parameters. Below are detailed descr
       -H "Content-Type: application/json" \
       -d '{
         "model": "doubao-seedance-1-0-lite-i2v-250428",
-        "prompt": "[图1] A boy wearing glasses and blue T-shirt and [图2] corgi dog, sitting on [图3] lawn, 3D cartoon style",
-        "content": [
-          {
-            "type": "text",
-            "text": "[图1] A boy wearing glasses and blue T-shirt and [图2] corgi dog, sitting on [图3] lawn, 3D cartoon style --rs 720p --dur 5 --ratio 16:9 --wm false"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "https://example.com/ref1.png"
+        "metadata": {
+          "content": [
+            {
+              "type": "text",
+              "text": "[图1] A boy wearing glasses and blue T-shirt and [图2] corgi dog, sitting on [图3] lawn, 3D cartoon style --rs 720p --dur 5 --ratio 16:9 --wm false"
             },
-            "role": "reference_image"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "https://example.com/ref2.png"
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "https://example.com/ref1.png"
+              },
+              "role": "reference_image"
             },
-            "role": "reference_image"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "https://example.com/ref3.png"
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "https://example.com/ref2.png"
+              },
+              "role": "reference_image"
             },
-            "role": "reference_image"
-          }
-        ]
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "https://example.com/ref3.png"
+              },
+              "role": "reference_image"
+            }
+          ]
+        }
       }'
     ```
     
@@ -510,19 +516,20 @@ Different models support different specific parameters. Below are detailed descr
       -H "Content-Type: application/json" \
       -d '{
         "model": "doubao-seedance-1-0-pro-250528",
-        "prompt": "A girl opens her eyes and looks gently at the camera",
-        "content": [
-          {
-            "type": "text",
-            "text": "A girl opens her eyes and looks gently at the camera --ratio 16:9 --dur 5 --rs 1080p --wm false"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+        "metadata": {
+          "content": [
+            {
+              "type": "text",
+              "text": "A girl opens her eyes and looks gently at the camera --ratio 16:9 --dur 5 --rs 1080p --wm false"
+            },
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+              }
             }
-          }
-        ]
+          ]
+        }
       }'
     ```
   </Tab>

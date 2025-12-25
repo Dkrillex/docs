@@ -373,13 +373,14 @@ curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69
       -H "Content-Type: application/json" \
       -d '{
         "model": "doubao-seedance-1-0-lite-t2v-250428",
-        "prompt": "一只小猫在花园里玩耍，阳光明媚",
-        "content": [
-          {
-            "type": "text",
-            "text": "一只小猫在花园里玩耍，阳光明媚 --ratio 16:9 --dur 5 --rs 720p --wm false"
-          }
-        ]
+        "metadata": {
+          "content": [
+            {
+              "type": "text",
+              "text": "一只小猫在花园里玩耍，阳光明媚 --ratio 16:9 --dur 5 --rs 720p --wm false"
+            }
+          ]
+        }
       }'
     ```
     
@@ -390,13 +391,14 @@ curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69
       -H "Content-Type: application/json" \
       -d '{
         "model": "doubao-seedance-1-0-lite-t2v-250428",
-        "prompt": "一只小猫在花园里玩耍，阳光明媚",
-        "content": [
-          {
-            "type": "text",
-            "text": "一只小猫在花园里玩耍，阳光明媚 --ratio 9:16 --dur 10 --rs 1080p --fps 30 --wm true --seed 12345"
-          }
-        ]
+        "metadata": {
+          "content": [
+            {
+              "type": "text",
+              "text": "一只小猫在花园里玩耍，阳光明媚 --ratio 9:16 --dur 10 --rs 1080p --fps 30 --wm true --seed 12345"
+            }
+          ]
+        }
       }'
     ```
     
@@ -407,19 +409,20 @@ curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69
       -H "Content-Type: application/json" \
       -d '{
         "model": "doubao-seedance-1-0-lite-i2v-250428",
-        "prompt": "女孩睁开眼睛，温柔地看着镜头",
-        "content": [
-          {
-            "type": "text",
-            "text": "女孩睁开眼睛，温柔地看着镜头 --ratio adaptive --dur 5 --rs 720p --wm false"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+        "metadata": {
+          "content": [
+            {
+              "type": "text",
+              "text": "女孩睁开眼睛，温柔地看着镜头 --ratio adaptive --dur 5 --rs 720p --wm false"
+            },
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+              }
             }
-          }
-        ]
+          ]
+        }
       }'
     ```
     
@@ -430,27 +433,28 @@ curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69
       -H "Content-Type: application/json" \
       -d '{
         "model": "doubao-seedance-1-0-lite-i2v-250428",
-        "prompt": "一只蓝绿色的精卫鸟变成人形",
-        "content": [
-          {
-            "type": "text",
-            "text": "一只蓝绿色的精卫鸟变成人形 --rs 720p --dur 5 --fps 24 --cf false --wm false --seed 67890"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+        "metadata": {
+          "content": [
+            {
+              "type": "text",
+              "text": "一只蓝绿色的精卫鸟变成人形 --rs 720p --dur 5 --fps 24 --cf false --wm false --seed 67890"
             },
-            "role": "first_frame"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "data:image/png;base64,iVBORw0KGgoAAyyyy..."
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+              },
+              "role": "first_frame"
             },
-            "role": "last_frame"
-          }
-        ]
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "data:image/png;base64,iVBORw0KGgoAAyyyy..."
+              },
+              "role": "last_frame"
+            }
+          ]
+        }
       }'
     ```
     
@@ -461,34 +465,35 @@ curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69
       -H "Content-Type: application/json" \
       -d '{
         "model": "doubao-seedance-1-0-lite-i2v-250428",
-        "prompt": "[图1] 戴眼镜穿蓝色T恤的男孩和 [图2] 柯基狗，坐在 [图3] 草坪上，3D卡通风格",
-        "content": [
-          {
-            "type": "text",
-            "text": "[图1] 戴眼镜穿蓝色T恤的男孩和 [图2] 柯基狗，坐在 [图3] 草坪上，3D卡通风格 --rs 720p --dur 5 --ratio 16:9 --wm false"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "https://example.com/ref1.png"
+        "metadata": {
+          "content": [
+            {
+              "type": "text",
+              "text": "[图1] 戴眼镜穿蓝色T恤的男孩和 [图2] 柯基狗，坐在 [图3] 草坪上，3D卡通风格 --rs 720p --dur 5 --ratio 16:9 --wm false"
             },
-            "role": "reference_image"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "https://example.com/ref2.png"
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "https://example.com/ref1.png"
+              },
+              "role": "reference_image"
             },
-            "role": "reference_image"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "https://example.com/ref3.png"
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "https://example.com/ref2.png"
+              },
+              "role": "reference_image"
             },
-            "role": "reference_image"
-          }
-        ]
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "https://example.com/ref3.png"
+              },
+              "role": "reference_image"
+            }
+          ]
+        }
       }'
     ```
     
@@ -499,19 +504,20 @@ curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69
       -H "Content-Type: application/json" \
       -d '{
         "model": "doubao-seedance-1-0-pro-250528",
-        "prompt": "女孩睁开眼睛，温柔地看着镜头",
-        "content": [
-          {
-            "type": "text",
-            "text": "女孩睁开眼睛，温柔地看着镜头 --ratio 16:9 --dur 5 --rs 1080p --wm false"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+        "metadata": {
+          "content": [
+            {
+              "type": "text",
+              "text": "女孩睁开眼睛，温柔地看着镜头 --ratio 16:9 --dur 5 --rs 1080p --wm false"
+            },
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+              }
             }
-          }
-        ]
+          ]
+        }
       }'
     ```
   </Tab>
@@ -549,8 +555,8 @@ curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69
   - `doubao-seedance-1-0-pro-250528` - 文生视频（首帧模式）
 </ParamField>
 
-<ParamField body="prompt" type="string" required>
-  视频生成提示词，描述画面动作和场景
+<ParamField body="prompt" type="string">
+  视频生成提示词，描述画面动作和场景。**注意**：豆包 Seedance 系列模型不需要此字段，提示词直接写在 `metadata.content` 数组的 `text` 字段中
 </ParamField>
 
 <ParamField body="image" type="string">
@@ -650,8 +656,8 @@ curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69
   </Tab>
   
   <Tab title="豆包 Seedance">
-<ParamField body="content" type="array" required>
-  内容数组，必须包含文本和可选的图片。参数通过文本提示词中的特殊标记控制：
+<ParamField body="metadata.content" type="array" required>
+  内容数组，必须放在 `metadata` 对象中。必须包含文本和可选的图片。参数通过文本提示词中的特殊标记控制：
   - `--rs` 或 `--resolution`：分辨率（`480p`、`720p`、`1080p`）
   - `--ratio`：宽高比（`16:9`、`9:16`、`1:1`、`4:3`、`3:4`、`adaptive`，注意 `doubao-seedance-1-0-lite-t2v-250428` 不支持 `adaptive`）
   - `--dur` 或 `--duration`：时长（秒，如 `5`、`10`）
@@ -660,25 +666,26 @@ curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69
   - `--wm` 或 `--watermark`：水印开关（`true`、`false`）
   - `--cf` 或 `--camerafixed`：固定摄像头（`true`、`false`，仅 lite 模型支持）
   
-  **content 数组格式**：
+  **metadata.content 数组格式**：
   ```json
-  [
-    {
-      "type": "text",
-      "text": "提示词内容 --ratio 16:9 --dur 5 --rs 720p --wm false"
-    },
-    {
-      "type": "image_url",
-      "image_url": {
-        "url": "data:image/png;base64,..."
-      },
-      "role": "first_frame"  // 可选：first_frame、last_frame、reference_image
+  {
+    "metadata": {
+      "content": [
+        {
+          "type": "text",
+          "text": "提示词内容 --ratio 16:9 --dur 5 --rs 720p --wm false"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,..."
+          },
+          "role": "first_frame"  // 可选：first_frame、last_frame、reference_image
+        }
+      ]
     }
-  ]
+  }
   ```
-</ParamField>
-<ParamField body="prompt" type="string" required>
-  基础提示词（不含参数标记），参数标记会自动添加到 content 数组的文本中
 </ParamField>
   </Tab>
 </Tabs>
@@ -687,7 +694,7 @@ curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69
 
 ### 豆包 Seedance 系列
 
-豆包 Seedance 系列模型使用特殊的参数传递方式：**所有参数通过提示词中的特殊标记传递**，图片通过 `content` 数组传递。
+豆包 Seedance 系列模型使用特殊的参数传递方式：**所有参数通过提示词中的特殊标记传递**，图片通过 `metadata.content` 数组传递。
 
 #### 1. 文生视频（T2V）
 
@@ -697,13 +704,14 @@ curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "doubao-seedance-1-0-lite-t2v-250428",
-    "prompt": "一只小猫在花园里玩耍，阳光明媚",
-    "content": [
-      {
-        "type": "text",
-        "text": "一只小猫在花园里玩耍，阳光明媚 --ratio 16:9 --dur 5 --rs 720p --wm false"
-      }
-    ]
+    "metadata": {
+      "content": [
+        {
+          "type": "text",
+          "text": "一只小猫在花园里玩耍，阳光明媚 --ratio 16:9 --dur 5 --rs 720p --wm false"
+        }
+      ]
+    }
   }'
 ```
 
@@ -715,19 +723,20 @@ curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "doubao-seedance-1-0-lite-i2v-250428",
-    "prompt": "女孩睁开眼睛，温柔地看着镜头",
-    "content": [
-      {
-        "type": "text",
-        "text": "女孩睁开眼睛，温柔地看着镜头 --ratio adaptive --dur 5 --rs 720p --wm false"
-      },
-      {
-        "type": "image_url",
-        "image_url": {
-          "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+    "metadata": {
+      "content": [
+        {
+          "type": "text",
+          "text": "女孩睁开眼睛，温柔地看着镜头 --ratio adaptive --dur 5 --rs 720p --wm false"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+          }
         }
-      }
-    ]
+      ]
+    }
   }'
 ```
 
@@ -739,27 +748,28 @@ curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "doubao-seedance-1-0-lite-i2v-250428",
-    "prompt": "一只蓝绿色的精卫鸟变成人形",
-    "content": [
-      {
-        "type": "text",
-        "text": "一只蓝绿色的精卫鸟变成人形 --rs 720p --dur 5 --cf false"
-      },
-      {
-        "type": "image_url",
-        "image_url": {
-          "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+    "metadata": {
+      "content": [
+        {
+          "type": "text",
+          "text": "一只蓝绿色的精卫鸟变成人形 --rs 720p --dur 5 --cf false"
         },
-        "role": "first_frame"
-      },
-      {
-        "type": "image_url",
-        "image_url": {
-          "url": "data:image/png;base64,iVBORw0KGgoAAyyyy..."
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+          },
+          "role": "first_frame"
         },
-        "role": "last_frame"
-      }
-    ]
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,iVBORw0KGgoAAyyyy..."
+          },
+          "role": "last_frame"
+        }
+      ]
+    }
   }'
 ```
 
@@ -771,39 +781,41 @@ curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "doubao-seedance-1-0-lite-i2v-250428",
-    "prompt": "[图1] 戴眼镜穿蓝色T恤的男孩和 [图2] 柯基狗，坐在 [图3] 草坪上，3D卡通风格",
-    "content": [
-      {
-        "type": "text",
-        "text": "[图1] 戴眼镜穿蓝色T恤的男孩和 [图2] 柯基狗，坐在 [图3] 草坪上，3D卡通风格 --rs 720p --dur 5"
-      },
-      {
-        "type": "image_url",
-        "image_url": {
-          "url": "https://example.com/ref1.png"
+    "metadata": {
+      "content": [
+        {
+          "type": "text",
+          "text": "[图1] 戴眼镜穿蓝色T恤的男孩和 [图2] 柯基狗，坐在 [图3] 草坪上，3D卡通风格 --rs 720p --dur 5"
         },
-        "role": "reference_image"
-      },
-      {
-        "type": "image_url",
-        "image_url": {
-          "url": "https://example.com/ref2.png"
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://example.com/ref1.png"
+          },
+          "role": "reference_image"
         },
-        "role": "reference_image"
-      },
-      {
-        "type": "image_url",
-        "image_url": {
-          "url": "https://example.com/ref3.png"
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://example.com/ref2.png"
+          },
+          "role": "reference_image"
         },
-        "role": "reference_image"
-      }
-    ]
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://example.com/ref3.png"
+          },
+          "role": "reference_image"
+        }
+      ]
+    }
   }'
 ```
 
 **重要提示**：
-- 所有参数必须通过提示词中的特殊标记传递（如 `--ratio 16:9`）
+- `content` 数组必须放在 `metadata` 对象中
+- 所有参数通过提示词中的特殊标记传递（如 `--ratio 16:9`）
 - 图片必须放在 `content` 数组中，使用 `image_url` 类型
 - 首尾帧模式需要两张图片，分别标记 `role: "first_frame"` 和 `role: "last_frame"`
 - 参考图模式需要在提示词中使用 `[图1]`、`[图2]` 等标记引用图片，图片标记 `role: "reference_image"`
