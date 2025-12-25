@@ -401,6 +401,52 @@ console.log(response.data[0].b64_json);
           }'
         ```
       </Tab>
+      <Tab title="3.0 模型（引导系数）">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+          -H "Authorization: Bearer sk-xxxxxxxxxx" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "model": "doubao-seedream-3-0-t2i-250415",
+            "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
+            "size": "1024x1024",
+            "watermark": false,
+            "guidance_scale": 7.5,
+            "seed": 12345
+          }'
+        ```
+      </Tab>
+      <Tab title="4.5 模型（创意/精确模式）">
+        ```bash
+        # 创意模式
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+          -H "Authorization: Bearer sk-xxxxxxxxxx" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "model": "doubao-seedream-4-5-251128",
+            "prompt": "一只可爱的小猫",
+            "size": "2048x2048",
+            "watermark": false,
+            "optimize_prompt_options": {
+              "mode": "creative"
+            }
+          }'
+
+        # 精确模式
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+          -H "Authorization: Bearer sk-xxxxxxxxxx" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "model": "doubao-seedream-4-5-251128",
+            "prompt": "一只可爱的小猫",
+            "size": "2048x2048",
+            "watermark": false,
+            "optimize_prompt_options": {
+              "mode": "precise"
+            }
+          }'
+        ```
+      </Tab>
     </Tabs>
   </Tab>
   

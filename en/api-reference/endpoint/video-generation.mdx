@@ -165,19 +165,362 @@ curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69
 
 Submit a video generation task and return a task ID for subsequent queries.
 
-#### Usage Example
+#### Usage Examples
 
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sora-2",
-    "prompt": "A cute little cat playing in the garden, sunny and warm",
-    "seconds": "4",
-    "size": "720x1280"
-  }'
-```
+<Tabs>
+  <Tab title="Sora 2">
+    **1. Text-to-Video (Basic Example)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "sora-2",
+        "prompt": "A cute little cat playing in the garden, sunny and warm",
+        "seconds": "4",
+        "size": "720x1280"
+      }'
+    ```
+    
+    **2. Text-to-Video (Landscape, 8 seconds)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "sora-2",
+        "prompt": "A cute little cat playing in the garden, sunny and warm",
+        "seconds": "8",
+        "size": "1280x720"
+      }'
+    ```
+    
+    **3. Image-to-Video (First Frame Mode)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "sora-2",
+        "prompt": "A cute little cat playing in the garden, sunny and warm",
+        "seconds": "4",
+        "size": "720x1280",
+        "input_reference": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+      }'
+    ```
+    
+    **4. Remix Mode (Video-to-Video)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "sora-2",
+        "prompt": "Change the video to a night scene with stars",
+        "seconds": "4",
+        "size": "720x1280",
+        "remix_from_video_id": "video_69095b4ce0048190893a01510c0c98b0"
+      }'
+    ```
+  </Tab>
+  
+  <Tab title="Veo">
+    **1. Text-to-Video (Basic Example)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "veo-3.1-fast-generate-preview",
+        "prompt": "Aerial view of a sci-fi city at dawn, sunlight piercing through clouds",
+        "durationSeconds": 8,
+        "aspectRatio": "16:9",
+        "resolution": "1080p",
+        "fps": 24,
+        "generateAudio": true,
+        "personGeneration": "allow_all",
+        "addWatermark": false
+      }'
+    ```
+    
+    **2. Text-to-Video (Portrait, with Random Seed)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "veo-3.1-fast-generate-preview",
+        "prompt": "Aerial view of a sci-fi city at dawn, sunlight piercing through clouds",
+        "durationSeconds": 6,
+        "aspectRatio": "9:16",
+        "resolution": "720p",
+        "fps": 30,
+        "generateAudio": false,
+        "personGeneration": "allow_adult",
+        "addWatermark": true,
+        "seed": 12345,
+        "sampleCount": 2
+      }'
+    ```
+    
+    **3. Image-to-Video (First Frame Mode)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "veo-3.1-fast-generate-preview",
+        "prompt": "Generate video based on this image, scene gradually unfolds",
+        "durationSeconds": 8,
+        "aspectRatio": "16:9",
+        "resolution": "1080p",
+        "fps": 24,
+        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
+        "generateAudio": true,
+        "personGeneration": "dont_allow",
+        "addWatermark": false
+      }'
+    ```
+    
+    **4. Image-to-Video (First/Last Frame Mode, only veo-3.1 supports)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "veo-3.1-fast-generate-preview",
+        "prompt": "Transition from first image to second image",
+        "durationSeconds": 8,
+        "aspectRatio": "16:9",
+        "resolution": "1080p",
+        "fps": 24,
+        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
+        "lastFrame": "data:image/png;base64,iVBORw0KGgoAAyyyy...",
+        "generateAudio": true,
+        "seed": 67890,
+        "sampleCount": 1
+      }'
+    ```
+  </Tab>
+  
+  <Tab title="Ali Wanxiang">
+    **1. Text-to-Video (Basic Example)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "wan2.5-t2v-preview",
+        "prompt": "A kitten slowly opens its eyes, ears gently twitch, camera slowly pushes in",
+        "duration": 5,
+        "size": "1280*720",
+        "smart_rewrite": true,
+        "generate_audio": true
+      }'
+    ```
+    
+    **2. Text-to-Video (10 seconds, 1080p, with Random Seed)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "wan2.5-t2v-preview",
+        "prompt": "A kitten slowly opens its eyes, ears gently twitch, camera slowly pushes in",
+        "duration": 10,
+        "size": "1920*1080",
+        "smart_rewrite": false,
+        "generate_audio": false,
+        "seed": 123456
+      }'
+    ```
+    
+    **3. Image-to-Video (First Frame Mode)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "wan2.5-i2v-preview",
+        "prompt": "Kitten slowly opens its eyes, ears gently twitch, camera slowly pushes in",
+        "duration": 5,
+        "resolution": "720p",
+        "smart_rewrite": true,
+        "generate_audio": true,
+        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+      }'
+    ```
+    
+    **4. Image-to-Video (with Custom Audio)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "wan2.5-i2v-preview",
+        "prompt": "Kitten slowly opens its eyes, ears gently twitch, camera slowly pushes in",
+        "duration": 10,
+        "resolution": "1080p",
+        "smart_rewrite": false,
+        "generate_audio": false,
+        "audio_url": "https://example.com/audio.mp3",
+        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
+        "seed": 789012
+      }'
+    ```
+  </Tab>
+  
+  <Tab title="Doubao Seedance">
+    **1. Text-to-Video (T2V, Basic Example)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "doubao-seedance-1-0-lite-t2v-250428",
+        "prompt": "A cute kitten playing in a garden, sunny day",
+        "content": [
+          {
+            "type": "text",
+            "text": "A cute kitten playing in a garden, sunny day --ratio 16:9 --dur 5 --rs 720p --wm false"
+          }
+        ]
+      }'
+    ```
+    
+    **2. Text-to-Video (T2V, Full Parameters)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "doubao-seedance-1-0-lite-t2v-250428",
+        "prompt": "A cute kitten playing in a garden, sunny day",
+        "content": [
+          {
+            "type": "text",
+            "text": "A cute kitten playing in a garden, sunny day --ratio 9:16 --dur 10 --rs 1080p --fps 30 --wm true --seed 12345"
+          }
+        ]
+      }'
+    ```
+    
+    **3. Image-to-Video (First Frame Mode)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "doubao-seedance-1-0-lite-i2v-250428",
+        "prompt": "A girl opens her eyes and looks gently at the camera",
+        "content": [
+          {
+            "type": "text",
+            "text": "A girl opens her eyes and looks gently at the camera --ratio adaptive --dur 5 --rs 720p --wm false"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+            }
+          }
+        ]
+      }'
+    ```
+    
+    **4. Image-to-Video (First/Last Frame Mode, only lite-i2v supports)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "doubao-seedance-1-0-lite-i2v-250428",
+        "prompt": "A blue-green jingwei bird transforms into human form",
+        "content": [
+          {
+            "type": "text",
+            "text": "A blue-green jingwei bird transforms into human form --rs 720p --dur 5 --fps 24 --cf false --wm false --seed 67890"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+            },
+            "role": "first_frame"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAyyyy..."
+            },
+            "role": "last_frame"
+          }
+        ]
+      }'
+    ```
+    
+    **5. Image-to-Video (Reference Image Mode, only lite-i2v supports)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "doubao-seedance-1-0-lite-i2v-250428",
+        "prompt": "[图1] A boy wearing glasses and blue T-shirt and [图2] corgi dog, sitting on [图3] lawn, 3D cartoon style",
+        "content": [
+          {
+            "type": "text",
+            "text": "[图1] A boy wearing glasses and blue T-shirt and [图2] corgi dog, sitting on [图3] lawn, 3D cartoon style --rs 720p --dur 5 --ratio 16:9 --wm false"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://example.com/ref1.png"
+            },
+            "role": "reference_image"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://example.com/ref2.png"
+            },
+            "role": "reference_image"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://example.com/ref3.png"
+            },
+            "role": "reference_image"
+          }
+        ]
+      }'
+    ```
+    
+    **6. Pro Model (First Frame Mode)**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "doubao-seedance-1-0-pro-250528",
+        "prompt": "A girl opens her eyes and looks gently at the camera",
+        "content": [
+          {
+            "type": "text",
+            "text": "A girl opens her eyes and looks gently at the camera --ratio 16:9 --dur 5 --rs 1080p --wm false"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+            }
+          }
+        ]
+      }'
+    ```
+  </Tab>
+</Tabs>
 
 #### Response Example
 
@@ -312,29 +655,165 @@ Different models support different specific parameters. Below are detailed descr
   </Tab>
   
   <Tab title="Doubao Seedance">
-<ParamField body="metadata" type="object">
-  Doubao models use `metadata.content` array to pass content, supporting mixed text and image input. Parameters are controlled through special markers in text prompts:
+<ParamField body="content" type="array" required>
+  Content array, must include text and optional images. Parameters are controlled through special markers in text prompts:
   - `--rs` or `--resolution`: Resolution (`480p`, `720p`, `1080p`)
-  - `--ratio`: Aspect ratio (`16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `adaptive`)
+  - `--ratio`: Aspect ratio (`16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `adaptive`, note that `doubao-seedance-1-0-lite-t2v-250428` does not support `adaptive`)
   - `--dur` or `--duration`: Duration (seconds, e.g. `5`, `10`)
   - `--fps` or `--framespersecond`: Frame rate (e.g. `24`, `30`)
   - `--seed`: Random seed
   - `--wm` or `--watermark`: Watermark toggle (`true`, `false`)
   - `--cf` or `--camerafixed`: Fixed camera (`true`, `false`, only lite models support)
+  
+  **content array format**:
+  ```json
+  [
+    {
+      "type": "text",
+      "text": "Prompt content --ratio 16:9 --dur 5 --rs 720p --wm false"
+    },
+    {
+      "type": "image_url",
+      "image_url": {
+        "url": "data:image/png;base64,..."
+      },
+      "role": "first_frame"  // Optional: first_frame, last_frame, reference_image
+    }
+  ]
+  ```
 </ParamField>
-<ParamField body="image" type="string">
-  Reference image (supports URL or Base64 format). In `metadata.content`, images can be marked via `role` field:
-  - `first_frame`: First frame image
-  - `last_frame`: Last frame image (only some models support)
-  - `reference_image`: Reference image (only `doubao-seedance-1-0-lite-i2v-250428` supports)
-</ParamField>
-<ParamField body="callback_url" type="string">
-  Callback notification URL (optional), automatically pushes results when task status changes
+<ParamField body="prompt" type="string" required>
+  Base prompt (without parameter markers), parameter markers will be automatically added to the text in the content array
 </ParamField>
   </Tab>
 </Tabs>
 
 ## Complete Examples
+
+### Doubao Seedance Series
+
+Doubao Seedance series models use a special parameter passing method: **all parameters are passed through special markers in the prompt**, and images are passed through the `content` array.
+
+#### 1. Text-to-Video (T2V)
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "doubao-seedance-1-0-lite-t2v-250428",
+    "prompt": "A cute kitten playing in a garden, sunny day",
+    "content": [
+      {
+        "type": "text",
+        "text": "A cute kitten playing in a garden, sunny day --ratio 16:9 --dur 5 --rs 720p --wm false"
+      }
+    ]
+  }'
+```
+
+#### 2. Image-to-Video - First Frame Mode
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "doubao-seedance-1-0-lite-i2v-250428",
+    "prompt": "A girl opens her eyes and looks gently at the camera",
+    "content": [
+      {
+        "type": "text",
+        "text": "A girl opens her eyes and looks gently at the camera --ratio adaptive --dur 5 --rs 720p --wm false"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+        }
+      }
+    ]
+  }'
+```
+
+#### 3. Image-to-Video - First/Last Frame Mode (Only lite-i2v supports)
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "doubao-seedance-1-0-lite-i2v-250428",
+    "prompt": "A blue-green jingwei bird transforms into human form",
+    "content": [
+      {
+        "type": "text",
+        "text": "A blue-green jingwei bird transforms into human form --rs 720p --dur 5 --cf false"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+        },
+        "role": "first_frame"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "data:image/png;base64,iVBORw0KGgoAAyyyy..."
+        },
+        "role": "last_frame"
+      }
+    ]
+  }'
+```
+
+#### 4. Image-to-Video - Reference Image Mode (Only lite-i2v supports)
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "doubao-seedance-1-0-lite-i2v-250428",
+    "prompt": "[图1] A boy wearing glasses and blue T-shirt and [图2] corgi dog, sitting on [图3] lawn, 3D cartoon style",
+    "content": [
+      {
+        "type": "text",
+        "text": "[图1] A boy wearing glasses and blue T-shirt and [图2] corgi dog, sitting on [图3] lawn, 3D cartoon style --rs 720p --dur 5"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "https://example.com/ref1.png"
+        },
+        "role": "reference_image"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "https://example.com/ref2.png"
+        },
+        "role": "reference_image"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "https://example.com/ref3.png"
+        },
+        "role": "reference_image"
+      }
+    ]
+  }'
+```
+
+**Important Notes**:
+- All parameters must be passed through special markers in the prompt (e.g., `--ratio 16:9`)
+- Images must be placed in the `content` array using `image_url` type
+- First/last frame mode requires two images, marked with `role: "first_frame"` and `role: "last_frame"` respectively
+- Reference image mode requires using `[图1]`, `[图2]` etc. in the prompt to reference images, with images marked `role: "reference_image"`
+- `doubao-seedance-1-0-lite-t2v-250428` does not support image input and `adaptive` aspect ratio
+- `doubao-seedance-1-0-pro-250528` only supports first frame mode
 
 <Tabs>
   <Tab title="Sora 2 Complete Example">

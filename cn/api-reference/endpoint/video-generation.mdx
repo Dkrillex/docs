@@ -162,17 +162,360 @@ curl -X GET "https://llm.ai-nebula.com/v1/video/generations/download?id=video_69
 
 #### 使用示例
 
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sora-2",
-    "prompt": "一只可爱的小猫在花园里玩耍，阳光明媚，画面温馨",
-    "seconds": "4",
-    "size": "720x1280"
-  }'
-```
+<Tabs>
+  <Tab title="Sora 2">
+    **1. 文生视频（基础示例）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "sora-2",
+        "prompt": "一只可爱的小猫在花园里玩耍，阳光明媚，画面温馨",
+        "seconds": "4",
+        "size": "720x1280"
+      }'
+    ```
+    
+    **2. 文生视频（横屏，8秒）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "sora-2",
+        "prompt": "一只可爱的小猫在花园里玩耍，阳光明媚，画面温馨",
+        "seconds": "8",
+        "size": "1280x720"
+      }'
+    ```
+    
+    **3. 图生视频（首帧模式）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "sora-2",
+        "prompt": "一只可爱的小猫在花园里玩耍，阳光明媚，画面温馨",
+        "seconds": "4",
+        "size": "720x1280",
+        "input_reference": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+      }'
+    ```
+    
+    **4. Remix 模式（视频生视频）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "sora-2",
+        "prompt": "将视频改成夜晚场景，添加星空",
+        "seconds": "4",
+        "size": "720x1280",
+        "remix_from_video_id": "video_69095b4ce0048190893a01510c0c98b0"
+      }'
+    ```
+  </Tab>
+  
+  <Tab title="Veo">
+    **1. 文生视频（基础示例）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "veo-3.1-fast-generate-preview",
+        "prompt": "科幻城市鸟瞰图，黎明时分，阳光穿透云层",
+        "durationSeconds": 8,
+        "aspectRatio": "16:9",
+        "resolution": "1080p",
+        "fps": 24,
+        "generateAudio": true,
+        "personGeneration": "allow_all",
+        "addWatermark": false
+      }'
+    ```
+    
+    **2. 文生视频（竖屏，带随机种子）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "veo-3.1-fast-generate-preview",
+        "prompt": "科幻城市鸟瞰图，黎明时分，阳光穿透云层",
+        "durationSeconds": 6,
+        "aspectRatio": "9:16",
+        "resolution": "720p",
+        "fps": 30,
+        "generateAudio": false,
+        "personGeneration": "allow_adult",
+        "addWatermark": true,
+        "seed": 12345,
+        "sampleCount": 2
+      }'
+    ```
+    
+    **3. 图生视频（首帧模式）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "veo-3.1-fast-generate-preview",
+        "prompt": "基于这张图片生成视频，画面逐渐展开",
+        "durationSeconds": 8,
+        "aspectRatio": "16:9",
+        "resolution": "1080p",
+        "fps": 24,
+        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
+        "generateAudio": true,
+        "personGeneration": "dont_allow",
+        "addWatermark": false
+      }'
+    ```
+    
+    **4. 图生视频（首尾帧模式，仅 veo-3.1 支持）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "veo-3.1-fast-generate-preview",
+        "prompt": "从第一张图过渡到第二张图",
+        "durationSeconds": 8,
+        "aspectRatio": "16:9",
+        "resolution": "1080p",
+        "fps": 24,
+        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
+        "lastFrame": "data:image/png;base64,iVBORw0KGgoAAyyyy...",
+        "generateAudio": true,
+        "seed": 67890,
+        "sampleCount": 1
+      }'
+    ```
+  </Tab>
+  
+  <Tab title="阿里万相">
+    **1. 文生视频（基础示例）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "wan2.5-t2v-preview",
+        "prompt": "一只小猫慢慢睁开眼睛，耳朵轻轻抖动，镜头慢慢推进",
+        "duration": 5,
+        "size": "1280*720",
+        "smart_rewrite": true,
+        "generate_audio": true
+      }'
+    ```
+    
+    **2. 文生视频（10秒，1080p，带随机种子）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "wan2.5-t2v-preview",
+        "prompt": "一只小猫慢慢睁开眼睛，耳朵轻轻抖动，镜头慢慢推进",
+        "duration": 10,
+        "size": "1920*1080",
+        "smart_rewrite": false,
+        "generate_audio": false,
+        "seed": 123456
+      }'
+    ```
+    
+    **3. 图生视频（首帧模式）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "wan2.5-i2v-preview",
+        "prompt": "小猫慢慢睁开眼睛，耳朵轻轻抖动，镜头慢慢推进",
+        "duration": 5,
+        "resolution": "720p",
+        "smart_rewrite": true,
+        "generate_audio": true,
+        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+      }'
+    ```
+    
+    **4. 图生视频（带自定义音频）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "wan2.5-i2v-preview",
+        "prompt": "小猫慢慢睁开眼睛，耳朵轻轻抖动，镜头慢慢推进",
+        "duration": 10,
+        "resolution": "1080p",
+        "smart_rewrite": false,
+        "generate_audio": false,
+        "audio_url": "https://example.com/audio.mp3",
+        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
+        "seed": 789012
+      }'
+    ```
+  </Tab>
+  
+  <Tab title="豆包 Seedance">
+    **1. 文生视频（T2V，基础示例）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "doubao-seedance-1-0-lite-t2v-250428",
+        "prompt": "一只小猫在花园里玩耍，阳光明媚",
+        "content": [
+          {
+            "type": "text",
+            "text": "一只小猫在花园里玩耍，阳光明媚 --ratio 16:9 --dur 5 --rs 720p --wm false"
+          }
+        ]
+      }'
+    ```
+    
+    **2. 文生视频（T2V，完整参数）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "doubao-seedance-1-0-lite-t2v-250428",
+        "prompt": "一只小猫在花园里玩耍，阳光明媚",
+        "content": [
+          {
+            "type": "text",
+            "text": "一只小猫在花园里玩耍，阳光明媚 --ratio 9:16 --dur 10 --rs 1080p --fps 30 --wm true --seed 12345"
+          }
+        ]
+      }'
+    ```
+    
+    **3. 图生视频（首帧模式）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "doubao-seedance-1-0-lite-i2v-250428",
+        "prompt": "女孩睁开眼睛，温柔地看着镜头",
+        "content": [
+          {
+            "type": "text",
+            "text": "女孩睁开眼睛，温柔地看着镜头 --ratio adaptive --dur 5 --rs 720p --wm false"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+            }
+          }
+        ]
+      }'
+    ```
+    
+    **4. 图生视频（首尾帧模式，仅 lite-i2v 支持）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "doubao-seedance-1-0-lite-i2v-250428",
+        "prompt": "一只蓝绿色的精卫鸟变成人形",
+        "content": [
+          {
+            "type": "text",
+            "text": "一只蓝绿色的精卫鸟变成人形 --rs 720p --dur 5 --fps 24 --cf false --wm false --seed 67890"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+            },
+            "role": "first_frame"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAyyyy..."
+            },
+            "role": "last_frame"
+          }
+        ]
+      }'
+    ```
+    
+    **5. 图生视频（参考图模式，仅 lite-i2v 支持）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "doubao-seedance-1-0-lite-i2v-250428",
+        "prompt": "[图1] 戴眼镜穿蓝色T恤的男孩和 [图2] 柯基狗，坐在 [图3] 草坪上，3D卡通风格",
+        "content": [
+          {
+            "type": "text",
+            "text": "[图1] 戴眼镜穿蓝色T恤的男孩和 [图2] 柯基狗，坐在 [图3] 草坪上，3D卡通风格 --rs 720p --dur 5 --ratio 16:9 --wm false"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://example.com/ref1.png"
+            },
+            "role": "reference_image"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://example.com/ref2.png"
+            },
+            "role": "reference_image"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://example.com/ref3.png"
+            },
+            "role": "reference_image"
+          }
+        ]
+      }'
+    ```
+    
+    **6. Pro 模型（首帧模式）**
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "doubao-seedance-1-0-pro-250528",
+        "prompt": "女孩睁开眼睛，温柔地看着镜头",
+        "content": [
+          {
+            "type": "text",
+            "text": "女孩睁开眼睛，温柔地看着镜头 --ratio 16:9 --dur 5 --rs 1080p --wm false"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+            }
+          }
+        ]
+      }'
+    ```
+  </Tab>
+</Tabs>
 
 #### 响应示例
 
@@ -307,27 +650,165 @@ curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
   </Tab>
   
   <Tab title="豆包 Seedance">
-<ParamField body="metadata" type="object">
-  豆包模型使用 `metadata.content` 数组传递内容，支持文本和图片混合输入。参数通过文本提示词中的特殊标记控制：
+<ParamField body="content" type="array" required>
+  内容数组，必须包含文本和可选的图片。参数通过文本提示词中的特殊标记控制：
   - `--rs` 或 `--resolution`：分辨率（`480p`、`720p`、`1080p`）
-  - `--ratio`：宽高比（`16:9`、`9:16`、`1:1`、`4:3`、`3:4`、`adaptive`）
+  - `--ratio`：宽高比（`16:9`、`9:16`、`1:1`、`4:3`、`3:4`、`adaptive`，注意 `doubao-seedance-1-0-lite-t2v-250428` 不支持 `adaptive`）
   - `--dur` 或 `--duration`：时长（秒，如 `5`、`10`）
   - `--fps` 或 `--framespersecond`：帧率（如 `24`、`30`）
   - `--seed`：随机种子
   - `--wm` 或 `--watermark`：水印开关（`true`、`false`）
   - `--cf` 或 `--camerafixed`：固定摄像头（`true`、`false`，仅 lite 模型支持）
+  
+  **content 数组格式**：
+  ```json
+  [
+    {
+      "type": "text",
+      "text": "提示词内容 --ratio 16:9 --dur 5 --rs 720p --wm false"
+    },
+    {
+      "type": "image_url",
+      "image_url": {
+        "url": "data:image/png;base64,..."
+      },
+      "role": "first_frame"  // 可选：first_frame、last_frame、reference_image
+    }
+  ]
+  ```
 </ParamField>
-<ParamField body="image" type="string">
-  参考图片（支持 URL 或 Base64 格式）。在 `metadata.content` 中，图片可通过 `role` 字段标记：
-  - `first_frame`：首帧图片
-  - `last_frame`：尾帧图片（仅部分模型支持）
-  - `reference_image`：参考图（仅 `doubao-seedance-1-0-lite-i2v-250428` 支持）
-</ParamField>
-<ParamField body="callback_url" type="string">
-  回调通知URL（可选），任务状态变更时自动推送结果
+<ParamField body="prompt" type="string" required>
+  基础提示词（不含参数标记），参数标记会自动添加到 content 数组的文本中
 </ParamField>
   </Tab>
 </Tabs>
+
+## 完整示例
+
+### 豆包 Seedance 系列
+
+豆包 Seedance 系列模型使用特殊的参数传递方式：**所有参数通过提示词中的特殊标记传递**，图片通过 `content` 数组传递。
+
+#### 1. 文生视频（T2V）
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "doubao-seedance-1-0-lite-t2v-250428",
+    "prompt": "一只小猫在花园里玩耍，阳光明媚",
+    "content": [
+      {
+        "type": "text",
+        "text": "一只小猫在花园里玩耍，阳光明媚 --ratio 16:9 --dur 5 --rs 720p --wm false"
+      }
+    ]
+  }'
+```
+
+#### 2. 图生视频 - 首帧模式
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "doubao-seedance-1-0-lite-i2v-250428",
+    "prompt": "女孩睁开眼睛，温柔地看着镜头",
+    "content": [
+      {
+        "type": "text",
+        "text": "女孩睁开眼睛，温柔地看着镜头 --ratio adaptive --dur 5 --rs 720p --wm false"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+        }
+      }
+    ]
+  }'
+```
+
+#### 3. 图生视频 - 首尾帧模式（仅 lite-i2v 支持）
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "doubao-seedance-1-0-lite-i2v-250428",
+    "prompt": "一只蓝绿色的精卫鸟变成人形",
+    "content": [
+      {
+        "type": "text",
+        "text": "一只蓝绿色的精卫鸟变成人形 --rs 720p --dur 5 --cf false"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
+        },
+        "role": "first_frame"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "data:image/png;base64,iVBORw0KGgoAAyyyy..."
+        },
+        "role": "last_frame"
+      }
+    ]
+  }'
+```
+
+#### 4. 图生视频 - 参考图模式（仅 lite-i2v 支持）
+
+```bash
+curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
+  -H "Authorization: Bearer sk-xxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "doubao-seedance-1-0-lite-i2v-250428",
+    "prompt": "[图1] 戴眼镜穿蓝色T恤的男孩和 [图2] 柯基狗，坐在 [图3] 草坪上，3D卡通风格",
+    "content": [
+      {
+        "type": "text",
+        "text": "[图1] 戴眼镜穿蓝色T恤的男孩和 [图2] 柯基狗，坐在 [图3] 草坪上，3D卡通风格 --rs 720p --dur 5"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "https://example.com/ref1.png"
+        },
+        "role": "reference_image"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "https://example.com/ref2.png"
+        },
+        "role": "reference_image"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "https://example.com/ref3.png"
+        },
+        "role": "reference_image"
+      }
+    ]
+  }'
+```
+
+**重要提示**：
+- 所有参数必须通过提示词中的特殊标记传递（如 `--ratio 16:9`）
+- 图片必须放在 `content` 数组中，使用 `image_url` 类型
+- 首尾帧模式需要两张图片，分别标记 `role: "first_frame"` 和 `role: "last_frame"`
+- 参考图模式需要在提示词中使用 `[图1]`、`[图2]` 等标记引用图片，图片标记 `role: "reference_image"`
+- `doubao-seedance-1-0-lite-t2v-250428` 不支持图片输入和 `adaptive` 宽高比
+- `doubao-seedance-1-0-pro-250528` 仅支持首帧模式
 
 ## 最佳实践
 

@@ -401,6 +401,52 @@ Different models support different parameters. Below are detailed parameter desc
           }'
         ```
       </Tab>
+      <Tab title="3.0 Model (Guidance Scale)">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+          -H "Authorization: Bearer sk-xxxxxxxxxx" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "model": "doubao-seedream-3-0-t2i-250415",
+            "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
+            "size": "1024x1024",
+            "watermark": false,
+            "guidance_scale": 7.5,
+            "seed": 12345
+          }'
+        ```
+      </Tab>
+      <Tab title="4.5 Model (Creative/Precise Mode)">
+        ```bash
+        # Creative mode
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+          -H "Authorization: Bearer sk-xxxxxxxxxx" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "model": "doubao-seedream-4-5-251128",
+            "prompt": "A cute kitten",
+            "size": "2048x2048",
+            "watermark": false,
+            "optimize_prompt_options": {
+              "mode": "creative"
+            }
+          }'
+
+        # Precise mode
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+          -H "Authorization: Bearer sk-xxxxxxxxxx" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "model": "doubao-seedream-4-5-251128",
+            "prompt": "A cute kitten",
+            "size": "2048x2048",
+            "watermark": false,
+            "optimize_prompt_options": {
+              "mode": "precise"
+            }
+          }'
+        ```
+      </Tab>
     </Tabs>
   </Tab>
   
