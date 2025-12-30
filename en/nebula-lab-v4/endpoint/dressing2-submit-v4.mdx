@@ -1,0 +1,69 @@
+---
+title: 'Any Shoot - Dressing Mode - Submit Task'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/dressing2Submitv4'
+---
+
+## Introduction
+
+Submit Any Shoot dressing mode task, used for virtual try-on.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g., `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField body="cVDressingV4DTO" type="object" required>
+  Dressing mode request parameters
+</ParamField>
+
+### Example Code
+
+<Tabs>
+  <Tab title="cURL Example">
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/nebula/v4/api/dressing2Submitv4" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "imageUrl": "https://example.com/model.jpg",
+        "clothingUrl": "https://example.com/clothing.jpg"
+      }'
+    ```
+  </Tab>
+  <Tab title="Python Example">
+    ```python
+    import requests
+    import json
+
+    url = "https://llm.ai-nebula.com/nebula/v4/api/dressing2Submitv4"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer sk-xxxxxxxxxx"
+    }
+    data = {
+        "imageUrl": "https://example.com/model.jpg",
+        "clothingUrl": "https://example.com/clothing.jpg"
+    }
+
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    print(response.json())
+    ```
+  </Tab>
+</Tabs>
+
+### Response Example
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "Operation successful",
+  "data": {
+    "task_id": "task-1234567890"
+  }
+}
+```
+</ResponseExample>

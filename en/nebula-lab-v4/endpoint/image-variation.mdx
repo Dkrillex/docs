@@ -1,0 +1,50 @@
+---
+title: 'AI Image - Variation'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/imageVariationSubmit'
+---
+
+## Introduction
+
+Submit image variation task, used to generate variations of an image.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g., `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField body="batchImageGenerationDTO.prompt" type="string" required>
+  Image description prompt
+</ParamField>
+
+<ParamField body="batchImageGenerationDTO.model" type="string" required>
+  Generation model ID
+</ParamField>
+
+<ParamField body="batchImageGenerationDTO.n" type="integer">
+  Number of images to generate
+</ParamField>
+
+<ParamField body="batchImageGenerationDTO.image" type="string">
+  Reference image URL
+</ParamField>
+
+### Response Example
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "Operation successful",
+  "data": {
+    "images": [{
+      "url": "https://example.com/image1.jpg"
+    }, {
+      "url": "https://example.com/image2.jpg"
+    }]
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,40 @@
+---
+title: 'AI Image - Image to Image'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/img2imgSubmit'
+---
+
+## Introduction
+
+Submit image-to-image task, used to generate new images based on input image.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g., `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField body="volcImageDTO.volcImageBo.prompt" type="string" required>
+  Image description prompt
+</ParamField>
+
+<ParamField body="volcImageDTO.volcImageBo.image_urls" type="array" required>
+  Input image URL list
+</ParamField>
+
+### Response Example
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "Operation successful",
+  "data": {
+    "images": [{
+      "url": "https://example.com/image.jpg"
+    }]
+  }
+}
+```
+</ResponseExample>

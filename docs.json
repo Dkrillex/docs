@@ -64,7 +64,7 @@
               },
               {
                 "group": "编程开发",
-                "pages": ["cn/integrations/cursor", "cn/integrations/claude-code"]
+                "pages": ["cn/integrations/cursor", "cn/integrations/claude-code", "cn/integrations/claude-code-vscode"]
               },
               {
                 "group": "技术工程",
@@ -82,6 +82,47 @@
               {
                 "group": "使用指南",
                 "pages": ["cn/faq/invalid-api-key", "cn/faq/network-proxy", "cn/faq/model-selection", "cn/faq/data-security", "cn/faq/content-safety"]
+              }
+            ]
+          },
+          {
+            "tab": "Nebula Lab API",
+            "groups": [
+              {
+                "group": "AI 视频",
+                "pages": [
+                  "cn/nebula-lab-v4/endpoint/video-face-merge-submit",
+                  "cn/nebula-lab-v4/endpoint/video-face-merge-query",
+                  "cn/nebula-lab-v4/endpoint/video-image-to-video-first-last-submit",
+                  "cn/nebula-lab-v4/endpoint/video-image-to-video-first-last-query",
+                  "cn/nebula-lab-v4/endpoint/video-image-to-video-tradition-submit",
+                  "cn/nebula-lab-v4/endpoint/video-image-to-video-tradition-query",
+                  "cn/nebula-lab-v4/endpoint/video-text-to-video-submit",
+                  "cn/nebula-lab-v4/endpoint/video-text-to-video-query"
+                ]
+              },
+              {
+                "group": "AI 生图",
+                "pages": [
+                  "cn/nebula-lab-v4/endpoint/image-batch-generation",
+                  "cn/nebula-lab-v4/endpoint/image-clothing-details",
+                  "cn/nebula-lab-v4/endpoint/image-fashion-grass",
+                  "cn/nebula-lab-v4/endpoint/image-image-to-image",
+                  "cn/nebula-lab-v4/endpoint/image-product-extraction",
+                  "cn/nebula-lab-v4/endpoint/image-smart-watermark-removal",
+                  "cn/nebula-lab-v4/endpoint/image-text-to-image",
+                  "cn/nebula-lab-v4/endpoint/image-variation"
+                ]
+              },
+              {
+                "group": "万物迁移",
+                "pages": [
+                  "cn/nebula-lab-v4/endpoint/any-shoot-advanced-mode-submit",
+                  "cn/nebula-lab-v4/endpoint/any-shoot-query",
+                  "cn/nebula-lab-v4/endpoint/any-shoot-easy-mode-submit",
+                  "cn/nebula-lab-v4/endpoint/dressing2-submit-v4",
+                  "cn/nebula-lab-v4/endpoint/dressingv4-query"
+                ]
               }
             ]
           }
@@ -155,6 +196,47 @@
               {
                 "group": "Usage Guide",
                 "pages": ["en/faq/invalid-api-key", "en/faq/network-proxy", "en/faq/model-selection", "en/faq/data-security", "en/faq/content-safety"]
+              }
+            ]
+          },
+          {
+            "tab": "Nebula Lab API",
+            "groups": [
+              {
+                "group": "AI Video",
+                "pages": [
+                  "en/nebula-lab-v4/endpoint/video-face-merge-submit",
+                  "en/nebula-lab-v4/endpoint/video-face-merge-query",
+                  "en/nebula-lab-v4/endpoint/video-image-to-video-first-last-submit",
+                  "en/nebula-lab-v4/endpoint/video-image-to-video-first-last-query",
+                  "en/nebula-lab-v4/endpoint/video-image-to-video-tradition-submit",
+                  "en/nebula-lab-v4/endpoint/video-image-to-video-tradition-query",
+                  "en/nebula-lab-v4/endpoint/video-text-to-video-submit",
+                  "en/nebula-lab-v4/endpoint/video-text-to-video-query"
+                ]
+              },
+              {
+                "group": "AI Image",
+                "pages": [
+                  "en/nebula-lab-v4/endpoint/image-batch-generation",
+                  "en/nebula-lab-v4/endpoint/image-clothing-details",
+                  "en/nebula-lab-v4/endpoint/image-fashion-grass",
+                  "en/nebula-lab-v4/endpoint/image-image-to-image",
+                  "en/nebula-lab-v4/endpoint/image-product-extraction",
+                  "en/nebula-lab-v4/endpoint/image-smart-watermark-removal",
+                  "en/nebula-lab-v4/endpoint/image-text-to-image",
+                  "en/nebula-lab-v4/endpoint/image-variation"
+                ]
+              },
+              {
+                "group": "Any Shoot",
+                "pages": [
+                  "en/nebula-lab-v4/endpoint/any-shoot-advanced-mode-submit",
+                  "en/nebula-lab-v4/endpoint/any-shoot-query",
+                  "en/nebula-lab-v4/endpoint/any-shoot-easy-mode-submit",
+                  "en/nebula-lab-v4/endpoint/dressing2-submit-v4",
+                  "en/nebula-lab-v4/endpoint/dressingv4-query"
+                ]
               }
             ]
           }

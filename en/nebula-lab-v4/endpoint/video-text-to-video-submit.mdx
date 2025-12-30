@@ -1,0 +1,73 @@
+---
+title: 'Text to Video - Submit Task'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/nebulaVideoCompletions'
+---
+
+## Introduction
+
+Submit text-to-video task, used to generate video based on text description.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g., `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField body="videoCompletionsDTO.prompt" type="string" required>
+  Text prompt for video generation
+</ParamField>
+
+<ParamField body="videoCompletionsDTO.duration" type="string" required>
+  Video duration, supports: 30, 30s, 1m, 1m30s
+</ParamField>
+
+### Example Code
+
+<Tabs>
+  <Tab title="cURL Example">
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/nebula/v4/api/nebulaVideoCompletions" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "prompt": "A cute little cat playing on the grass",
+        "duration": "30s"
+      }'
+    ```
+  </Tab>
+  <Tab title="Python Example">
+    ```python
+    import requests
+    import json
+
+    url = "https://llm.ai-nebula.com/nebula/v4/api/nebulaVideoCompletions"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer sk-xxxxxxxxxx"
+    }
+    data = {
+        "prompt": "A cute little cat playing on the grass",
+        "duration": "30s"
+    }
+
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    print(response.json())
+    ```
+  </Tab>
+</Tabs>
+
+### Response Example
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "Operation successful",
+  "data": {
+    "task_id": "task-1234567890"
+  }
+}
+```
+</ResponseExample>

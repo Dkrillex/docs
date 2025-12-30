@@ -1,0 +1,38 @@
+---
+title: 'Image to Video - Traditional Mode - Submit Task'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/image2VideoTradition'
+---
+
+## Introduction
+
+Submit image-to-video task in traditional mode, used to generate video based on input image.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g., `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField body="image2VideoTraditionalDTO.image_url" type="string" required>
+  Input image URL
+</ParamField>
+
+<ParamField body="image2VideoTraditionalDTO.duration" type="string" required>
+  Video duration, supports: 30, 30s, 1m, 1m30s
+</ParamField>
+
+### Response Example
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "Operation successful",
+  "data": {
+    "id": "task-1234567890"
+  }
+}
+```
+</ResponseExample>

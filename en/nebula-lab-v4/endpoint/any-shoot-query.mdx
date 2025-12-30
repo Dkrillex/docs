@@ -1,0 +1,68 @@
+---
+title: 'Any Shoot - Standard Mode - Query Task'
+api: 'GET https://llm.ai-nebula.com/nebula/v4/api/anyShootQuery'
+---
+
+## Introduction
+
+Query Any Shoot task status and result.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g., `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField query="taskId" type="string" required>
+  Task ID
+</ParamField>
+
+### Example Code
+
+<Tabs>
+  <Tab title="cURL Example">
+    ```bash
+    curl -X GET "https://llm.ai-nebula.com/nebula/v4/api/anyShootQuery?taskId=task-1234567890" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx"
+    ```
+  </Tab>
+  <Tab title="Python Example">
+    ```python
+    import requests
+
+    url = "https://llm.ai-nebula.com/nebula/v4/api/anyShootQuery"
+    headers = {
+        "Authorization": "Bearer sk-xxxxxxxxxx"
+    }
+    params = {
+        "taskId": "task-1234567890"
+    }
+
+    response = requests.get(url, headers=headers, params=params)
+    print(response.json())
+    ```
+  </Tab>
+</Tabs>
+
+### Response Example
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "Operation successful",
+  "data": {
+    "status": "SUCCESS",
+    "result": {
+      "taskId": "task-1234567890",
+      "images": [
+        "https://example.com/image1.jpg",
+        "https://example.com/image2.jpg"
+      ]
+    }
+  }
+}
+```
+</ResponseExample>

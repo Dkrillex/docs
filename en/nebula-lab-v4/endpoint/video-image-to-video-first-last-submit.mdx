@@ -1,0 +1,42 @@
+---
+title: 'Image to Video - First/Last Frame Mode - Submit Task'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/volcImageFirstLast'
+---
+
+## Introduction
+
+Submit image-to-video task in first/last frame mode, used to generate video based on start and end images.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g., `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField body="volcImageFirstLastDTO.first_image_url" type="string" required>
+  First image URL
+</ParamField>
+
+<ParamField body="volcImageFirstLastDTO.last_image_url" type="string" required>
+  Last image URL
+</ParamField>
+
+<ParamField body="volcImageFirstLastDTO.duration" type="long" required>
+  Video duration (seconds)
+</ParamField>
+
+### Response Example
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "Operation successful",
+  "data": {
+    "id": "task-1234567890"
+  }
+}
+```
+</ResponseExample>

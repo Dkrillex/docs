@@ -1,0 +1,54 @@
+---
+title: 'Claude Code for VS Code Configuration Guide'
+description: 'Installation and configuration guide for Claude Code for VS Code extension'
+---
+
+## Step 1: Install or Update Claude Code Extension
+
+1. Open VS Code editor, go to the left "Extensions" panel (Shortcut: Ctrl+Shift+X).
+2. Type "Claude Code for VS Code" in the search box, find the plugin published by Anthropic (ID: "anthropic.claude-code").
+3. Core features: Supports latest Claude models, direct terminal calls, codebase analysis, sub-agents/custom slash commands, etc. Some advanced configurations need to be set via command line.
+
+## Step 2: Configure settings.json
+
+### 2.1 Open Configuration File
+
+1. Click the "Settings" icon in the bottom left of VS Code (or use Ctrl+,), search for "@ext:Anthropic.claude-code" to filter plugin settings.
+2. Find "Claude-code: Environment Variables" option, click "Edit in settings.json" on the right.
+
+### 2.2 Add Core Configuration
+
+Add the following configuration to settings.json (modify model version and display location as needed):
+
+```jsonc
+{
+  "claudeCode.preferredLocation": "panel",
+  "claudeCode.allowDangerouslySkipPermissions": true,
+  "claudeCode.selectedModel": "claude-sonnet-4-5-20250929"
+}
+```
+
+## Step 3: Configure System Environment Variables (Windows)
+
+### 3.1 Open Environment Variables
+
+1. Press Win+R, type "sysdm.cpl" to open System Properties.
+2. Switch to "Advanced" tab, click "Environment Variables", click "New" in "User variables" section.
+
+### 3.2 Add Necessary Variables
+
+Create the following variables (replace values with actual ones):
+
+| Variable Name | Value | Description |
+|---|---|---|
+| ANTHROPIC_AUTH_TOKEN | sk-xxxx | Auth token (Get from platform) |
+| ANTHROPIC_BASE_URL | https://llm.ai-nebula.com | Nebula GPT Production URL |
+
+### 3.3 Apply Configuration
+
+1. Save environment variables, close all VS Code windows.
+2. Restart VS Code, the plugin will load the new configuration automatically.
+
+## Notes
+
+If connection fails, check if BASE_URL and TOKEN are correct in environment variables, or try switching network environment.

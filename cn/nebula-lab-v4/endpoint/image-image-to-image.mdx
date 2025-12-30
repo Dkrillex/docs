@@ -1,0 +1,40 @@
+---
+title: 'AI生图-图生图'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/img2imgSubmit'
+---
+
+## 简介
+
+提交图生图任务，用于根据输入图片生成新的图片。
+
+## 认证
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## 请求参数
+
+<ParamField body="volcImageDTO.volcImageBo.prompt" type="string" required>
+  图片描述提示词
+</ParamField>
+
+<ParamField body="volcImageDTO.volcImageBo.image_urls" type="array" required>
+  输入图片URL列表
+</ParamField>
+
+### 响应示例
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": {
+    "images": [{
+      "url": "https://example.com/image.jpg"
+    }]
+  }
+}
+```
+</ResponseExample>

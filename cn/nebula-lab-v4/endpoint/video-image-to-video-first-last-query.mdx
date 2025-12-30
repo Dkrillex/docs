@@ -1,0 +1,36 @@
+---
+title: '图生视频-首尾图模式-查询任务'
+api: 'GET https://llm.ai-nebula.com/nebula/v4/api/textOrImage2videoQuery/{taskId}'
+---
+
+## 简介
+
+查询首尾图模式图生视频任务状态和结果。
+
+## 认证
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## 请求参数
+
+<ParamField path="taskId" type="string" required>
+  任务ID，由提交任务接口返回
+</ParamField>
+
+### 响应示例
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": {
+    "id": "task-1234567890",
+    "status": "succeeded",
+    "url": "https://example.com/video.mp4"
+  }
+}
+```
+</ResponseExample>

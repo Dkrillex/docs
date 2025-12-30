@@ -1,0 +1,95 @@
+---
+title: 'Any Shoot - Creative Mode'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/anyShootEasyModeSubmit'
+---
+
+## Introduction
+
+Submit Any Shoot creative mode task, used to generate creative style transfer images.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g., `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField body="anyShootEasyModeDTO.size" type="string" required>
+  Image size
+</ParamField>
+
+<ParamField body="anyShootEasyModeDTO.contents" type="object[]" required>
+  Content list, including image and text information
+</ParamField>
+
+### Example Code
+
+<Tabs>
+  <Tab title="cURL Example">
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/nebula/v4/api/anyShootEasyModeSubmit" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "size": "1024x1024",
+        "contents": [
+          {
+            "parts": [
+              {
+                "text": "A cute little cat playing on the grass"
+              },
+              {
+                "image": "https://example.com/cat.jpg"
+              }
+            ]
+          }
+        ]
+      }'
+    ```
+  </Tab>
+  <Tab title="Python Example">
+    ```python
+    import requests
+    import json
+
+    url = "https://llm.ai-nebula.com/nebula/v4/api/anyShootEasyModeSubmit"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer sk-xxxxxxxxxx"
+    }
+    data = {
+        "size": "1024x1024",
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": "A cute little cat playing on the grass"
+                    },
+                    {
+                        "image": "https://example.com/cat.jpg"
+                    }
+                ]
+            }
+        ]
+    }
+
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    print(response.json())
+    ```
+  </Tab>
+</Tabs>
+
+### Response Example
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "Operation successful",
+  "data": {
+    "url": "https://example.com/generated-image.jpg"
+  }
+}
+```
+</ResponseExample>

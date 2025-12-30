@@ -1,0 +1,50 @@
+---
+title: 'AI Image - Batch Generation'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/batchImageGenerationSubmit'
+---
+
+## Introduction
+
+Submit batch image generation task.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g., `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField body="req.prompt" type="string" required>
+  Image description prompt
+</ParamField>
+
+<ParamField body="req.model" type="string" required>
+  Generation model ID
+</ParamField>
+
+<ParamField body="req.n" type="integer">
+  Number of images to generate
+</ParamField>
+
+<ParamField body="req.size" type="string">
+  Image size
+</ParamField>
+
+### Response Example
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "Operation successful",
+  "data": {
+    "images": [{
+      "url": "https://example.com/image1.jpg"
+    }, {
+      "url": "https://example.com/image2.jpg"
+    }]
+  }
+}
+```
+</ResponseExample>

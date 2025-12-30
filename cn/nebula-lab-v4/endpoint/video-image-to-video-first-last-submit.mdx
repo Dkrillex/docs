@@ -1,0 +1,42 @@
+---
+title: '图生视频-首尾图模式-提交任务'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/volcImageFirstLast'
+---
+
+## 简介
+
+提交首尾图模式图生视频任务，用于根据首尾图片生成视频。
+
+## 认证
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## 请求参数
+
+<ParamField body="volcImageFirstLastDTO.first_image_url" type="string" required>
+  首图URL
+</ParamField>
+
+<ParamField body="volcImageFirstLastDTO.last_image_url" type="string" required>
+  尾图URL
+</ParamField>
+
+<ParamField body="volcImageFirstLastDTO.duration" type="long" required>
+  视频时长（秒）
+</ParamField>
+
+### 响应示例
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": {
+    "id": "task-1234567890"
+  }
+}
+```
+</ResponseExample>

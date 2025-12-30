@@ -1,0 +1,36 @@
+---
+title: 'Image to Video - Face Swap - Query Task'
+api: 'GET https://llm.ai-nebula.com/nebula/v4/api/videoFaceMergeQuery'
+---
+
+## Introduction
+
+Query video face swap task status and result.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g., `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField query="taskId" type="string" required>
+  Task ID, returned by submit task interface
+</ParamField>
+
+### Response Example
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "Operation successful",
+  "data": {
+    "task_id": "task-1234567890",
+    "status": "succeeded",
+    "url": "https://example.com/video.mp4"
+  }
+}
+```
+</ResponseExample>

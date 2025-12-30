@@ -1,0 +1,44 @@
+---
+title: 'AI生图-智能去印'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/smartWatermarkRemovalSubmit'
+---
+
+## 简介
+
+提交智能去印生图任务，用于生成智能去印的图片。
+
+## 认证
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## 请求参数
+
+<ParamField body="batchImageGenerationDTO.prompt" type="string" required>
+  图片描述提示词
+</ParamField>
+
+<ParamField body="batchImageGenerationDTO.model" type="string" required>
+  生图模型ID
+</ParamField>
+
+<ParamField body="batchImageGenerationDTO.n" type="integer">
+  生成图片数量
+</ParamField>
+
+### 响应示例
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": {
+    "images": [{
+      "url": "https://example.com/image.jpg"
+    }]
+  }
+}
+```
+</ResponseExample>

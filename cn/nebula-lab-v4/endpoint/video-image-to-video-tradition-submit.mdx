@@ -1,0 +1,38 @@
+---
+title: '图生视频-传统模式-提交任务'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/image2VideoTradition'
+---
+
+## 简介
+
+提交传统模式图生视频任务，用于根据输入图片生成视频。
+
+## 认证
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## 请求参数
+
+<ParamField body="image2VideoTraditionalDTO.image_url" type="string" required>
+  输入图片URL
+</ParamField>
+
+<ParamField body="image2VideoTraditionalDTO.duration" type="string" required>
+  视频时长，支持格式：30, 30s, 1m, 1m30s
+</ParamField>
+
+### 响应示例
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": {
+    "id": "task-1234567890"
+  }
+}
+```
+</ResponseExample>

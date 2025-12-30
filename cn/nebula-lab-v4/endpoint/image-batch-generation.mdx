@@ -1,0 +1,50 @@
+---
+title: 'AI生图-批量生图'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/batchImageGenerationSubmit'
+---
+
+## 简介
+
+提交批量生图任务，用于生成批量的图片。
+
+## 认证
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## 请求参数
+
+<ParamField body="req.prompt" type="string" required>
+  图片描述提示词
+</ParamField>
+
+<ParamField body="req.model" type="string" required>
+  生图模型ID
+</ParamField>
+
+<ParamField body="req.n" type="integer">
+  生成图片数量
+</ParamField>
+
+<ParamField body="req.size" type="string">
+  图片尺寸
+</ParamField>
+
+### 响应示例
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": {
+    "images": [{
+      "url": "https://example.com/image1.jpg"
+    }, {
+      "url": "https://example.com/image2.jpg"
+    }]
+  }
+}
+```
+</ResponseExample>

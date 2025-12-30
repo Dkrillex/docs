@@ -1,0 +1,79 @@
+---
+title: 'AI生图-文生图'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/text2imageSubmit'
+---
+
+## 简介
+
+提交文生图任务，用于根据文本描述生成新的图片。
+
+## 认证
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## 请求参数
+
+<ParamField body="volcEngineReqDTO.req.prompt" type="string" required>
+  图片描述提示词
+</ParamField>
+
+<ParamField body="volcEngineReqDTO.req.size" type="string">
+  图片尺寸，如：512x512, 1024x1024
+</ParamField>
+
+### 示例代码
+
+<Tabs>
+  <Tab title="cURL示例">
+    ```bash
+    curl -X POST "https://llm.ai-nebula.com/nebula/v4/api/text2imageSubmit" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer sk-xxxxxxxxxx" \
+      -d '{
+        "req": {
+          "prompt": "一只可爱的小猫在草地上玩耍",
+          "size": "1024x1024"
+        }
+      }'
+    ```
+  </Tab>
+  <Tab title="Python示例">
+    ```python
+    import requests
+    import json
+
+    url = "https://llm.ai-nebula.com/nebula/v4/api/text2imageSubmit"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer sk-xxxxxxxxxx"
+    }
+    data = {
+        "req": {
+            "prompt": "一只可爱的小猫在草地上玩耍",
+            "size": "1024x1024"
+        }
+    }
+
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    print(response.json())
+    ```
+  </Tab>
+</Tabs>
+
+### 响应示例
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": {
+    "images": [{
+      "url": "https://example.com/image.jpg"
+    }]
+  }
+}
+```
+</ResponseExample>

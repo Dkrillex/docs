@@ -1,0 +1,50 @@
+---
+title: '图生视频-视频换人-提交任务'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/videoFaceMergeSubmit'
+---
+
+## 简介
+
+提交视频换人任务，用于生成替换人脸的视频。
+
+## 认证
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## 请求参数
+
+<ParamField body="visualFaceFusionMovieSubmitTaskRequest.imageUrl" type="string" required>
+  人脸图片URL
+</ParamField>
+
+<ParamField body="visualFaceFusionMovieSubmitTaskRequest.videoUrl" type="string" required>
+  视频URL
+</ParamField>
+
+<ParamField body="visualFaceFusionMovieSubmitTaskRequest.reqKey" type="string" required>
+  请求key
+</ParamField>
+
+<ParamField body="visualFaceFusionMovieSubmitTaskRequest.sourceSimilarity" type="string">
+  源相似度
+</ParamField>
+
+### 响应示例
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": {
+    "output": {
+      "task_id": "task-1234567890",
+      "task_status": "PENDING"
+    },
+    "request_id": "request-1234567890"
+  }
+}
+```
+</ResponseExample>

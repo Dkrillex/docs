@@ -1,0 +1,44 @@
+---
+title: 'AI Image - Product Extraction'
+api: 'POST https://llm.ai-nebula.com/nebula/v4/api/productExtractionSubmit'
+---
+
+## Introduction
+
+Submit product extraction task, used to generate images with product extracted.
+
+## Authentication
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token, e.g., `Bearer sk-xxxxxxxxxx`
+</ParamField>
+
+## Request Parameters
+
+<ParamField body="batchImageGenerationDTO.prompt" type="string" required>
+  Image description prompt
+</ParamField>
+
+<ParamField body="batchImageGenerationDTO.model" type="string" required>
+  Generation model ID
+</ParamField>
+
+<ParamField body="batchImageGenerationDTO.n" type="integer">
+  Number of images to generate
+</ParamField>
+
+### Response Example
+
+<ResponseExample>
+```json
+{
+  "code": 200,
+  "msg": "Operation successful",
+  "data": {
+    "images": [{
+      "url": "https://example.com/image.jpg"
+    }]
+  }
+}
+```
+</ResponseExample>
