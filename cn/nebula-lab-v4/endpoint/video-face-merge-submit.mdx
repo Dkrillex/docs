@@ -10,7 +10,8 @@ api: 'POST https://llm.ai-nebula.com/nebula/v4/api/videoFaceMergeSubmit'
 ## 认证
 
 <ParamField header="Authorization" type="string" required>
-  Bearer Token，如 `Bearer sk-xxxxxxxxxx`
+  Bearer Token，如 `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...`
+  获取方法：依照左侧最上面认证模块的post接口获取，`https://docs.openai-nebula.com/cn/nebula-lab-v4/endpoint/get-token`
 </ParamField>
 
 ## 请求参数

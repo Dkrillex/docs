@@ -89,6 +89,12 @@
             "tab": "Nebula Lab API",
             "groups": [
               {
+                "group": "认证",
+                "pages": [
+                  "cn/nebula-lab-v4/endpoint/get-token"
+                ]
+              },
+              {
                 "group": "AI 视频",
                 "pages": [
                   "cn/nebula-lab-v4/endpoint/video-face-merge-submit",
@@ -178,7 +184,7 @@
               },
               {
                 "group": "Coding",
-                "pages": ["en/integrations/cursor", "en/integrations/claude-code"]
+                "pages": ["en/integrations/cursor", "en/integrations/claude-code", "en/integrations/claude-code-vscode"]
               },
               {
                 "group": "Tech Engineering",
@@ -202,6 +208,12 @@
           {
             "tab": "Nebula Lab API",
             "groups": [
+              {
+                "group": "Authentication",
+                "pages": [
+                  "en/nebula-lab-v4/endpoint/get-token"
+                ]
+              },
               {
                 "group": "AI Video",
                 "pages": [
