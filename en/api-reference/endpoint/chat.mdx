@@ -63,7 +63,7 @@ Universal text chat API supporting OpenAI-compatible large language models for g
       }'
     ```
   </Tab>
-  
+
   <Tab title="Streaming Request (SSE)">
     ```bash
     curl -N -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
@@ -79,7 +79,7 @@ Universal text chat API supporting OpenAI-compatible large language models for g
       }'
     ```
   </Tab>
-  
+
   <Tab title="Python Example">
     ```python
     from openai import OpenAI
@@ -178,7 +178,7 @@ Supports OpenAI-compatible tool calling format, applicable to GPT, Claude, DeepS
       }'
     ```
   </Tab>
-  
+
   <Tab title="Phase 2: Return Tool Execution Result">
     After the model returns `tool_calls`, you need to execute the tool and pass the result back to the model:
 
@@ -281,7 +281,7 @@ Some models support thinking capability (Thinking/Reasoning), which can display 
     - It is recommended to use with `stream: true` for better interactive experience
     </Note>
   </Tab>
-  
+
   <Tab title="Tongyi Qianwen">
     Tongyi Qianwen supports deep thinking functionality, requires streaming output:
 
@@ -409,7 +409,7 @@ Tongyi Qianwen models support extended features such as search, speech recogniti
       }'
     ```
   </Tab>
-  
+
   <Tab title="Speech Recognition">
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/chat/completions" \
@@ -471,7 +471,7 @@ GPT-5 and other models support file input functionality, which needs to be calle
     print(response.output_text)
     ```
   </Tab>
-  
+
   <Tab title="Upload via Base64 Encoding">
     Send as Base64-encoded input:
 
@@ -566,7 +566,7 @@ Actual output text token count = `completion_tokens - reasoning_tokens`
     }
     ```
   </Tab>
-  
+
   <Tab title="Streaming Response">
     Streaming responses are returned in SSE (Server-Sent Events) format, each chunk contains partial content:
 

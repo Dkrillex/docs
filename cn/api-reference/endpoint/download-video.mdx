@@ -104,18 +104,18 @@ def download_video(video_id, api_key):
     """下载视频并保存为文件"""
     url = f"https://llm.ai-nebula.com/v1/video/generations/download?id={video_id}"
     headers = {"Authorization": f"Bearer {api_key}"}
-    
+
     response = requests.get(url, headers=headers)
     data = response.json()
-    
+
     if data.get("success"):
         # 解码 base64 数据
         video_data = base64.b64decode(data["base64"])
-        
+
         # 保存为文件
         with open("video.mp4", "wb") as f:
             f.write(video_data)
-        
+
         print(f"✅ 视频已保存: video.mp4 (大小: {data['size']} 字节)")
         return True
     else:
@@ -137,7 +137,7 @@ def download_video(video_id, api_key):
        "size": "720x1280"
      }'
    ```
-   
+
    响应：
    ```json
    {
@@ -152,7 +152,7 @@ def download_video(video_id, api_key):
    curl -X GET "https://llm.ai-nebula.com/v1/video/generations/video_69095b4ce0048190893a01510c0c98b0" \
      -H "Authorization: Bearer sk-xxxxxxxxxx"
    ```
-   
+
    当状态为 `succeeded` 时，继续下一步。
 
 3. **下载视频文件**

@@ -76,7 +76,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
   Remix 模式：基于已有视频ID重新生成（必须以 `video_` 开头）
 </ParamField>
   </Tab>
-  
+
   <Tab title="Veo">
 <ParamField body="durationSeconds" type="integer" default="4">
   视频时长（秒），支持：`4`、`6`、`8`
@@ -112,7 +112,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
   每次生成的视频数量，范围：`1-4`
 </ParamField>
   </Tab>
-  
+
   <Tab title="阿里万相">
 <ParamField body="duration" type="integer" default="5">
   视频时长（秒），支持：`5`、`10`
@@ -136,18 +136,19 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
   随机种子，范围：`0-2147483647`
 </ParamField>
   </Tab>
-  
+
   <Tab title="豆包 Seedance">
 <ParamField body="metadata.content" type="array" required>
   内容数组，必须放在 `metadata` 对象中。必须包含文本和可选的图片。参数通过文本提示词中的特殊标记控制：
   - `--rs` 或 `--resolution`：分辨率（`480p`、`720p`、`1080p`）
   - `--ratio`：宽高比（`16:9`、`9:16`、`1:1`、`4:3`、`3:4`、`adaptive`，注意 `doubao-seedance-1-0-lite-t2v-250428` 不支持 `adaptive`）
   - `--dur` 或 `--duration`：时长（秒，如 `5`、`10`）
-  - `--fps` 或 `--framespersecond`：帧率（如 `24`、`30`）
-  - `--seed`：随机种子
+  - `frames`：Seedance 1.5 pro 暂不支持duration 和 frames 二选一即可，frames 的优先级高于 duration。如果您希望生成小数秒的视频，建议指定 frames,取值范围：支持 [29, 289] 区间内所有满足 25 + 4n 格式的整数值，其中 n 为正整数。
+  - `--fps` 或 `--framespersecond`：帧率，即一秒时间内视频画面数量。仅支持 `24`
+  - `--seed`：随机种子取值范围：[-1, 2^32-1]之间的整数。
   - `--wm` 或 `--watermark`：水印开关（`true`、`false`）
   - `--cf` 或 `--camerafixed`：固定摄像头（`true`、`false`，仅 lite 模型支持）
-  
+
   **metadata.content 数组格式**：
   ```json
   {
@@ -188,7 +189,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         "size": "720x1280"
       }'
     ```
-    
+
     **2. 文生视频（横屏，8秒）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
@@ -201,7 +202,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         "size": "1280x720"
       }'
     ```
-    
+
     **3. 图生视频（首帧模式）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
@@ -215,7 +216,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         "input_reference": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
       }'
     ```
-    
+
     **4. Remix 模式（视频生视频）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
@@ -230,7 +231,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
       }'
     ```
   </Tab>
-  
+
   <Tab title="Veo">
     **1. 文生视频（基础示例）**
     ```bash
@@ -243,14 +244,11 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         "durationSeconds": 8,
         "aspectRatio": "16:9",
         "resolution": "1080p",
-        "fps": 24,
-        "generateAudio": true,
-        "personGeneration": "allow_all",
-        "addWatermark": false
+        "fps": 24
       }'
     ```
-    
-    **2. 文生视频（竖屏，带随机种子）**
+
+{/*    **2. 文生视频（竖屏，带随机种子）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
       -H "Authorization: Bearer sk-xxxxxxxxxx" \
@@ -268,9 +266,9 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         "seed": 12345,
         "sampleCount": 2
       }'
-    ```
-    
-    **3. 图生视频（首帧模式）**
+    ```*/}
+
+    **2. 图生视频（首帧模式）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
       -H "Authorization: Bearer sk-xxxxxxxxxx" \
@@ -282,14 +280,11 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         "aspectRatio": "16:9",
         "resolution": "1080p",
         "fps": 24,
-        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
-        "generateAudio": true,
-        "personGeneration": "dont_allow",
-        "addWatermark": false
+        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
       }'
     ```
-    
-    **4. 图生视频（首尾帧模式，仅 veo-3.1 支持）**
+
+    **3. 图生视频（首尾帧模式，仅 veo-3.1 支持）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
       -H "Authorization: Bearer sk-xxxxxxxxxx" \
@@ -302,14 +297,11 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         "resolution": "1080p",
         "fps": 24,
         "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
-        "lastFrame": "data:image/png;base64,iVBORw0KGgoAAyyyy...",
-        "generateAudio": true,
-        "seed": 67890,
-        "sampleCount": 1
+        "lastFrame": "data:image/png;base64,iVBORw0KGgoAAyyyy..."
       }'
     ```
   </Tab>
-  
+
   <Tab title="阿里万相">
     **1. 文生视频（基础示例）**
     ```bash
@@ -325,7 +317,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         "generate_audio": true
       }'
     ```
-    
+
     **2. 文生视频（10秒，1080p，带随机种子）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
@@ -341,7 +333,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         "seed": 123456
       }'
     ```
-    
+
     **3. 图生视频（首帧模式）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
@@ -357,7 +349,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         "image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
       }'
     ```
-    
+
     **4. 图生视频（带自定义音频）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
@@ -376,7 +368,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
       }'
     ```
   </Tab>
-  
+
   <Tab title="豆包 Seedance">
     **1. 文生视频（T2V，基础示例）**
     ```bash
@@ -395,7 +387,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         }
       }'
     ```
-    
+
     **2. 文生视频（T2V，完整参数）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
@@ -413,7 +405,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         }
       }'
     ```
-    
+
     **3. 图生视频（首帧模式）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
@@ -437,7 +429,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         }
       }'
     ```
-    
+
     **4. 图生视频（首尾帧模式，仅 lite-i2v 支持）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
@@ -469,7 +461,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         }
       }'
     ```
-    
+
     **5. 图生视频（参考图模式，仅 lite-i2v 支持）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
@@ -508,7 +500,7 @@ api: 'POST https://llm.ai-nebula.com/v1/video/generations'
         }
       }'
     ```
-    
+
     **6. Pro 模型（首帧模式）**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \

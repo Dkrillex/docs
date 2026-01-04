@@ -143,8 +143,9 @@ Different models support different specific parameters. Below are detailed descr
   - `--rs` or `--resolution`: Resolution (`480p`, `720p`, `1080p`)
   - `--ratio`: Aspect ratio (`16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `adaptive`, note that `doubao-seedance-1-0-lite-t2v-250428` does not support `adaptive`)
   - `--dur` or `--duration`: Duration (seconds, e.g. `5`, `10`)
-  - `--fps` or `--framespersecond`: Frame rate (e.g. `24`, `30`)
-  - `--seed`: Random seed
+  - `frames`: Seedance 1.5 Pro does not support using `duration` and `frames` together; either works, and `frames` takes priority. If you want fractional-second videos, specify `frames`. Range: all integers within `[29, 289]` that match `25 + 4n` where `n` is a positive integer
+  - `--fps` or `--framespersecond`: Frame rate, only supports `24`
+  - `--seed`: Random seed, integer in range `[-1, 2^32-1]`
   - `--wm` or `--watermark`: Watermark toggle (`true`, `false`)
   - `--cf` or `--camerafixed`: Fixed camera (`true`, `false`, only lite models support)
   
@@ -243,34 +244,11 @@ Different models support different specific parameters. Below are detailed descr
         "durationSeconds": 8,
         "aspectRatio": "16:9",
         "resolution": "1080p",
-        "fps": 24,
-        "generateAudio": true,
-        "personGeneration": "allow_all",
-        "addWatermark": false
+        "fps": 24
       }'
     ```
     
-    **2. Text-to-Video (Portrait, with Random Seed)**
-    ```bash
-    curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
-      -H "Authorization: Bearer sk-xxxxxxxxxx" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "model": "veo-3.1-fast-generate-preview",
-        "prompt": "Aerial view of a sci-fi city at dawn, sunlight piercing through clouds",
-        "durationSeconds": 6,
-        "aspectRatio": "9:16",
-        "resolution": "720p",
-        "fps": 30,
-        "generateAudio": false,
-        "personGeneration": "allow_adult",
-        "addWatermark": true,
-        "seed": 12345,
-        "sampleCount": 2
-      }'
-    ```
-    
-    **3. Image-to-Video (First Frame Mode)**
+    **2. Image-to-Video (First Frame Mode)**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
       -H "Authorization: Bearer sk-xxxxxxxxxx" \
@@ -282,14 +260,11 @@ Different models support different specific parameters. Below are detailed descr
         "aspectRatio": "16:9",
         "resolution": "1080p",
         "fps": 24,
-        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
-        "generateAudio": true,
-        "personGeneration": "dont_allow",
-        "addWatermark": false
+        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."
       }'
     ```
     
-    **4. Image-to-Video (First/Last Frame Mode, only veo-3.1 supports)**
+    **3. Image-to-Video (First/Last Frame Mode, only veo-3.1 supports)**
     ```bash
     curl -X POST "https://llm.ai-nebula.com/v1/video/generations" \
       -H "Authorization: Bearer sk-xxxxxxxxxx" \
@@ -302,10 +277,7 @@ Different models support different specific parameters. Below are detailed descr
         "resolution": "1080p",
         "fps": 24,
         "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
-        "lastFrame": "data:image/png;base64,iVBORw0KGgoAAyyyy...",
-        "generateAudio": true,
-        "seed": 67890,
-        "sampleCount": 1
+        "lastFrame": "data:image/png;base64,iVBORw0KGgoAAyyyy..."
       }'
     ```
   </Tab>

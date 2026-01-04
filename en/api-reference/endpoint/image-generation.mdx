@@ -19,7 +19,7 @@ The image generation API supports text-to-image, image-to-image, image editing, 
   Model identifier, supported models include:
   - Gemini series: `gemini-2.5-flash-image` (Nano Banana), `gemini-3-pro-image-preview` (Nano Banana Pro), etc.
   - Doubao Seedream series: `doubao-seedream-3-0-t2i-250415`, `doubao-seedream-4-0-250828`, `doubao-seedream-4-5-251128`, `doubao-seededit-3-0-i2i-250628`, etc.
-  - GPT Image series: `gpt-image-1`, `gpt-image-1-mini`, etc.
+  - GPT Image series: `gpt-image-1`, etc.
   - Tongyi Qianwen series: `qwen-image-plus`, `qwen-image-edit-plus`, etc.
 </ParamField>
 
@@ -41,92 +41,341 @@ The image generation API supports text-to-image, image-to-image, image editing, 
   Multi-turn content for image-to-image or contextual conversation
 </ParamField>
 
-## Code Examples
+## Basic Examples
 
 <Tabs>
-  <Tab title="cURL">
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gemini-2.5-flash-image",
-    "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
-    "size": "16:9",
-    "quality": "high",
-    "n": 1,
-    "response_format": "b64_json"
-  }'
-```
+  <Tab title="Gemini">
+    <Tabs>
+      <Tab title="Text-to-Image">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "gemini-2.5-flash-image",
+        "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
+        "size": "16:9",
+        "quality": "high",
+        "n": 1,
+        "temperature":1.1,
+        "top_p":0.95,
+        "response_format": "b64_json",
+        "image_size": "2K",
+        "mime_type": "image/png",
+        "response_modalities": "image"
+      }'
+        ```
+      </Tab>
+      <Tab title="Image-to-Image">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "gemini-2.5-flash-image",
+        "size": "16:9",
+        "quality": "high",
+        "image_size": "3K",
+        "temperature":1.1,
+        "top_p":0.95,
+        "response_format": "b64_json",
+        "contents": [
+      {
+        "role": "user",
+        "parts": [
+      {"text": "Generate an aerial view of Canton Tower based on this image"},
+      {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
+        ]
+      }
+        ]
+      }'
+        ```
+      </Tab>
+      <Tab title="Multi-Image Fusion">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "gemini-2.5-flash-image",
+        "size": "16:9",
+        "image_size": "3K",
+        "temperature":1.1,
+        "top_p":0.95,
+        "response_format": "b64_json",
+        "contents": [
+      {
+        "role": "user",
+        "parts": [
+      {"text": "Apply the oil painting style from the first image to the content of the second image"},
+      {"image": "https://example.com/style.jpg"},
+      {"image": "https://example.com/content.jpg"}
+        ]
+      }
+        ]
+      }'
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
 
-  <Tab title="Python">
-```python
-from openai import OpenAI
+  <Tab title="Doubao Seedream">
+    <Tabs>
+      <Tab title="Text-to-Image">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seedream-4-0-250828",
+        "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
+        "size": "2048x2048",
+        "watermark": false,
+        "seed": 12345,
+        "optimize_prompt_options": {
+        "mode": "standard"
+      }
+      }'
+        ```
+      </Tab>
+      <Tab title="Image-to-Image">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seedream-4-0-250828",
+        "prompt": "Change this image to oil painting style",
+        "size": "2048x2048",
+        "watermark": false,
+        "seed": 12345,
+        "contents": [
+      {
+        "role": "user",
+        "parts": [
+      {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
+      {"text": "Change this image to oil painting style"}
+        ]
+      }
+        ]
+      }'
+        ```
+      </Tab>
+      <Tab title="Sequential Image Generation">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seedream-4-0-250828",
+        "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
+        "size": "2048x2048",
+        "watermark": false,
+        "sequential_image_generation": "auto",
+        "sequential_image_generation_options": {
+        "max_images": 4
+      },
+        "optimize_prompt_options": {
+        "mode": "standard"
+      }
+      }'
+        ```
+      </Tab>
+      <Tab title="Image Editing">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seededit-3-0-i2i-250628",
+        "prompt": "Change this image to oil painting style",
+        "watermark": false,
+        "guidance_scale": 2.5,
+        "seed": 12345,
+        "contents": [
+      {
+        "role": "user",
+        "parts": [
+      {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
+      {"text": "Change this image to oil painting style"}
+        ]
+      }
+        ]
+      }'
+        ```
+      </Tab>
+      <Tab title="3.0 Model (Guidance Scale)">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seedream-3-0-t2i-250415",
+        "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
+        "size": "1024x1024",
+        "watermark": false,
+        "guidance_scale": 7.5,
+        "seed": 12345
+      }'
+        ```
+      </Tab>
+      <Tab title="4.5 Model (Standard/Fast Mode)">
+        ```bash
+        # Creative mode
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seedream-4-5-251128",
+        "prompt": "A cute kitten",
+        "size": "2048x2048",
+        "watermark": false,
+        "optimize_prompt_options": {
+        "mode": "standard"
+      }
+      }'
 
-client = OpenAI(
-    api_key="sk-xxxxxxxxxx",
-    base_url="https://llm.ai-nebula.com/v1"
-)
-
-response = client.images.generate(
-    model="gemini-2.5-flash-image",
-    prompt="A cute orange kitten sitting in a garden, sunny day, high quality photography",
-    size="16:9",
-    quality="high",
-    n=1,
-    response_format="b64_json"
-)
-
-print(response.data[0].b64_json)
-```
+        # Precise mode
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seedream-4-0-250828",
+        "prompt": "A cute kitten",
+        "size": "2048x2048",
+        "watermark": false,
+        "optimize_prompt_options": {
+        "mode": "fast"
+      }
+      }'
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
 
-  <Tab title="Java">
-```java
-import com.theokanning.openai.image.CreateImageRequest;
-import com.theokanning.openai.service.OpenAiService;
-
-OpenAiService service = new OpenAiService(
-    "sk-xxxxxxxxxx",
-    Duration.ofSeconds(60),
-    "https://llm.ai-nebula.com/v1"
-);
-
-CreateImageRequest request = CreateImageRequest.builder()
-    .model("gemini-2.5-flash-image")
-    .prompt("A cute orange kitten sitting in a garden, sunny day, high quality photography")
-    .size("16:9")
-    .quality("high")
-    .n(1)
-    .responseFormat("b64_json")
-    .build();
-
-ImageResult result = service.createImage(request);
-System.out.println(result.getData().get(0).getB64Json());
-```
+  <Tab title="GPT Image">
+    <Tabs>
+      <Tab title="Text-to-Image">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "gpt-image-1",
+        "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
+        "size": "1024x1024",
+        "quality": "high",
+        "n": 1,
+        "seed":1,
+        "response_format": "b64_json"
+      }'
+        ```
+      </Tab>
+      <Tab title="Image-to-Image">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "gpt-image-1",
+        "prompt": "Change this image to oil painting style",
+        "size": "1024x1024",
+        "quality": "high",
+        "input_fidelity": "medium",
+        "n": 1,
+        "seed":1,
+        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
+        "response_format": "b64_json"
+      }'
+        ```
+      </Tab>
+      <Tab title="Multi-Image Fusion">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "gpt-image-1",
+        "prompt": "Apply the style from the first image to the content of the second image",
+        "size": "1024x1024",
+        "quality": "high",
+        "input_fidelity": "high",
+        "n": 2,
+        "seed":1,
+        "images": [
+        "data:image/png;base64,iVBORw0KGgoAAxxxx...",
+        "data:image/png;base64,iVBORw0KGgoAAyyyy..."
+        ],
+        "response_format": "b64_json"
+      }'
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
 
-  <Tab title="Node.js">
-```javascript
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: 'sk-xxxxxxxxxx',
-  baseURL: 'https://llm.ai-nebula.com/v1'
-});
-
-const response = await openai.images.generate({
-  model: 'gemini-2.5-flash-image',
-  prompt: 'A cute orange kitten sitting in a garden, sunny day, high quality photography',
-  size: '16:9',
-  quality: 'high',
-  n: 1,
-  response_format: 'b64_json'
-});
-
-console.log(response.data[0].b64_json);
-```
+  <Tab title="Tongyi Qianwen">
+    <Tabs>
+      <Tab title="Text-to-Image">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "qwen-image-plus",
+        "input": {
+        "messages": [
+      {
+        "role": "user",
+        "content": [
+      {
+        "text": "一副典雅庄重的对联悬挂于厅堂之中，房间是个安静古典的中式布置，桌子上放着一些青花瓷，对联上左书“义本生知人机同道善思新”，右书“通云赋智乾坤启数高志远”， 横批“智启通义”，字体飘逸，在中间挂着一幅中国风的画作，内容是岳阳楼。"
+      }
+        ]
+      }
+        ]
+      },
+        "parameters": {
+        "negative_prompt": "1",
+        "prompt_extend": true,
+        "seed": "4",
+        "watermark": true
+      }
+      }'
+        ```
+      </Tab>
+      <Tab title="Image Editing">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "qwen-image-edit-plus",
+        "input": {
+        "messages": [
+      {
+        "role": "user",
+        "content": [
+      {
+        "image": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250925/fpakfo/image36.webp"
+      },
+      {
+        "text": "Generate an image that matches the depth map. Description: a red, worn-out bicycle parked on a muddy path, with a dense primeval forest in the background."
+      }
+        ]
+      }
+        ]
+      },
+        "parameters": {
+        "n": 2,
+        "negative_prompt": "low quality",
+        "watermark": true,
+        "size": "2048*2048",
+        "seed": 1
+      }
+      }'
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
 </Tabs>
 
@@ -136,6 +385,10 @@ Different models support different parameters. Below are detailed parameter desc
 
 <Tabs>
   <Tab title="Doubao Seedream">
+    <ParamField body="image " type="string">
+      doubao-seedream-3-0-t2i-250415 does not support this parameter for input images.
+      Supports URL or Base64 encoding. Among them, doubao-seedream-4.5 and doubao-seedream-4.0 support single-image or multi-image input (see the Multi-Image Fusion example), while doubao-seededit-3.0-i2i only supports single-image input.
+    </ParamField>
     <ParamField body="size" type="string">
       Image size, supported sizes depend on model version:
       - **doubao-seedream-3.0**: `1024x1024`, `1152x864`, `864x1152`, `1280x720`, `720x1280`, `1248x832`, `832x1248`, `1512x648`
@@ -148,7 +401,7 @@ Different models support different parameters. Below are detailed parameter desc
       Random seed for controlling the randomness of generation results. Same seed produces similar results. Range: `0` to `2147483647`
     </ParamField>
     <ParamField body="guidance_scale" type="number">
-      Guidance scale, controls how closely the generated image matches the prompt. Higher values are stricter, lower values are more free. Recommended range: `1.0-10.0`, default: `2.5`. Only supported by `doubao-seedream-3-0-t2i-250415` and `doubao-seededit-3-0-i2i-250628`
+      Guidance scale, controls how closely the generated image matches the prompt. Higher values are stricter, lower values are more free. Recommended range: `1.0-10.0`, default: `2.5`. Only supported by `doubao-seedream-3.0-t2i-250415` and `doubao-seededit-3.0-i2i-250628`
     </ParamField>
     <ParamField body="sequential_image_generation" type="string">
       Sequential image generation toggle, only supported by `doubao-seedream-4.0` and `doubao-seedream-4.5`:
@@ -160,12 +413,10 @@ Different models support different parameters. Below are detailed parameter desc
       - `max_images` (integer): Maximum number of images, range `1-4`, default `4`
     </ParamField>
     <ParamField body="optimize_prompt_options" type="object">
-      Prompt optimization options, only supported by `doubao-seedream-4.0` and `doubao-seedream-4.5`:
+      Only doubao-seedream-4.5 (currently only supports standard mode) and doubao-seedream-4.0 support this parameter.
       - `mode` (string): Optimization mode
         - `"standard"`: Standard mode, higher quality but longer time (default, supported by both 4.0 and 4.5)
         - `"fast"`: Fast mode, shorter time but average quality (only 4.0)
-        - `"creative"`: Creative mode (only 4.5)
-        - `"precise"`: Precise mode (only 4.5)
     </ParamField>
   </Tab>
 
@@ -199,7 +450,7 @@ Different models support different parameters. Below are detailed parameter desc
 
   <Tab title="Gemini">
     <ParamField body="size" type="string">
-      Image aspect ratio, supports: `1:1`, `3:2`, `2:3`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`. Can also use pixel dimensions (e.g., `1024x1024`), system will automatically convert to corresponding ratio
+      Image aspect ratio, supports: `1:1`, `3:2`, `2:3`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`. Can also use pixel dimensions (e.g., `1024x1024`), and the system will automatically convert them to the corresponding ratio.
     </ParamField>
     <ParamField body="quality" type="string">
       Image quality, maps to `imageSize` parameter:
@@ -235,549 +486,16 @@ Different models support different parameters. Below are detailed parameter desc
   <Tab title="Tongyi Qianwen">
     <ParamField body="parameters" type="object" required>
       Generation parameters object, contains the following fields:
-      
-      - `size` (string, required): Image size, supports: `1328*1328`, `1664*928`, `928*1664`, `1472*1140`, `1140*1472`
+      - `role` (string, required): Message sender role, must be set to `user`.
+      - `image` (string): Only for qwen-image-edit-plus models. URL or Base64-encoded image data. Supports 1-3 input images. When multiple images are provided, image order is defined by array order, and the output aspect ratio is based on the last image.
+      - `n` (integer, required): Number of output images, default is 1. For qwen-image-edit-plus series models, you can choose to output 1-6 images. For qwen-image-edit, only 1 image is supported.
       - `negative_prompt` (string): Negative prompt, used to exclude unwanted elements
-      - `prompt_extend` (boolean, default: true): Whether to enable prompt extension. Recommended for short prompts, not recommended for detailed prompts
+      - `prompt_extend` (boolean, default: true): Whether to enable prompt extension. Recommended for short prompts, and recommended to disable for detailed prompts. Only supported by qwen-image-edit-plus series models.
       - `watermark` (boolean, default: true): Whether to add watermark
-      - `n` (integer, only qwen-image-edit-plus): Number of images to generate, range `1-6`, default `1`
-      - `seed` (integer, only qwen-image-edit-plus): Random seed, range `0-2147483647`
+      - `seed` (integer): Random seed, range `0-2147483647`
     </ParamField>
   </Tab>
 </Tabs>
-
-## Basic Examples
-
-<Tabs>
-  <Tab title="Gemini">
-    <Tabs>
-      <Tab title="Text-to-Image">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "gemini-2.5-flash-image",
-            "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
-            "size": "16:9",
-            "quality": "high",
-            "n": 1,
-            "response_format": "b64_json",
-            "image_size": "2K",
-            "mime_type": "image/png",
-            "response_modalities": "image"
-          }'
-        ```
-      </Tab>
-      <Tab title="Image-to-Image">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "gemini-2.5-flash-image",
-            "size": "16:9",
-            "quality": "high",
-            "response_format": "b64_json",
-            "contents": [
-              {
-                "role": "user",
-                "parts": [
-                  {"text": "Generate a bird eye view of Canton Tower based on this image"},
-                  {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
-                ]
-              }
-            ]
-          }'
-        ```
-      </Tab>
-      <Tab title="Multi-Image Fusion">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "gemini-2.5-flash-image",
-            "size": "16:9",
-            "response_format": "b64_json",
-            "contents": [
-              {
-                "role": "user",
-                "parts": [
-                  {"text": "Apply the oil painting style from the first image to the content of the second image"},
-                  {"image": "https://example.com/style.jpg"},
-                  {"image": "https://example.com/content.jpg"}
-                ]
-              }
-            ]
-          }'
-        ```
-      </Tab>
-    </Tabs>
-  </Tab>
-  
-  <Tab title="Doubao Seedream">
-    <Tabs>
-      <Tab title="Text-to-Image">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seedream-4-0-250828",
-            "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
-            "size": "2048x2048",
-            "watermark": false,
-            "seed": 12345,
-            "optimize_prompt_options": {
-              "mode": "standard"
-            }
-          }'
-        ```
-      </Tab>
-      <Tab title="Image-to-Image">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seedream-4-0-250828",
-            "prompt": "Change this image to oil painting style",
-            "size": "2048x2048",
-            "watermark": false,
-            "seed": 12345,
-            "contents": [
-              {
-                "role": "user",
-                "parts": [
-                  {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
-                  {"text": "Change this image to oil painting style"}
-                ]
-              }
-            ]
-          }'
-        ```
-      </Tab>
-      <Tab title="Sequential Image Generation">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seedream-4-0-250828",
-            "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
-            "size": "2048x2048",
-            "watermark": false,
-            "sequential_image_generation": "auto",
-            "sequential_image_generation_options": {
-              "max_images": 4
-            },
-            "optimize_prompt_options": {
-              "mode": "standard"
-            }
-          }'
-        ```
-      </Tab>
-      <Tab title="Image Editing">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seededit-3-0-i2i-250628",
-            "prompt": "Change this image to oil painting style",
-            "watermark": false,
-            "guidance_scale": 2.5,
-            "seed": 12345,
-            "contents": [
-              {
-                "role": "user",
-                "parts": [
-                  {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
-                  {"text": "Change this image to oil painting style"}
-                ]
-              }
-            ]
-          }'
-        ```
-      </Tab>
-      <Tab title="3.0 Model (Guidance Scale)">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seedream-3-0-t2i-250415",
-            "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
-            "size": "1024x1024",
-            "watermark": false,
-            "guidance_scale": 7.5,
-            "seed": 12345
-          }'
-        ```
-      </Tab>
-      <Tab title="4.5 Model (Creative/Precise Mode)">
-        ```bash
-        # Creative mode
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seedream-4-5-251128",
-            "prompt": "A cute kitten",
-            "size": "2048x2048",
-            "watermark": false,
-            "optimize_prompt_options": {
-              "mode": "creative"
-            }
-          }'
-
-        # Precise mode
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seedream-4-5-251128",
-            "prompt": "A cute kitten",
-            "size": "2048x2048",
-            "watermark": false,
-            "optimize_prompt_options": {
-              "mode": "precise"
-            }
-          }'
-        ```
-      </Tab>
-    </Tabs>
-  </Tab>
-  
-  <Tab title="GPT Image">
-    <Tabs>
-      <Tab title="Text-to-Image">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "gpt-image-1",
-            "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
-            "size": "1024x1024",
-            "quality": "high",
-            "n": 1,
-            "response_format": "b64_json"
-          }'
-        ```
-      </Tab>
-      <Tab title="Image-to-Image">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "gpt-image-1",
-            "prompt": "Change this image to oil painting style",
-            "size": "1024x1024",
-            "quality": "high",
-            "input_fidelity": "medium",
-            "n": 1,
-            "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
-            "response_format": "b64_json"
-          }'
-        ```
-      </Tab>
-      <Tab title="Multi-Image Fusion">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "gpt-image-1",
-            "prompt": "Apply the style from the first image to the content of the second image",
-            "size": "1024x1024",
-            "quality": "high",
-            "input_fidelity": "high",
-            "n": 2,
-            "images": [
-              "data:image/png;base64,iVBORw0KGgoAAxxxx...",
-              "data:image/png;base64,iVBORw0KGgoAAyyyy..."
-            ],
-            "response_format": "b64_json"
-          }'
-        ```
-      </Tab>
-    </Tabs>
-  </Tab>
-  
-  <Tab title="Tongyi Qianwen">
-    <Tabs>
-      <Tab title="Text-to-Image">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "qwen-image-plus",
-            "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
-            "parameters": {
-              "size": "1328*1328",
-              "negative_prompt": "",
-              "prompt_extend": true,
-              "watermark": true
-            }
-          }'
-        ```
-      </Tab>
-      <Tab title="Image Editing">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "qwen-image-edit-plus",
-            "prompt": "Change \"Hello\" in the image to \"你好\", keep other content unchanged",
-            "parameters": {
-              "n": 1,
-              "negative_prompt": "blurry text, typos",
-              "watermark": false,
-              "seed": 123456
-            },
-            "contents": [
-              {
-                "role": "user",
-                "parts": [
-                  {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
-                  {"text": "Change \"Hello\" in the image to \"你好\""}
-                ]
-              }
-            ]
-          }'
-        ```
-      </Tab>
-    </Tabs>
-  </Tab>
-</Tabs>
-
-## Advanced Features
-
-### Multi-Image Fusion (Nano Banana Exclusive)
-
-Nano Banana supports simultaneous input of 2-5 images for fusion generation:
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gemini-2.5-flash-image-preview",
-    "response_format": "b64_json",
-    "size": "16:9",
-    "contents": [
-      {
-        "role": "user",
-        "parts": [
-          {"text": "Apply the oil painting style from the first image to the content of the second image"},
-          {"image": "https://example.com/style.jpg"},
-          {"image": "https://example.com/content.jpg"}
-        ]
-      }
-    ]
-  }'
-```
-
-### Text Rendering (Tongyi Qianwen Exclusive)
-
-Tongyi Qianwen excels at generating complex text in images, supporting Chinese and English text rendering:
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "qwen-image-plus",
-    "prompt": "A coffee poster with large title \"Artisan Coffee\" at the top, subtitle \"Aromatic Every Moment\", with a steaming cup of coffee in the middle",
-    "parameters": {
-      "size": "928*1664",
-      "negative_prompt": "blurry text",
-      "prompt_extend": false,
-      "watermark": false
-    }
-  }'
-```
-
-### Guidance Scale Control (Doubao Seedream 3.0 Exclusive)
-
-Use the `guidance_scale` parameter to control how closely the generated image matches the prompt:
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "doubao-seedream-3-0-t2i-250415",
-    "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
-    "size": "1024x1024",
-    "guidance_scale": 7.5,
-    "watermark": false
-  }'
-```
-
-**Parameter Description**:
-- Higher `guidance_scale` values make the generated image strictly follow the prompt
-- Recommended range: `1.0-10.0`, default: `2.5`
-- Lower values (e.g., `1.0-3.0`): More creative freedom, more varied results
-- Higher values (e.g., `7.0-10.0`): Stricter prompt matching, more precise results
-
-### Random Seed Control (Doubao Seedream Series)
-
-Use the `seed` parameter to control the randomness of generation results. Same seed produces similar results:
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "doubao-seedream-4-0-250828",
-    "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
-    "size": "2048x2048",
-    "seed": 12345,
-    "watermark": false
-  }'
-```
-
-**Parameter Description**:
-- `seed` value range: `0` to `2147483647`
-- Using the same `seed` and `prompt` can produce similar (but not guaranteed identical) results
-- If `seed` is not provided, the system will use a random seed, and each generation will produce different results
-
-### Sequential Image Generation (Doubao Seedream 4.x Exclusive)
-
-Doubao Seedream 4.0 and 4.5 support sequential image generation, allowing you to generate multiple stylistically consistent images at once:
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "doubao-seedream-4-0-250828",
-    "prompt": "A cute orange kitten sitting in a garden, sunny day, high quality photography",
-    "size": "2048x2048",
-    "sequential_image_generation": "auto",
-    "sequential_image_generation_options": {
-      "max_images": 4
-    },
-    "watermark": false
-  }'
-```
-
-**Parameter Description**:
-- `sequential_image_generation`: Set to `"auto"` to enable sequential image generation
-- `sequential_image_generation_options.max_images`: Number of images, range `1-4`, default `4`
-- Sequential image generation produces multiple stylistically consistent images, suitable for scenarios requiring series images
-
-### Prompt Optimization (Doubao Seedream 4.0/4.5 Exclusive)
-
-Doubao Seedream 4.0 and 4.5 support prompt optimization options to automatically optimize prompt effects:
-
-```bash
-# Standard mode (supported by both 4.0 and 4.5)
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "doubao-seedream-4-0-250828",
-    "prompt": "A cute kitten",
-    "size": "2048x2048",
-    "optimize_prompt_options": {
-      "mode": "standard"
-    },
-    "watermark": false
-  }'
-
-# Creative mode (only 4.5)
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "doubao-seedream-4-5-251128",
-    "prompt": "A cute kitten",
-    "size": "2048x2048",
-    "optimize_prompt_options": {
-      "mode": "creative"
-    },
-    "watermark": false
-  }'
-```
-
-**Parameter Description**:
-- `mode: "standard"`: Standard mode, higher quality but longer time (default, supported by both 4.0 and 4.5)
-- `mode: "fast"`: Fast mode, shorter time but average quality (only 4.0)
-- `mode: "creative"`: Creative mode, more creative freedom (only 4.5)
-- `mode: "precise"`: Precise mode, more precise prompt matching (only 4.5)
-
-### Multi-Image Input (GPT Image Exclusive)
-
-GPT Image supports simultaneous input of multiple images (up to 10) for fusion generation:
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gpt-image-1",
-    "prompt": "Apply the style from the first image to the content of the second image",
-    "size": "1024x1024",
-    "quality": "high",
-    "input_fidelity": "high",
-    "n": 2,
-    "images": [
-      "data:image/png;base64,iVBORw0KGgoAAxxxx...",
-      "data:image/png;base64,iVBORw0KGgoAAyyyy..."
-    ]
-  }'
-```
-
-**Parameter Description**:
-- `images`: Array of multiple input images, supports up to 10 images
-- `input_fidelity`: Controls the fidelity of input images
-  - `"low"`: More creative freedom, larger differences from original image
-  - `"medium"`: Balance between fidelity and creativity
-  - `"high"`: Preserve original image features, smaller changes
-  - `"auto"`: Automatically select appropriate fidelity
-- `n`: Number of images to generate, range `1-10`, each image consumes corresponding quota
-
-### Image Editing (Tongyi Qianwen Image Editing)
-
-Use the `qwen-image-edit-plus` model for image editing, supporting text modification, object addition/removal, style transfer, etc.:
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "qwen-image-edit-plus",
-    "prompt": "Change \"Hello\" in the image to \"你好\", keep other content unchanged",
-    "parameters": {
-      "n": 1,
-      "negative_prompt": "blurry text, typos",
-      "watermark": false,
-      "seed": 123456
-    },
-    "contents": [
-      {
-        "role": "user",
-        "parts": [
-          {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
-          {"text": "Change \"Hello\" in the image to \"你好\""}
-        ]
-      }
-    ]
-  }'
-```
-
-**Parameter Description**:
-- `parameters.n`: Number of images to generate, range `1-6`, default `1`. Billed per image when generating multiple variants
-- `parameters.seed`: Random seed, range `0-2147483647`, used to control the randomness of generation results
-- `parameters.negative_prompt`: Negative prompt, used to exclude unwanted elements, e.g., "blurry text, typos"
-- `parameters.watermark`: Whether to add watermark, default `true`
 
 ## Response Format
 

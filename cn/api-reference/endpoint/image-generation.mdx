@@ -19,7 +19,7 @@ api: 'POST https://llm.ai-nebula.com/v1/images/generations'
   模型标识，支持的模型包括：
   - Gemini 系列：`gemini-2.5-flash-image` (Nano Banana)、`gemini-3-pro-image-preview` (Nano Banana Pro) 等
   - 豆包 Seedream 系列：`doubao-seedream-3-0-t2i-250415`、`doubao-seedream-4-0-250828`、`doubao-seedream-4-5-251128`、`doubao-seededit-3-0-i2i-250628` 等
-  - GPT Image 系列：`gpt-image-1`、`gpt-image-1-mini` 等
+  - GPT Image 系列：`gpt-image-1` 等
   - 通义千问系列：`qwen-image-plus`、`qwen-image-edit-plus` 等
 </ParamField>
 
@@ -29,7 +29,7 @@ api: 'POST https://llm.ai-nebula.com/v1/images/generations'
 
 <ParamField body="response_format" type="string" default="url">
   响应格式：`b64_json` 或 `url`
-  
+
   **注意**：不同模型对 `response_format` 的支持情况不同：
   - **Gemini 系列**：仅支持 `b64_json` 格式，无论传入什么值都会返回 base64 编码的图片数据
   - **豆包 Seedream 系列**：通常返回 URL 链接，`response_format` 参数可能不生效
@@ -41,92 +41,341 @@ api: 'POST https://llm.ai-nebula.com/v1/images/generations'
   图生图或上下文对话的多轮内容
 </ParamField>
 
-## 代码示例
+## 基础示例
 
 <Tabs>
-  <Tab title="cURL">
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gemini-2.5-flash-image",
-    "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
-    "size": "16:9",
-    "quality": "high",
-    "n": 1,
-    "response_format": "b64_json"
-  }'
-```
+  <Tab title="Gemini">
+    <Tabs>
+      <Tab title="文生图">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "gemini-2.5-flash-image",
+        "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
+        "size": "16:9",
+        "quality": "high",
+        "n": 1,
+        "temperature":1.1,
+        "top_p":0.95,
+        "response_format": "b64_json",
+        "image_size": "2K",
+        "mime_type": "image/png",
+        "response_modalities": "image"
+      }'
+        ```
+      </Tab>
+      <Tab title="图生图">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "gemini-2.5-flash-image",
+        "size": "16:9",
+        "quality": "high",
+        "image_size": "3K",
+        "temperature":1.1,
+        "top_p":0.95,
+        "response_format": "b64_json",
+        "contents": [
+      {
+        "role": "user",
+        "parts": [
+      {"text": "根据这张图帮我生成一张俯瞰广州塔的图片"},
+      {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
+        ]
+      }
+        ]
+      }'
+        ```
+      </Tab>
+      <Tab title="多图融合">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "gemini-2.5-flash-image",
+        "size": "16:9",
+        "image_size": "3K",
+        "temperature":1.1,
+        "top_p":0.95,
+        "response_format": "b64_json",
+        "contents": [
+      {
+        "role": "user",
+        "parts": [
+      {"text": "将第一张图的油画风格应用到第二张图的内容上"},
+      {"image": "https://example.com/style.jpg"},
+      {"image": "https://example.com/content.jpg"}
+        ]
+      }
+        ]
+      }'
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
 
-  <Tab title="Python">
-```python
-from openai import OpenAI
+  <Tab title="豆包 Seedream">
+    <Tabs>
+      <Tab title="文生图">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seedream-4-0-250828",
+        "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
+        "size": "2048x2048",
+        "watermark": false,
+        "seed": 12345,
+        "optimize_prompt_options": {
+        "mode": "standard"
+      }
+      }'
+        ```
+      </Tab>
+      <Tab title="图生图">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seedream-4-0-250828",
+        "prompt": "将这张图片改成油画风格",
+        "size": "2048x2048",
+        "watermark": false,
+        "seed": 12345,
+        "contents": [
+      {
+        "role": "user",
+        "parts": [
+      {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
+      {"text": "将这张图片改成油画风格"}
+        ]
+      }
+        ]
+      }'
+        ```
+      </Tab>
+      <Tab title="组图模式">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seedream-4-0-250828",
+        "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
+        "size": "2048x2048",
+        "watermark": false,
+        "sequential_image_generation": "auto",
+        "sequential_image_generation_options": {
+        "max_images": 4
+      },
+        "optimize_prompt_options": {
+        "mode": "standard"
+      }
+      }'
+        ```
+      </Tab>
+      <Tab title="图片编辑">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seededit-3-0-i2i-250628",
+        "prompt": "将这张图片改成油画风格",
+        "watermark": false,
+        "guidance_scale": 2.5,
+        "seed": 12345,
+        "contents": [
+      {
+        "role": "user",
+        "parts": [
+      {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
+      {"text": "将这张图片改成油画风格"}
+        ]
+      }
+        ]
+      }'
+        ```
+      </Tab>
+      <Tab title="3.0 模型（引导系数）">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seedream-3-0-t2i-250415",
+        "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
+        "size": "1024x1024",
+        "watermark": false,
+        "guidance_scale": 7.5,
+        "seed": 12345
+      }'
+        ```
+      </Tab>
+      <Tab title="4.5 模型（标准/快速模式）">
+        ```bash
+        # 创意模式
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seedream-4-5-251128",
+        "prompt": "一只可爱的小猫",
+        "size": "2048x2048",
+        "watermark": false,
+        "optimize_prompt_options": {
+        "mode": "standard"
+      }
+      }'
 
-client = OpenAI(
-    api_key="sk-xxxxxxxxxx",
-    base_url="https://llm.ai-nebula.com/v1"
-)
-
-response = client.images.generate(
-    model="gemini-2.5-flash-image",
-    prompt="一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
-    size="16:9",
-    quality="high",
-    n=1,
-    response_format="b64_json"
-)
-
-print(response.data[0].b64_json)
-```
+        # 精确模式
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "doubao-seedream-4-0-250828",
+        "prompt": "一只可爱的小猫",
+        "size": "2048x2048",
+        "watermark": false,
+        "optimize_prompt_options": {
+        "mode": "fast"
+      }
+      }'
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
 
-  <Tab title="Java">
-```java
-import com.theokanning.openai.image.CreateImageRequest;
-import com.theokanning.openai.service.OpenAiService;
-
-OpenAiService service = new OpenAiService(
-    "sk-xxxxxxxxxx",
-    Duration.ofSeconds(60),
-    "https://llm.ai-nebula.com/v1"
-);
-
-CreateImageRequest request = CreateImageRequest.builder()
-    .model("gemini-2.5-flash-image")
-    .prompt("一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影")
-    .size("16:9")
-    .quality("high")
-    .n(1)
-    .responseFormat("b64_json")
-    .build();
-
-ImageResult result = service.createImage(request);
-System.out.println(result.getData().get(0).getB64Json());
-```
+  <Tab title="GPT Image">
+    <Tabs>
+      <Tab title="文生图">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "gpt-image-1",
+        "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
+        "size": "1024x1024",
+        "quality": "high",
+        "n": 1,
+        "seed":1,
+        "response_format": "b64_json"
+      }'
+        ```
+      </Tab>
+      <Tab title="图生图">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "gpt-image-1",
+        "prompt": "将这张图片改成油画风格",
+        "size": "1024x1024",
+        "quality": "high",
+        "input_fidelity": "medium",
+        "n": 1,
+        "seed":1,
+        "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
+        "response_format": "b64_json"
+      }'
+        ```
+      </Tab>
+      <Tab title="多图融合">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "gpt-image-1",
+        "prompt": "将第一张图的风格应用到第二张图的内容上",
+        "size": "1024x1024",
+        "quality": "high",
+        "input_fidelity": "high",
+        "n": 2,
+        "seed":1,
+        "images": [
+        "data:image/png;base64,iVBORw0KGgoAAxxxx...",
+        "data:image/png;base64,iVBORw0KGgoAAyyyy..."
+        ],
+        "response_format": "b64_json"
+      }'
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
 
-  <Tab title="Node.js">
-```javascript
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: 'sk-xxxxxxxxxx',
-  baseURL: 'https://llm.ai-nebula.com/v1'
-});
-
-const response = await openai.images.generate({
-  model: 'gemini-2.5-flash-image',
-  prompt: '一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影',
-  size: '16:9',
-  quality: 'high',
-  n: 1,
-  response_format: 'b64_json'
-});
-
-console.log(response.data[0].b64_json);
-```
+  <Tab title="通义千问">
+    <Tabs>
+      <Tab title="文生图">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "qwen-image-plus",
+        "input": {
+        "messages": [
+      {
+        "role": "user",
+        "content": [
+      {
+        "text": "一副典雅庄重的对联悬挂于厅堂之中，房间是个安静古典的中式布置，桌子上放着一些青花瓷，对联上左书“义本生知人机同道善思新”，右书“通云赋智乾坤启数高志远”， 横批“智启通义”，字体飘逸，在中间挂着一幅中国风的画作，内容是岳阳楼。"
+      }
+        ]
+      }
+        ]
+      },
+        "parameters": {
+        "negative_prompt": "1",
+        "prompt_extend": true,
+        "seed": "4",
+        "watermark": true
+      }
+      }'
+        ```
+      </Tab>
+      <Tab title="图片编辑">
+        ```bash
+        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
+        -H "Authorization: Bearer sk-xxxxxxxxxx" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "model": "qwen-image-edit-plus",
+        "input": {
+        "messages": [
+      {
+        "role": "user",
+        "content": [
+      {
+        "image": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250925/fpakfo/image36.webp"
+      },
+      {
+        "text": "生成一张符合深度图的图像，遵循以下描述：一辆红色的破旧的自行车停在一条泥泞的小路上，背景是茂密的原始森林"
+      }
+        ]
+      }
+        ]
+      },
+        "parameters": {
+        "n": 2,
+        "negative_prompt": "低质量",
+        "watermark": true,
+        "size": "2048*2048",
+        "seed": 1
+      }
+      }'
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
 </Tabs>
 
@@ -136,6 +385,10 @@ console.log(response.data[0].b64_json);
 
 <Tabs>
   <Tab title="豆包 Seedream">
+    <ParamField body="image " type="string">
+      doubao-seedream-3-0-t2i-250415 不支持该参数输入的图片信息。
+      支持 URL 或 Base64 编码。其中，doubao-seedream-4.5、doubao-seedream-4.0 支持单图或多图输入（查看多图融合示例），doubao-seededit-3.0-i2i 仅支持单图输入。
+    </ParamField>
     <ParamField body="size" type="string">
       图片尺寸，支持的尺寸取决于模型版本：
       - **doubao-seedream-3.0**: `1024x1024`、`1152x864`、`864x1152`、`1280x720`、`720x1280`、`1248x832`、`832x1248`、`1512x648`
@@ -160,12 +413,10 @@ console.log(response.data[0].b64_json);
       - `max_images` (integer): 组图最大数量，范围 `1-4`，默认 `4`
     </ParamField>
     <ParamField body="optimize_prompt_options" type="object">
-      提示词优化选项，仅 `doubao-seedream-4.0` 和 `doubao-seedream-4.5` 支持：
+      仅 doubao-seedream-4.5（当前仅支持 standard 模式）、doubao-seedream-4.0 支持该参
       - `mode` (string): 优化模式
         - `"standard"`: 标准模式，质量更高但耗时较长（默认，4.0 和 4.5 都支持）
         - `"fast"`: 快速模式，耗时更短但质量一般（仅 4.0 支持）
-        - `"creative"`: 创意模式（仅 4.5 支持）
-        - `"precise"`: 精确模式（仅 4.5 支持）
     </ParamField>
   </Tab>
 
@@ -235,549 +486,17 @@ console.log(response.data[0].b64_json);
   <Tab title="通义千问">
     <ParamField body="parameters" type="object" required>
       生成参数对象，包含以下字段：
-      
-      - `size` (string, 必填): 图片尺寸，支持：`1328*1328`、`1664*928`、`928*1664`、`1472*1140`、`1140*1472`
+      - `role` (string, 必填): 消息发送者角色，必须设置为user。
+      - `image` (string): qwen-image-edit-plus模型才有，输入图像的 URL 或 Base64 编码数据。支持传入1-3张图像。 多图输入时，按照数组顺序定义图像顺序，输出图像的比例以最后一张为准。
+      - `n` (integer, 必填): 输出图像的数量，默认值为1。对于qwen-image-edit-plus系列模型，可选择输出1-6张图片。对于qwen-image-edit，仅支持输出1张图片。
       - `negative_prompt` (string): 负面提示词，用于排除不想要的元素
-      - `prompt_extend` (boolean, default: true): 是否启用提示词扩展。简短提示词建议启用，详细提示词建议关闭
+      - `prompt_extend` (boolean, default: true): 是否启用提示词扩展。简短提示词建议启用，详细提示词建议关闭，仅qwen-image-edit-plus系列模型支持。
       - `watermark` (boolean, default: true): 是否添加水印
-      - `n` (integer, 仅 qwen-image-edit-plus): 生成数量，范围 `1-6`，默认 `1`
-      - `seed` (integer, 仅 qwen-image-edit-plus): 随机种子，范围 `0-2147483647`
+      - `seed` (integer): 随机种子，范围 `0-2147483647`
     </ParamField>
   </Tab>
 </Tabs>
 
-## 基础示例
-
-<Tabs>
-  <Tab title="Gemini">
-    <Tabs>
-      <Tab title="文生图">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "gemini-2.5-flash-image",
-            "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
-            "size": "16:9",
-            "quality": "high",
-            "n": 1,
-            "response_format": "b64_json",
-            "image_size": "2K",
-            "mime_type": "image/png",
-            "response_modalities": "image"
-          }'
-        ```
-      </Tab>
-      <Tab title="图生图">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "gemini-2.5-flash-image",
-            "size": "16:9",
-            "quality": "high",
-            "response_format": "b64_json",
-            "contents": [
-              {
-                "role": "user",
-                "parts": [
-                  {"text": "根据这张图帮我生成一张俯瞰广州塔的图片"},
-                  {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."}
-                ]
-              }
-            ]
-          }'
-        ```
-      </Tab>
-      <Tab title="多图融合">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "gemini-2.5-flash-image",
-            "size": "16:9",
-            "response_format": "b64_json",
-            "contents": [
-              {
-                "role": "user",
-                "parts": [
-                  {"text": "将第一张图的油画风格应用到第二张图的内容上"},
-                  {"image": "https://example.com/style.jpg"},
-                  {"image": "https://example.com/content.jpg"}
-                ]
-              }
-            ]
-          }'
-        ```
-      </Tab>
-    </Tabs>
-  </Tab>
-  
-  <Tab title="豆包 Seedream">
-    <Tabs>
-      <Tab title="文生图">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seedream-4-0-250828",
-            "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
-            "size": "2048x2048",
-            "watermark": false,
-            "seed": 12345,
-            "optimize_prompt_options": {
-              "mode": "standard"
-            }
-          }'
-        ```
-      </Tab>
-      <Tab title="图生图">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seedream-4-0-250828",
-            "prompt": "将这张图片改成油画风格",
-            "size": "2048x2048",
-            "watermark": false,
-            "seed": 12345,
-            "contents": [
-              {
-                "role": "user",
-                "parts": [
-                  {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
-                  {"text": "将这张图片改成油画风格"}
-                ]
-              }
-            ]
-          }'
-        ```
-      </Tab>
-      <Tab title="组图模式">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seedream-4-0-250828",
-            "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
-            "size": "2048x2048",
-            "watermark": false,
-            "sequential_image_generation": "auto",
-            "sequential_image_generation_options": {
-              "max_images": 4
-            },
-            "optimize_prompt_options": {
-              "mode": "standard"
-            }
-          }'
-        ```
-      </Tab>
-      <Tab title="图片编辑">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seededit-3-0-i2i-250628",
-            "prompt": "将这张图片改成油画风格",
-            "watermark": false,
-            "guidance_scale": 2.5,
-            "seed": 12345,
-            "contents": [
-              {
-                "role": "user",
-                "parts": [
-                  {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
-                  {"text": "将这张图片改成油画风格"}
-                ]
-              }
-            ]
-          }'
-        ```
-      </Tab>
-      <Tab title="3.0 模型（引导系数）">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seedream-3-0-t2i-250415",
-            "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
-            "size": "1024x1024",
-            "watermark": false,
-            "guidance_scale": 7.5,
-            "seed": 12345
-          }'
-        ```
-      </Tab>
-      <Tab title="4.5 模型（创意/精确模式）">
-        ```bash
-        # 创意模式
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seedream-4-5-251128",
-            "prompt": "一只可爱的小猫",
-            "size": "2048x2048",
-            "watermark": false,
-            "optimize_prompt_options": {
-              "mode": "creative"
-            }
-          }'
-
-        # 精确模式
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "doubao-seedream-4-5-251128",
-            "prompt": "一只可爱的小猫",
-            "size": "2048x2048",
-            "watermark": false,
-            "optimize_prompt_options": {
-              "mode": "precise"
-            }
-          }'
-        ```
-      </Tab>
-    </Tabs>
-  </Tab>
-  
-  <Tab title="GPT Image">
-    <Tabs>
-      <Tab title="文生图">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "gpt-image-1",
-            "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
-            "size": "1024x1024",
-            "quality": "high",
-            "n": 1,
-            "response_format": "b64_json"
-          }'
-        ```
-      </Tab>
-      <Tab title="图生图">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "gpt-image-1",
-            "prompt": "将这张图片改成油画风格",
-            "size": "1024x1024",
-            "quality": "high",
-            "input_fidelity": "medium",
-            "n": 1,
-            "image": "data:image/png;base64,iVBORw0KGgoAAxxxx...",
-            "response_format": "b64_json"
-          }'
-        ```
-      </Tab>
-      <Tab title="多图融合">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "gpt-image-1",
-            "prompt": "将第一张图的风格应用到第二张图的内容上",
-            "size": "1024x1024",
-            "quality": "high",
-            "input_fidelity": "high",
-            "n": 2,
-            "images": [
-              "data:image/png;base64,iVBORw0KGgoAAxxxx...",
-              "data:image/png;base64,iVBORw0KGgoAAyyyy..."
-            ],
-            "response_format": "b64_json"
-          }'
-        ```
-      </Tab>
-    </Tabs>
-  </Tab>
-  
-  <Tab title="通义千问">
-    <Tabs>
-      <Tab title="文生图">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "qwen-image-plus",
-            "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
-            "parameters": {
-              "size": "1328*1328",
-              "negative_prompt": "",
-              "prompt_extend": true,
-              "watermark": true
-            }
-          }'
-        ```
-      </Tab>
-      <Tab title="图片编辑">
-        ```bash
-        curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-          -H "Authorization: Bearer sk-xxxxxxxxxx" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "qwen-image-edit-plus",
-            "prompt": "将图片中的\"Hello\"改成\"你好\"，保持其他内容不变",
-            "parameters": {
-              "n": 1,
-              "negative_prompt": "模糊的文字、错别字",
-              "watermark": false,
-              "seed": 123456
-            },
-            "contents": [
-              {
-                "role": "user",
-                "parts": [
-                  {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
-                  {"text": "将图片中的\"Hello\"改成\"你好\""}
-                ]
-              }
-            ]
-          }'
-        ```
-      </Tab>
-    </Tabs>
-  </Tab>
-</Tabs>
-
-## 高级功能
-
-### 多图融合（Nano Banana 特有）
-
-Nano Banana 支持同时输入 2-5 张图片进行融合生成：
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gemini-2.5-flash-image-preview",
-    "response_format": "b64_json",
-    "size": "16:9",
-    "contents": [
-      {
-        "role": "user",
-        "parts": [
-          {"text": "将第一张图的油画风格应用到第二张图的内容上"},
-          {"image": "https://example.com/style.jpg"},
-          {"image": "https://example.com/content.jpg"}
-        ]
-      }
-    ]
-  }'
-```
-
-### 文本渲染（通义千问特有）
-
-通义千问特别擅长在图片中生成复杂文字，支持中英文文本渲染：
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "qwen-image-plus",
-    "prompt": "一张咖啡海报，顶部大标题\"匠心咖啡\"，副标题\"醇香每一刻\"，中间是一杯冒着热气的咖啡",
-    "parameters": {
-      "size": "928*1664",
-      "negative_prompt": "模糊的文字",
-      "prompt_extend": false,
-      "watermark": false
-    }
-  }'
-```
-
-### 引导系数控制（豆包 Seedream 3.0 特有）
-
-使用 `guidance_scale` 参数控制生成图像与提示词的匹配程度：
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "doubao-seedream-3-0-t2i-250415",
-    "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
-    "size": "1024x1024",
-    "guidance_scale": 7.5,
-    "watermark": false
-  }'
-```
-
-**参数说明**：
-- `guidance_scale` 值越高，生成图像越严格遵循提示词
-- 建议范围：`1.0-10.0`，默认：`2.5`
-- 值较低时（如 `1.0-3.0`）：更多创意发挥，结果更自由
-- 值较高时（如 `7.0-10.0`）：更严格匹配提示词，结果更精确
-
-### 随机种子控制（豆包 Seedream 系列）
-
-使用 `seed` 参数控制生成结果的随机性，相同 seed 会产生相似的结果：
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "doubao-seedream-4-0-250828",
-    "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
-    "size": "2048x2048",
-    "seed": 12345,
-    "watermark": false
-  }'
-```
-
-**参数说明**：
-- `seed` 取值范围：`0` 到 `2147483647`
-- 使用相同的 `seed` 和 `prompt` 可以获得相似（但不保证完全相同）的结果
-- 如果不提供 `seed`，系统将使用随机种子，每次生成结果都不同
-
-### 组图生成（豆包 Seedream 4.x 特有）
-
-豆包 Seedream 4.0 和 4.5 支持组图功能，可以一次性生成多张风格一致的图片：
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "doubao-seedream-4-0-250828",
-    "prompt": "一只可爱的橙色小猫坐在花园里，阳光明媚，高质量摄影",
-    "size": "2048x2048",
-    "sequential_image_generation": "auto",
-    "sequential_image_generation_options": {
-      "max_images": 4
-    },
-    "watermark": false
-  }'
-```
-
-**参数说明**：
-- `sequential_image_generation`: 设置为 `"auto"` 启用组图功能
-- `sequential_image_generation_options.max_images`: 组图数量，范围 `1-4`，默认 `4`
-- 组图功能会生成风格一致的多张图片，适合需要系列图片的场景
-
-### 提示词优化（豆包 Seedream 4.0/4.5 特有）
-
-豆包 Seedream 4.0 和 4.5 支持提示词优化选项，可以自动优化提示词效果：
-
-```bash
-# 标准模式（4.0 和 4.5 都支持）
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "doubao-seedream-4-0-250828",
-    "prompt": "一只可爱的小猫",
-    "size": "2048x2048",
-    "optimize_prompt_options": {
-      "mode": "standard"
-    },
-    "watermark": false
-  }'
-
-# 创意模式（仅 4.5 支持）
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "doubao-seedream-4-5-251128",
-    "prompt": "一只可爱的小猫",
-    "size": "2048x2048",
-    "optimize_prompt_options": {
-      "mode": "creative"
-    },
-    "watermark": false
-  }'
-```
-
-**参数说明**：
-- `mode: "standard"`: 标准模式，质量更高但耗时较长（默认，4.0 和 4.5 都支持）
-- `mode: "fast"`: 快速模式，耗时更短但质量一般（仅 4.0 支持）
-- `mode: "creative"`: 创意模式，更多创意发挥（仅 4.5 支持）
-- `mode: "precise"`: 精确模式，更精确匹配提示词（仅 4.5 支持）
-
-### 多图输入（GPT Image 特有）
-
-GPT Image 支持同时输入多张图片（最多10张）进行融合生成：
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gpt-image-1",
-    "prompt": "将第一张图的风格应用到第二张图的内容上",
-    "size": "1024x1024",
-    "quality": "high",
-    "input_fidelity": "high",
-    "n": 2,
-    "images": [
-      "data:image/png;base64,iVBORw0KGgoAAxxxx...",
-      "data:image/png;base64,iVBORw0KGgoAAyyyy..."
-    ]
-  }'
-```
-
-**参数说明**：
-- `images`: 多张输入图片数组，最多支持 10 张
-- `input_fidelity`: 控制输入图片的保真度
-  - `"low"`: 更多创意发挥，与原图差异较大
-  - `"medium"`: 平衡保真度和创意
-  - `"high"`: 保持原图特征，变化较小
-  - `"auto"`: 自动选择合适的保真度
-- `n`: 生成数量，范围 `1-10`，每张图片都会消耗相应的额度
-
-### 图片编辑（通义千问图像编辑）
-
-使用 `qwen-image-edit-plus` 模型进行图片编辑，支持修改图内文字、增删物体、风格迁移等：
-
-```bash
-curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
-  -H "Authorization: Bearer sk-xxxxxxxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "qwen-image-edit-plus",
-    "prompt": "将图片中的\"Hello\"改成\"你好\"，保持其他内容不变",
-    "parameters": {
-      "n": 1,
-      "negative_prompt": "模糊的文字、错别字",
-      "watermark": false,
-      "seed": 123456
-    },
-    "contents": [
-      {
-        "role": "user",
-        "parts": [
-          {"image": "data:image/png;base64,iVBORw0KGgoAAxxxx..."},
-          {"text": "将图片中的\"Hello\"改成\"你好\""}
-        ]
-      }
-    ]
-  }'
-```
-
-**参数说明**：
-- `parameters.n`: 生成数量，范围 `1-6`，默认 `1`。生成多张变体时按张计费
-- `parameters.seed`: 随机种子，范围 `0-2147483647`，用于控制生成结果的随机性
-- `parameters.negative_prompt`: 负面提示词，用于排除不想要的元素，如"模糊的文字、错别字"
-- `parameters.watermark`: 是否添加水印，默认 `true`
 
 ## 响应格式
 
@@ -967,7 +686,7 @@ curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
        - 明确说明每张图片的作用
        - 指定融合方式（风格迁移、元素组合等）
   </Tab>
-  
+
   <Tab title="豆包 Seedream">
     1. **明确风格需求**：
        - 写实风格：添加"照片级真实"、"超写实"
@@ -987,7 +706,7 @@ curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
        - 使用`optimize_prompt_options`参数优化提示词
        - 可选模式：`standard`（标准）、`creative`（创意）、`precise`（精确）
   </Tab>
-  
+
   <Tab title="GPT Image">
     1. **明确图片质量**：
        - 使用`quality`参数控制质量：`low`、`medium`、`high`
@@ -1007,7 +726,7 @@ curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
        - 使用`n`参数控制生成数量（1-10张）
        - 对于复杂场景建议生成多张选择最佳结果
   </Tab>
-  
+
   <Tab title="通义千问">
     1. **文本渲染技巧**：
        - 在提示词中用引号明确标注文字内容
@@ -1032,7 +751,7 @@ curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
     - **抖音封面**: 928×1664 (9:16)
     - **小红书**: 1140×1472 (3:4)
   </Tab>
-  
+
   <Tab title="设计用途">
     - **网站横幅**: 1664×928 (16:9) 或 21:9
     - **海报**: 1140×1472 (3:4) 或 928×1664 (9:16)
@@ -1054,97 +773,97 @@ curl -X POST "https://llm.ai-nebula.com/v1/images/generations" \
         - GPT Image：JPEG、PNG、GIF、WEBP，最大 10MB
         - 通义千问：JPEG、JPG、PNG、BMP、TIFF、WEBP，最大 10MB
       </Accordion>
-      
+
       <Accordion title="生成的图片有效期是多久？">
         图片URL的有效期约为24小时。建议在收到响应后立即下载保存，或上传到您自己的存储服务。
       </Accordion>
-      
+
       <Accordion title="可以同时生成多张图片吗？">
         通义千问系列每次请求生成1张图片。如需多张，请发起多个并发请求。
       </Accordion>
     </AccordionGroup>
   </Tab>
-  
+
   <Tab title="Gemini (Nano Banana)">
     <AccordionGroup>
       <Accordion title="如何在对话中保持相同的宽高比？">
         在 `contents` 对话数组中，每次请求都要带上 `size` 参数，系统会为当前请求应用指定的宽高比。
       </Accordion>
-      
+
       <Accordion title="使用 URL 图片有什么要求？">
         URL 必须是可公开访问的 HTTP/HTTPS 地址，支持格式包括 PNG、JPEG、JPG、WEBP，最大 7MB。
       </Accordion>
-      
+
       <Accordion title="多图融合最多支持几张图片？">
         支持 2-5 张图片同时输入，建议 2-3 张效果最佳。
       </Accordion>
     </AccordionGroup>
   </Tab>
-  
+
   <Tab title="豆包 Seedream">
     <AccordionGroup>
       <Accordion title="doubao-seedream-3.0 支持图生图吗？">
         不支持。doubao-seedream-3.0-t2i-250415 是纯文生图模型，只支持通过文本描述生成图片。
       </Accordion>
-      
+
       <Accordion title="doubao-seedream-4.x 支持哪些图片格式？">
         doubao-seedream-4.0 和 4.5 支持 JPEG、PNG、WEBP、BMP、TIFF、GIF 格式，最大 10MB。
       </Accordion>
-      
+
       <Accordion title="组图功能如何使用？">
         使用 `sequential_image_generation` 参数启用组图模式，设置为 `auto` 即可。可以通过 `max_images` 控制组图数量（1-4张）。
       </Accordion>
-      
+
       <Accordion title="提示词优化选项有什么作用？">
         doubao-seedream-4.5 支持 `optimize_prompt_options` 参数，可选 `standard`（标准）、`creative`（创意）、`precise`（精确）三种模式，用于优化提示词效果。
       </Accordion>
-      
+
       <Accordion title="doubao-seededit 支持哪些编辑功能？">
         doubao-seededit-3.0-i2i-250628 支持图片编辑，包括修改内容、风格迁移、增强细节等，需要输入一张图片和编辑指令。
       </Accordion>
     </AccordionGroup>
   </Tab>
-  
+
   <Tab title="GPT Image">
     <AccordionGroup>
       <Accordion title="GPT Image 支持哪些图片格式？">
         支持 JPEG、PNG、GIF、WEBP 格式，最大 10MB。
       </Accordion>
-      
+
       <Accordion title="最多可以输入多少张图片？">
         gpt-image-1 和 gpt-image-1-mini 最多支持 10 张图片输入。
       </Accordion>
-      
+
       <Accordion title="图片质量参数如何选择？">
         `quality` 参数可选 `low`、`medium`、`high`：
         - `low`：生成速度最快，成本最低
         - `medium`：平衡质量和速度
         - `high`：最高质量，细节最丰富
       </Accordion>
-      
+
       <Accordion title="输入保真度有什么作用？">
         `input_fidelity` 参数控制输入图片的保真度，可选 `low`、`medium`、`high`、`auto`：
         - `low`：更多创意发挥，与原图差异较大
         - `high`：保持原图特征，变化较小
         - `auto`：自动选择合适的保真度
       </Accordion>
-      
+
       <Accordion title="可以同时生成多张图片吗？">
         可以，使用 `n` 参数控制生成数量（1-10张），每张图片都会消耗相应的额度。
       </Accordion>
     </AccordionGroup>
   </Tab>
-  
+
   <Tab title="通义千问">
     <AccordionGroup>
       <Accordion title="qwen-image-plus 支持图生图吗？">
         不支持。qwen-image-plus 是纯文生图模型，只支持通过文本描述生成图片。
       </Accordion>
-      
+
       <Accordion title="如何生成带有中文文字的图片？">
         在提示词中明确说明文字内容，例如："一张海报，标题是\"双十一大促\"，副标题\"全场5折起\""
       </Accordion>
-      
+
       <Accordion title="提示词扩展和负面提示词可以同时使用吗？">
         可以！两者互不冲突。建议：简短提示词 + 启用扩展 + 添加负面提示词，效果最佳。
       </Accordion>
